@@ -16,7 +16,7 @@ class RegisterTest extends TestCase
 
     #[Test] public function route_is_accessible(): void
     {
-        $this->get(r()->register())->assertOk();
+        $this->get(web()->register)->assertOk();
     }
 
     #[Test] public function registration(): void
@@ -24,9 +24,9 @@ class RegisterTest extends TestCase
         $RegisterForm = RegisterFormFactory::factory()->make();
 
         $this->post(
-            r()->register(),
+            web()->register,
             $RegisterForm->toArray()
-        )->assertRedirect(r()->home());
+        )->assertRedirect(web()->home);
 
         $this->assertAuthenticated();
         $this->assertDatabaseHas((new User())->getTable(), [
@@ -38,7 +38,7 @@ class RegisterTest extends TestCase
     #[Test] public function validation_fails_with_invalid_name(): void
     {
         $this->post(
-            r()->register(),
+            web()->register,
             RegisterFormFactory::factory()->set(RegisterForm::name, '')->context()
         )->assertSessionHasErrors(RegisterForm::name);
 
@@ -48,7 +48,7 @@ class RegisterTest extends TestCase
     #[Test] public function validation_fails_with_invalid_email(): void
     {
         $this->post(
-            r()->register(),
+            web()->register,
             RegisterFormFactory::factory()->set(RegisterForm::email, '')->context()
         )->assertSessionHasErrors(RegisterForm::email);
 
@@ -61,7 +61,7 @@ class RegisterTest extends TestCase
         User::factory()->create([User::email => $RegisterForm->email]);
 
         $this->post(
-            r()->register(),
+            web()->register,
             $RegisterForm->toArray()
         )->assertSessionHasErrors(RegisterForm::email);
 
@@ -71,7 +71,7 @@ class RegisterTest extends TestCase
     #[Test] public function validation_fails_with_mismatched_passwords(): void
     {
         $this->post(
-            r()->register(),
+            web()->register,
             RegisterFormFactory::factory()->set(RegisterForm::password_confirmation, 'mismatch')->context()
         )->assertSessionHasErrors(RegisterForm::password);
 
@@ -82,7 +82,7 @@ class RegisterTest extends TestCase
     {
         $RegisterForm = RegisterFormFactory::factory()->make();
 
-        $this->post(r()->register(), $RegisterForm->toArray());
+        $this->post(web()->register, $RegisterForm->toArray());
 
         $user = User::where(User::email, $RegisterForm->email)->first();
         $this->assertNotEquals($RegisterForm->password, $user->password);
@@ -91,7 +91,7 @@ class RegisterTest extends TestCase
 
     #[Test] public function validation_fails_with_missing_required_fields(): void
     {
-        $this->post(r()->register())
+        $this->post(web()->register)
             ->assertSessionHasErrors([
                 RegisterForm::name,
                 RegisterForm::email,
@@ -107,7 +107,7 @@ class RegisterTest extends TestCase
             ->set(RegisterForm::email, 'invalid-email')
             ->make();
 
-        $this->post(r()->register(), $RegisterForm->toArray())
+        $this->post(web()->register, $RegisterForm->toArray())
             ->assertSessionHasInput($RegisterForm->name)
             ->assertSessionMissing($RegisterForm->password);
 
@@ -116,12 +116,12 @@ class RegisterTest extends TestCase
 
     public function test_intended_url_is_preserved_after_registration(): void
     {
-        session(['url.intended' => r()->home()]);
+        session(['url.intended' => web()->home]);
 
         $this->post(
-            r()->register(),
+            web()->register,
             RegisterFormFactory::factory()->make()->toArray()
-        )->assertRedirect(r()->home());
+        )->assertRedirect(web()->home);
 
         $this->assertAuthenticated();
     }

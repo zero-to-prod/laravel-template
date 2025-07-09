@@ -17,7 +17,7 @@
                     </li>
                 </ul>
             </div>
-            <a href="{{r()->home()}}"
+            <a href="{{web()->home}}"
                class="hidden text-xl btn btn-ghost no-animation lg:inline-flex"
                title="Go Home"
             >
@@ -29,11 +29,11 @@
     </div>
     <div class="navbar-end">
         @auth
-            <a href="{{r()->logout()}}" class="text-lg btn btn-ghost no-animation">
+            <a href="{{web()->logout}}" class="text-lg btn btn-ghost no-animation">
                 Logout
             </a>
         @else
-            <a href="{{r()->login()}}" class="text-lg btn btn-ghost no-animation">
+            <a href="{{web()->login}}" class="text-lg btn btn-ghost no-animation">
                 Login
             </a>
         @endauth

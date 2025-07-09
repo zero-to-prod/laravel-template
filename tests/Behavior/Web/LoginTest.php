@@ -15,7 +15,7 @@ class LoginTest extends TestCase
 
     #[Test] public function route_is_accessible(): void
     {
-        $this->get(r()->login())->assertOk();
+        $this->get(web()->login)->assertOk();
     }
 
     #[Test] public function login_with_valid_credentials(): void
@@ -27,9 +27,9 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
-        )->assertRedirect(r()->home());
+        )->assertRedirect(web()->home);
 
         $this->assertAuthenticated();
     }
@@ -37,7 +37,7 @@ class LoginTest extends TestCase
     #[Test] public function validation_fails_with_invalid_email(): void
     {
         $this->post(
-            r()->login(),
+            web()->login,
             LoginFormFactory::factory()->set(LoginForm::email, '')->context()
         )->assertSessionHasErrors(LoginForm::email);
 
@@ -47,7 +47,7 @@ class LoginTest extends TestCase
     #[Test] public function validation_fails_with_invalid_password(): void
     {
         $this->post(
-            r()->login(),
+            web()->login,
             LoginFormFactory::factory()->set(LoginForm::password, '')->context()
         )->assertSessionHasErrors(LoginForm::password);
 
@@ -63,7 +63,7 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
         )->assertSessionHasErrors(LoginForm::email);
 
@@ -77,7 +77,7 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
         )->assertSessionHasErrors(LoginForm::email);
 
@@ -93,11 +93,11 @@ class LoginTest extends TestCase
             ->make();
 
         $response = $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
         );
 
-        $response->assertRedirect(r()->home());
+        $response->assertRedirect(web()->home);
         $this->assertAuthenticatedAs($User);
         $this->assertNotNull($User->fresh()->remember_token);
     }
@@ -111,14 +111,14 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
         );
 
-        $this->post(r()->logout());
+        $this->post(web()->logout);
         $this->withSession([]);
 
-        $this->get(r()->home());
+        $this->get(web()->home);
 
         $this->assertAuthenticatedAs($User);
     }
@@ -128,7 +128,7 @@ class LoginTest extends TestCase
         $LoginForm = LoginFormFactory::factory()->make();
 
         $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
         )
             ->assertSessionHasInput(LoginForm::email)
@@ -144,12 +144,12 @@ class LoginTest extends TestCase
             ->set(LoginForm::email, $user->email)
             ->make();
 
-        session(['url.intended' => r()->home()]);
+        session(['url.intended' => web()->home]);
 
         $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
-        )->assertRedirect(r()->home());
+        )->assertRedirect(web()->home);
 
         $this->assertAuthenticated();
     }
@@ -165,16 +165,16 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
-        )->assertRedirect(r()->home());
+        )->assertRedirect(web()->home);
 
         $this->assertAuthenticated();
     }
 
     #[Test] public function validation_fails_with_missing_required_fields(): void
     {
-        $this->post(r()->login())
+        $this->post(web()->login)
             ->assertSessionHasErrors([
                 LoginForm::email,
                 LoginForm::password,
@@ -193,8 +193,8 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            r()->login(),
+            web()->login,
             $LoginForm->toArray()
-        )->assertRedirect(r()->home());
+        )->assertRedirect(web()->home);
     }
 }

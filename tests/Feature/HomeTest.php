@@ -9,6 +9,6 @@ class HomeTest extends TestCase
 {
     #[Test] public function home_ok(): void
     {
-        $this->get(r()->home())->assertOk();
+        $this->get(web()->home)->assertOk();
     }
 }

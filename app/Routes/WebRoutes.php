@@ -4,7 +4,7 @@ namespace App\Routes;
 
 use App\Helpers\IsSingleton;
 
-class Web
+class WebRoutes
 {
     use IsSingleton;
 

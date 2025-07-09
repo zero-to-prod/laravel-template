@@ -4,7 +4,7 @@ namespace App\Routes;
 
 use App\Helpers\IsSingleton;
 
-class Api
+class ApiRoutes
 {
     use IsSingleton;
 

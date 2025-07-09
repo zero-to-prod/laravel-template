@@ -13,7 +13,7 @@ class LogoutTest extends TestCase
 
     #[Test] public function route_is_accessible(): void
     {
-        $this->get(r()->logout())->assertRedirect(r()->home());
+        $this->get(web()->logout)->assertRedirect(web()->home);
     }
 
     #[Test] public function authenticated_user_can_logout(): void
@@ -21,8 +21,8 @@ class LogoutTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $this->get(r()->logout())
-            ->assertRedirect(r()->home());
+        $this->get(web()->logout)
+            ->assertRedirect(web()->home);
 
         $this->assertGuest();
     }
@@ -42,8 +42,8 @@ class LogoutTest extends TestCase
 
     #[Test] public function guest_user_is_redirected_to_home(): void
     {
-        $this->get(r()->logout())
-            ->assertRedirect(r()->home());
+        $this->get(web()->logout)
+            ->assertRedirect(web()->home);
 
         $this->assertGuest();
     }
@@ -55,7 +55,7 @@ class LogoutTest extends TestCase
 
         $oldToken = session()->token();
 
-        $this->get(r()->logout());
+        $this->get(web()->logout);
 
         $this->assertNotEquals($oldToken, session()->token());
     }

@@ -1,26 +1,18 @@
 <?php
 
-use App\Routes\Api;
-use App\Routes\RouteManager;
-use App\Routes\Web;
+use App\Routes\ApiRoutes;
+use App\Routes\WebRoutes;
 
 if (!function_exists('api')) {
-    function api(): Api
+    function api(): ApiRoutes
     {
-        return Api::getInstance();
+        return ApiRoutes::getInstance();
     }
 }
 
 if (!function_exists('web')) {
-    function web(): Web
+    function web(): WebRoutes
     {
-        return Web::getInstance();
-    }
-}
-
-if (!function_exists('r')) {
-    function r(): RouteManager
-    {
-        return RouteManager::getInstance();
+        return WebRoutes::getInstance();
     }
 }

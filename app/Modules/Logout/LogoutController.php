@@ -16,6 +16,6 @@ class LogoutController
         $Request->session()->invalidate();
         $Request->session()->regenerateToken();
 
-        return redirect(r()->home());
+        return redirect(web()->home);
     }
 }

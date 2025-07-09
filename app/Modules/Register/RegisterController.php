@@ -43,6 +43,6 @@ class RegisterController
             ])
         );
 
-        return redirect()->intended(r()->home());
+        return redirect()->intended(web()->home);
     }
 }

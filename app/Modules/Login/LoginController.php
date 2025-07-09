@@ -17,7 +17,7 @@ class LoginController
         if (Auth::attempt($LoginForm->validator()->validate(), $LoginForm->remember_token)) {
             $Request->session()->regenerate();
 
-            return redirect()->intended(r()->home());
+            return redirect()->intended(web()->home);
         }
 
         throw ValidationException::withMessages([
