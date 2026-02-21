@@ -8,10 +8,10 @@ use Attribute;
 readonly class Endpoint
 {
     public function __construct(
-        public readonly string $description,
-        public readonly array $errors = [],
-        public readonly ?string $request_schema = null,
-        public readonly ?string $response_schema = null,
-        public readonly array $accepts = [],
+        public string $description,
+        public array $errors = [],
+        public ?string $request_schema = null,
+        public ?string $response_schema = null,
+        public array $accepts = [],
     ) {}
 }
