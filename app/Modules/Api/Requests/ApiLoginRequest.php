@@ -13,8 +13,7 @@ readonly class ApiLoginRequest
     use HasFieldRules;
 
     /** @link $email */
-    public const email = 'email';
-
+    public const string email = 'email';
     #[Describe(['cast' => [self::class, 'sanitizeEmail']])]
     #[Field(
         description: 'User email address',
@@ -23,8 +22,7 @@ readonly class ApiLoginRequest
     public string $email;
 
     /** @link $password */
-    public const password = 'password';
-
+    public const string password = 'password';
     #[Field(
         description: 'User password',
         rules: 'required'
@@ -32,8 +30,7 @@ readonly class ApiLoginRequest
     public string $password;
 
     /** @link $device_name */
-    public const device_name = 'device_name';
-
+    public const string device_name = 'device_name';
     #[Field(
         description: 'Name of the requesting device',
         rules: 'required'
