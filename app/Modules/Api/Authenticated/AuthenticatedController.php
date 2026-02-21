@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 #[Endpoint(
     description: 'Check if the current token is valid.',
     errors: [ErrorCode::unauthorized],
-    request_schema: Authorized::class,
     response_schema: Authorized::class,
 )]
 readonly class AuthenticatedController
