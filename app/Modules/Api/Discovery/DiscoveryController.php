@@ -10,7 +10,7 @@ use ReflectionClass;
 use ReflectionException;
 use Zerotoprod\DataModel\Describe;
 
-class DiscoveryController
+readonly class DiscoveryController
 {
     /**
      * @throws ReflectionException

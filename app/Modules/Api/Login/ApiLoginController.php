@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
     request_schema: ApiLoginRequest::class,
     response_schema: ApiToken::class,
 )]
-class ApiLoginController
+readonly class ApiLoginController
 {
     public function __invoke(): JsonResponse
     {

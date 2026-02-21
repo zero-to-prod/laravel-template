@@ -13,7 +13,7 @@ use Illuminate\Http\JsonResponse;
     request_schema: Authorized::class,
     response_schema: Authorized::class,
 )]
-class AuthenticatedController
+readonly class AuthenticatedController
 {
     public function __invoke(): JsonResponse
     {

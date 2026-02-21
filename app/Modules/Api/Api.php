@@ -7,7 +7,7 @@ use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Validator;
 
-class Api
+readonly class Api
 {
     public function unprocessableEntity(Validator $Validator): JsonResponse
     {

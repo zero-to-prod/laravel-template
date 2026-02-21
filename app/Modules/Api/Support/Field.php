@@ -5,7 +5,7 @@ namespace App\Modules\Api\Support;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class Field
+readonly class Field
 {
     public function __construct(
         public readonly string $description = '',

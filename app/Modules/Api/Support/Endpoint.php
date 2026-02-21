@@ -5,7 +5,7 @@ namespace App\Modules\Api\Support;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class Endpoint
+readonly class Endpoint
 {
     public function __construct(
         public readonly string $description,
