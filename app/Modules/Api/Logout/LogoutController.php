@@ -2,17 +2,22 @@
 
 namespace App\Modules\Api\Logout;
 
-use App\Modules\Api\Api;
-use App\Modules\Api\ResponseType;
+use App\Modules\Api\Endpoint;
+use App\Modules\Api\ErrorCode;
+use App\Modules\Api\Models\Logout;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
+#[Endpoint(
+    description: 'Revoke the current API token.',
+    errors: [ErrorCode::unauthorized],
+    response: Logout::class,
+)]
 class LogoutController
 {
-    public function __invoke(Api $Api, Request $Request): JsonResponse
+    public function __invoke(): JsonResponse
     {
-        $Request->user()->currentAccessToken()->delete();
+        request()->user()->currentAccessToken()->delete();
 
-        return $Api->ok(ResponseType::logout);
+        return api_response()->ok(Logout::from());
     }
 }

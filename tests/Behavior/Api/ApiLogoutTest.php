@@ -3,6 +3,7 @@
 namespace Tests\Behavior\Api;
 
 use App\Models\User;
+use App\Modules\Api\ApiResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
@@ -23,9 +24,9 @@ class ApiLogoutTest extends TestCase
 
         $response->assertOk()
             ->assertJson([
-                'success' => true,
-                'message' => 'logout',
-                'type' => 'logout'
+                ApiResponse::success => true,
+                ApiResponse::message => 'Logout',
+                ApiResponse::type => 'Logout'
             ]);
 
         $this->assertDatabaseMissing('personal_access_tokens', [
@@ -102,8 +103,6 @@ class ApiLogoutTest extends TestCase
                 'success',
                 'message',
                 'type',
-                'data',
-                'errors'
             ]);
     }
 

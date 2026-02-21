@@ -7,11 +7,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterController
 {
-    public function __invoke(RegisterForm $Form, RegisterConfig $Conf): RedirectResponse
+    public function __invoke(RegisterConfig $Conf): RedirectResponse
     {
+        $Form = RegisterForm::from(request()->all());
         $key = $Conf->rateLimitKey($Form->email ?? '');
 
         $tooManyAttempts = RateLimiter::tooManyAttempts(
@@ -21,13 +24,16 @@ class RegisterController
 
         if ($tooManyAttempts) {
             return back()->withErrors([
-                RegisterForm::email => $Conf->tooManyAttemptsMessage()
+                RegisterForm::email => $Conf->tooManyAttemptsMessage(),
             ]);
         }
 
         RateLimiter::hit($key);
 
-        $Validator = $Form->validator();
+        $Validator = Validator::make($Form->toArray(), [
+            ...$Form->rules(),
+            RegisterForm::password => ['required', 'confirmed', Password::defaults()],
+        ]);
 
         if ($Validator->fails()) {
             return back()

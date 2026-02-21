@@ -9,16 +9,48 @@ class Api
 {
     public function unprocessableEntity(Validator $Validator): JsonResponse
     {
-        return response()->json(ApiResponse::fromValidator($Validator), 422);
+        return $this->respond(ApiResponse::fromValidator($Validator), 422);
     }
 
-    public function ok(ResponseType $ResponseType, mixed $data = []): JsonResponse
+    public function ok(mixed $data = []): JsonResponse
     {
-        return response()->json(ApiResponse::ok($ResponseType, $data));
+        return $this->respond(ApiResponse::ok($this->resolveType($data), $data), 200);
     }
 
-    public function unauthorized(string $message = 'unauthorized'): JsonResponse
+    public function unauthorized(ErrorCode $ErrorCode = ErrorCode::unauthorized): JsonResponse
     {
-        return response()->json(ApiResponse::error($message, [$message]), 401);
+        return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 401);
+    }
+
+    public function notFound(ErrorCode $ErrorCode, mixed $data = []): JsonResponse
+    {
+        return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value], $data), 404);
+    }
+
+    public function conflict(ErrorCode $ErrorCode): JsonResponse
+    {
+        return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 409);
+    }
+
+    public function created(mixed $data = []): JsonResponse
+    {
+        return $this->respond(ApiResponse::ok($this->resolveType($data), $data), 201);
+    }
+
+    private function respond(ApiResponse $response, int $status): JsonResponse
+    {
+        return response()->json(
+            data: array_filter($response->toArray(), static fn (mixed $value) => ! empty($value) || is_bool($value)),
+            status: $status
+        );
+    }
+
+    private function resolveType(mixed $data): string
+    {
+        if (is_object($data)) {
+            return class_basename($data);
+        }
+
+        return '';
     }
 }

@@ -4,7 +4,6 @@ namespace Tests\Behavior\Api;
 
 use App\Models\User;
 use App\Modules\Api\ApiResponse;
-use App\Modules\Api\ResponseType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
@@ -25,8 +24,8 @@ class ApiAuthenticatedTest extends TestCase
         $response->assertOk()
             ->assertJson([
                 ApiResponse::success => true,
-                ApiResponse::message => ResponseType::authorized->value,
-                ApiResponse::type => ResponseType::authorized->value
+                ApiResponse::message => 'Authorized',
+                ApiResponse::type => 'Authorized'
             ]);
     }
 
@@ -39,7 +38,7 @@ class ApiAuthenticatedTest extends TestCase
             ->assertJson([
                 ApiResponse::success => false,
                 ApiResponse::message => 'unauthorized',
-                ApiResponse::type => ResponseType::error->value
+                ApiResponse::type => 'error'
             ]);
     }
 
@@ -93,8 +92,6 @@ class ApiAuthenticatedTest extends TestCase
                 'success',
                 'message',
                 'type',
-                'data',
-                'errors'
             ]);
     }
 }

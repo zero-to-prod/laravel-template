@@ -1,14 +1,17 @@
 <?php
 
-namespace App\Modules\Api\Login;
+namespace App\Modules\Api\Models;
 
 use App\Helpers\DataModel;
+use App\Modules\Api\Field;
 
-readonly class ApiTokenResponse
+readonly class ApiToken
 {
     use DataModel;
 
     /** @link $token */
     public const token = 'token';
+
+    #[Field('API authentication token')]
     public string $token;
 }

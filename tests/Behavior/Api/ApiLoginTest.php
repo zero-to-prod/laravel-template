@@ -3,7 +3,7 @@
 namespace Tests\Behavior\Api;
 
 use App\Models\User;
-use App\Modules\Api\Login\ApiLoginForm;
+use App\Modules\Api\Requests\ApiLoginRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -16,10 +16,10 @@ class ApiLoginTest extends TestCase
     public function login_with_valid_credentials(): void
     {
         $User = User::factory([User::password => User::password])->create();
-        $payload = ApiLoginForm::from([
-            ApiLoginForm::email => $User->email,
-            ApiLoginForm::password => User::password,
-            ApiLoginForm::device_name => 'test-device',
+        $payload = ApiLoginRequest::from([
+            ApiLoginRequest::email => $User->email,
+            ApiLoginRequest::password => User::password,
+            ApiLoginRequest::device_name => 'test-device',
         ]);
 
         $response = $this->postJson(api()->login, $payload->toArray());
@@ -33,28 +33,28 @@ class ApiLoginTest extends TestCase
     public function validation_fails_with_invalid_email(): void
     {
         $payload = [
-            ApiLoginForm::email => 'invalid-email',
-            ApiLoginForm::password => 'password',
-            ApiLoginForm::device_name => 'test-device',
+            ApiLoginRequest::email => 'invalid-email',
+            ApiLoginRequest::password => 'password',
+            ApiLoginRequest::device_name => 'test-device',
         ];
 
         $this->postJson(api()->login, $payload)
             ->assertStatus(422)
-            ->assertJsonValidationErrors(ApiLoginForm::email);
+            ->assertJsonValidationErrors(ApiLoginRequest::email);
     }
 
     #[Test]
     public function validation_fails_with_invalid_password(): void
     {
         $payload = [
-            ApiLoginForm::email => 'test@example.com',
-            ApiLoginForm::password => '',
-            ApiLoginForm::device_name => 'test-device',
+            ApiLoginRequest::email => 'test@example.com',
+            ApiLoginRequest::password => '',
+            ApiLoginRequest::device_name => 'test-device',
         ];
 
         $this->postJson(api()->login, $payload)
             ->assertStatus(422)
-            ->assertJsonValidationErrors(ApiLoginForm::password);
+            ->assertJsonValidationErrors(ApiLoginRequest::password);
     }
 
     #[Test]
@@ -62,13 +62,13 @@ class ApiLoginTest extends TestCase
     {
         $User = User::factory()->create();
         $payload = [
-            ApiLoginForm::email => $User->email,
-            ApiLoginForm::password => 'password',
+            ApiLoginRequest::email => $User->email,
+            ApiLoginRequest::password => 'password',
         ];
 
         $this->postJson(api()->login, $payload)
             ->assertStatus(422)
-            ->assertJsonValidationErrors(ApiLoginForm::device_name);
+            ->assertJsonValidationErrors(ApiLoginRequest::device_name);
     }
 
     #[Test]
@@ -76,16 +76,16 @@ class ApiLoginTest extends TestCase
     {
         $User = User::factory()->create();
         $payload = [
-            ApiLoginForm::email => $User->email,
-            ApiLoginForm::password => 'wrong-password',
-            ApiLoginForm::device_name => 'test-device',
+            ApiLoginRequest::email => $User->email,
+            ApiLoginRequest::password => 'wrong-password',
+            ApiLoginRequest::device_name => 'test-device',
         ];
 
         $this->postJson(api()->login, $payload)
             ->assertStatus(401)
             ->assertJson([
                 'success' => false,
-                'message' => 'The provided credentials are incorrect.',
+                'message' => 'invalid_credentials',
             ]);
     }
 
@@ -93,16 +93,16 @@ class ApiLoginTest extends TestCase
     public function login_fails_with_non_existent_user(): void
     {
         $payload = [
-            ApiLoginForm::email => 'nonexistent@example.com',
-            ApiLoginForm::password => 'password',
-            ApiLoginForm::device_name => 'test-device',
+            ApiLoginRequest::email => 'nonexistent@example.com',
+            ApiLoginRequest::password => 'password',
+            ApiLoginRequest::device_name => 'test-device',
         ];
 
         $this->postJson(api()->login, $payload)
             ->assertStatus(401)
             ->assertJson([
                 'success' => false,
-                'message' => 'The provided credentials are incorrect.',
+                'message' => 'invalid_credentials',
             ]);
     }
 
@@ -112,9 +112,9 @@ class ApiLoginTest extends TestCase
         $this->postJson(api()->login, [])
             ->assertStatus(422)
             ->assertJsonValidationErrors([
-                ApiLoginForm::email,
-                ApiLoginForm::password,
-                ApiLoginForm::device_name,
+                ApiLoginRequest::email,
+                ApiLoginRequest::password,
+                ApiLoginRequest::device_name,
             ]);
     }
 
@@ -122,13 +122,13 @@ class ApiLoginTest extends TestCase
     public function input_is_sanitized_during_login(): void
     {
         $User = User::factory()->create([
-            User::email => 'test@example.com'
+            User::email => 'test@example.com',
         ]);
 
         $payload = [
-            ApiLoginForm::email => ' TEST@EXAMPLE.COM ',
-            ApiLoginForm::password => User::password,
-            ApiLoginForm::device_name => 'test-device',
+            ApiLoginRequest::email => ' TEST@EXAMPLE.COM ',
+            ApiLoginRequest::password => User::password,
+            ApiLoginRequest::device_name => 'test-device',
         ];
 
         $this->postJson(api()->login, $payload)
@@ -141,15 +141,15 @@ class ApiLoginTest extends TestCase
     {
         $User = User::factory([User::password => User::password])->create();
         $deviceName = 'test-device-name';
-        
+
         $payload = [
-            ApiLoginForm::email => $User->email,
-            ApiLoginForm::password => User::password,
-            ApiLoginForm::device_name => $deviceName,
+            ApiLoginRequest::email => $User->email,
+            ApiLoginRequest::password => User::password,
+            ApiLoginRequest::device_name => $deviceName,
         ];
 
         $this->postJson(api()->login, $payload)->assertOk();
-        
+
         $this->assertDatabaseHas('personal_access_tokens', [
             'name' => $deviceName,
             'tokenable_id' => $User->id,

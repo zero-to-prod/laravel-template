@@ -3,8 +3,8 @@
 namespace App\Modules\Login;
 
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class LoginController
@@ -12,10 +12,13 @@ class LoginController
     /**
      * @throws ValidationException
      */
-    public function __invoke(Request $Request, LoginForm $LoginForm): RedirectResponse
+    public function __invoke(): RedirectResponse
     {
-        if (Auth::attempt($LoginForm->validator()->validate(), $LoginForm->remember_token)) {
-            $Request->session()->regenerate();
+        $LoginForm = LoginForm::from(request()->all());
+        $Validator = Validator::make($LoginForm->toArray(), $LoginForm->rules());
+
+        if (Auth::attempt($Validator->validate(), $LoginForm->remember_token)) {
+            request()->session()->regenerate();
 
             return redirect()->intended(web()->home);
         }

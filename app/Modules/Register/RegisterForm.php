@@ -2,39 +2,40 @@
 
 namespace App\Modules\Register;
 
-use App\Helpers\DataModelFromRequest;
-use Illuminate\Support\Facades\Validator;
+use App\Helpers\DataModel;
+use App\Helpers\HasFieldRules;
+use App\Modules\Api\Field;
 use Illuminate\Validation\Rules\Password;
 use Zerotoprod\DataModel\Describe;
 
 readonly class RegisterForm
 {
-    use DataModelFromRequest;
+    use DataModel;
+    use HasFieldRules;
 
     /** @link $name */
     public const name = 'name';
+
     #[Describe(['cast' => [self::class, 'sanitize']])]
+    #[Field(description: 'User name', rules: 'required|string|max:255')]
     public string $name;
 
     /** @link $email */
     public const email = 'email';
+
     #[Describe(['cast' => [self::class, 'sanitizeEmail']])]
+    #[Field(description: 'User email address', rules: 'required|string|email|max:255|unique:users')]
     public string $email;
 
     /** @link $password */
     public const password = 'password';
+
+    #[Field(description: 'User password')]
     public string $password;
 
     /** @link $password_confirmation */
     public const password_confirmation = 'password_confirmation';
-    public string $password_confirmation;
 
-    public function validator(): \Illuminate\Validation\Validator
-    {
-        return Validator::make($this->toArray(), [
-            self::name => ['required', 'string', 'max:255'],
-            self::email => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            self::password => ['required', 'confirmed', Password::defaults()],
-        ]);
-    }
+    #[Field(description: 'Password confirmation')]
+    public string $password_confirmation;
 }

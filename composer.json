@@ -1,15 +1,10 @@
 {
   "$schema": "https://getcomposer.org/schema.json",
-  "name": "laravel/laravel",
   "type": "project",
   "description": "Project",
-  "keywords": [
-    "laravel",
-    "framework"
-  ],
   "license": "MIT",
   "require": {
-    "php": "^8.2",
+    "php": "^8.4",
     "laravel/folio": "^1.1",
     "laravel/framework": "^12.0",
     "laravel/sanctum": "^4.0",

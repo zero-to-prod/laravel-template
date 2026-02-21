@@ -12,44 +12,50 @@ readonly class ApiResponse
 
     /** @link $success */
     public const success = 'success';
+
     #[Describe(['default' => true])]
     public bool $success;
 
     /** @link $message */
     public const message = 'message';
+
     #[Describe(['nullable'])]
     public ?string $message;
 
     /** @link $errors */
     public const errors = 'errors';
+
     #[Describe(['default' => []])]
     public array $errors;
 
     /** @link $data */
     public const data = 'data';
+
     #[Describe(['default' => []])]
     public mixed $data;
 
     public const type = 'type';
-    public ResponseType $type;
 
-    public static function ok(ResponseType $ResponseType, mixed $data = null, ?string $message = null): self
+    public string $type;
+
+    public static function ok(string $type, mixed $data = null, ?string $message = null): self
     {
         return self::from([
             self::success => true,
-            self::message => $message ?? $ResponseType->value,
+            self::message => $message ?? $type,
             self::data => $data,
-            self::type => $ResponseType,
+            self::type => $type,
         ]);
     }
 
-    public static function error(string $message, ?array $errors = null): self
+    public static function error(string $message, ?array $errors = null, mixed $data = []): self
     {
         return self::from([
             self::success => false,
             self::message => $message,
             self::errors => $errors,
-            self::type => ResponseType::error,
+            self::data => $data,
+            self::type => 'error',
         ]);
     }
 
