@@ -4,8 +4,7 @@ namespace App\Modules\Register;
 
 use App\Helpers\DataModel;
 use App\Helpers\HasFieldRules;
-use App\Modules\Api\Field;
-use Illuminate\Validation\Rules\Password;
+use App\Modules\Api\Support\Field;
 use Zerotoprod\DataModel\Describe;
 
 readonly class RegisterForm

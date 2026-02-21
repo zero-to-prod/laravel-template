@@ -2,6 +2,8 @@
 
 namespace App\Modules\Api;
 
+use App\Modules\Api\Support\ApiResponse;
+use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Validator;
 

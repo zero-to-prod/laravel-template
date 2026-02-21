@@ -3,7 +3,7 @@
 namespace Tests\Behavior\Api;
 
 use App\Models\User;
-use App\Modules\Api\ApiResponse;
+use App\Modules\Api\Support\ApiResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;

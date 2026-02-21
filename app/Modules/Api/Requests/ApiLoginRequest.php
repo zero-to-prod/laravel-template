@@ -4,7 +4,7 @@ namespace App\Modules\Api\Requests;
 
 use App\Helpers\DataModel;
 use App\Helpers\HasFieldRules;
-use App\Modules\Api\Field;
+use App\Modules\Api\Support\Field;
 use Zerotoprod\DataModel\Describe;
 
 readonly class ApiLoginRequest

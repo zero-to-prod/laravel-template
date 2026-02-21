@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Api;
+namespace App\Modules\Api\Support;
 
 enum ErrorCode: string
 {

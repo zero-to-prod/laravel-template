@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Modules\Api\Field;
+use App\Modules\Api\Support\Field;
 use ReflectionClass;
 
 trait HasFieldRules

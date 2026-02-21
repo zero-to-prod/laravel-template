@@ -10,6 +10,7 @@
     "laravel/sanctum": "^4.0",
     "laravel/tinker": "^2.10.1",
     "zero-to-prod/data-model": "^81.10",
+    "zero-to-prod/data-model-helper": "^82.1",
     "zero-to-prod/factory": "^0.1.1",
     "zero-to-prod/package-helper": "^1.1.3"
   },

@@ -2,15 +2,15 @@
 
 namespace App\Modules\Api\Logout;
 
-use App\Modules\Api\Endpoint;
-use App\Modules\Api\ErrorCode;
 use App\Modules\Api\Models\Logout;
+use App\Modules\Api\Support\Endpoint;
+use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
 
 #[Endpoint(
     description: 'Revoke the current API token.',
     errors: [ErrorCode::unauthorized],
-    response: Logout::class,
+    request_schema: Logout::class, response_schema: Logout::class,
 )]
 class LogoutController
 {

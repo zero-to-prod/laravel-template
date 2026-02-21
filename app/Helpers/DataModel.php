@@ -4,10 +4,12 @@ namespace App\Helpers;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Zerotoprod\DataModelHelper\DataModelHelper;
 
 trait DataModel
 {
     use \Zerotoprod\DataModel\DataModel;
+    use DataModelHelper;
 
     public function toArray(): array
     {

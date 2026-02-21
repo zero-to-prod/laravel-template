@@ -3,7 +3,7 @@
 namespace App\Modules\Api\Models;
 
 use App\Helpers\DataModel;
-use App\Modules\Api\Field;
+use App\Modules\Api\Support\Field;
 
 readonly class ApiToken
 {

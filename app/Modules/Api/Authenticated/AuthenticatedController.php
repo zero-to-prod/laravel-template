@@ -2,15 +2,16 @@
 
 namespace App\Modules\Api\Authenticated;
 
-use App\Modules\Api\Endpoint;
-use App\Modules\Api\ErrorCode;
 use App\Modules\Api\Models\Authorized;
+use App\Modules\Api\Support\Endpoint;
+use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
 
 #[Endpoint(
     description: 'Check if the current token is valid.',
     errors: [ErrorCode::unauthorized],
-    response: Authorized::class,
+    request_schema: Authorized::class,
+    response_schema: Authorized::class,
 )]
 class AuthenticatedController
 {

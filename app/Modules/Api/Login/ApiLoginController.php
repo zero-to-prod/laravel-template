@@ -3,18 +3,18 @@
 namespace App\Modules\Api\Login;
 
 use App\Models\User;
-use App\Modules\Api\Endpoint;
-use App\Modules\Api\ErrorCode;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Api\Requests\ApiLoginRequest;
+use App\Modules\Api\Support\Endpoint;
+use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 
 #[Endpoint(
     description: 'Authenticate and receive an API token.',
     errors: [ErrorCode::invalid_credentials],
-    request: ApiLoginRequest::class,
-    response: ApiToken::class,
+    request_schema: ApiLoginRequest::class,
+    response_schema: ApiToken::class,
 )]
 class ApiLoginController
 {
