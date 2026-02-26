@@ -11,7 +11,7 @@ trait HasFieldRules
     {
         $rules = [];
 
-        foreach ((new ReflectionClass($this))->getProperties() as $property) {
+        foreach (new ReflectionClass($this)->getProperties() as $property) {
             $attributes = $property->getAttributes(Field::class);
             if (empty($attributes)) {
                 continue;

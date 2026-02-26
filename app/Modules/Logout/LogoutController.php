@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
-class LogoutController
+readonly class LogoutController
 {
     public function __invoke(Request $Request): RedirectResponse
     {

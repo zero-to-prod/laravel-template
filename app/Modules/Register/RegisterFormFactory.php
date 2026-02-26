@@ -3,6 +3,7 @@
 namespace App\Modules\Register;
 
 use Zerotoprod\Factory\Factory;
+
 class RegisterFormFactory
 {
     use Factory;

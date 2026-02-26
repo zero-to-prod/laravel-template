@@ -2,7 +2,7 @@
 
 namespace App\Modules\Register;
 
-class RegisterConfig
+readonly class RegisterConfig
 {
     public function rateLimitKey(?string $key = null): string
     {

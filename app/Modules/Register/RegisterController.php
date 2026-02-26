@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
-class RegisterController
+readonly class RegisterController
 {
     public function __invoke(RegisterConfig $Conf): RedirectResponse
     {

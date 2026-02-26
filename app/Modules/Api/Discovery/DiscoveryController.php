@@ -26,15 +26,14 @@ readonly class DiscoveryController
                 continue;
             }
 
-            $reflection = new ReflectionClass($controller);
-            $attributes = $reflection->getAttributes(Endpoint::class);
+            $ReflectionAttribute = new ReflectionClass($controller)->getAttributes(Endpoint::class);
 
-            if (empty($attributes)) {
+            if (empty($ReflectionAttribute)) {
                 continue;
             }
 
             /** @var Endpoint $endpoint */
-            $endpoint = $attributes[0]->newInstance();
+            $endpoint = $ReflectionAttribute[0]->newInstance();
 
             $methods = array_values(
                 array_filter(
@@ -108,12 +107,19 @@ readonly class DiscoveryController
             $description = $field?->description ?? '';
             $rules = $field?->rules ?? '';
 
+            $typeName = $type?->getName() ?? 'mixed';
+
             $entry = [
-                'type' => $type?->getName() ?? 'mixed',
+                'type' => $typeName,
                 'nullable' => $type?->allowsNull() ?? true,
                 ...($description !== '' ? ['description' => $description] : []),
                 ...($rules !== '' ? ['rules' => $rules] : []),
             ];
+
+            if ($typeName !== 'mixed' && !in_array($typeName, ['string', 'int', 'float', 'bool', 'array', 'object'], true) && class_exists($typeName)) {
+                $entry['type'] = class_basename($typeName);
+                $entry['schema'] = $this->buildSchema(new ReflectionClass($typeName));
+            }
 
             $describeAttributes = $property->getAttributes(Describe::class);
             if (!empty($describeAttributes)) {

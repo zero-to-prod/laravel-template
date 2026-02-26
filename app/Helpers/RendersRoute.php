@@ -8,31 +8,28 @@ trait RendersRoute
 {
     use DataModel;
 
-    public const route = 'route';
+    /** @see $route */
+    public const string route = 'route';
     #[Describe(['default' => ''])]
     public string $route;
-    public const path_params = 'path_params';
+
+    /** @see $path_params */
+    public const string path_params = 'path_params';
     #[Describe(['default' => []])]
     public array $path_params;
-    public const params = 'params';
+
+    /** @see $params */
+    public const string params = 'params';
     #[Describe(['default' => []])]
     public array $params;
 
     public function render(): string
     {
         $query = http_build_query($this->params);
-        $url = $this->buildUrlWithPathParams();
+        $route = render_url($this->route, $this->path_params);
 
-        return $query ? "$url?$query" : $url;
-    }
-    private function buildUrlWithPathParams(): string
-    {
-        $url = $this->route;
-
-        foreach ($this->path_params as $key => $parameter) {
-            $url = str_replace("{{$key}}", $parameter, $url);
-        }
-
-        return $url;
+        return $query
+            ? $route.'?'.$query
+            : $route;
     }
 }

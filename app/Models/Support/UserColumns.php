@@ -4,12 +4,12 @@ namespace App\Models\Support;
 
 trait UserColumns
 {
-    public const name = 'name';
-    public const email = 'email';
-    public const password = 'password';
-    public const remember_token = 'remember_token';
-    public const email_verified_at = 'email_verified_at';
-    public const created_at = 'created_at';
-    public const updated_at = 'updated_at';
+    public const string name = 'name';
+    public const string email = 'email';
+    public const string password = 'password';
+    public const string remember_token = 'remember_token';
+    public const string email_verified_at = 'email_verified_at';
+    public const string created_at = 'created_at';
+    public const string updated_at = 'updated_at';
 
 }
