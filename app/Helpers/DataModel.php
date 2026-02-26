@@ -8,8 +8,8 @@ use Zerotoprod\DataModelHelper\DataModelHelper;
 
 trait DataModel
 {
-    use \Zerotoprod\DataModel\DataModel;
     use DataModelHelper;
+    use \Zerotoprod\DataModel\DataModel;
 
     public function toArray(): array
     {

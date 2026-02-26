@@ -9,9 +9,7 @@ use Illuminate\View\Component;
 
 class Errors extends Component
 {
-    public function __construct(public readonly ViewErrorBag $errors, public $take = null, public readonly ?string $classname = null)
-    {
-    }
+    public function __construct(public readonly ViewErrorBag $errors, public $take = null, public readonly ?string $classname = null) {}
 
     public function render(): View|Closure|string
     {
@@ -20,7 +18,7 @@ class Errors extends Component
             data: [
                 'ViewErrorBag' => $this->errors,
                 'take' => $this->take,
-                'classname' => $this->classname
+                'classname' => $this->classname,
             ]
         );
     }

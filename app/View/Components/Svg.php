@@ -10,9 +10,7 @@ class Svg extends Component
     public const name = 'name';
     public const classname = 'classname';
 
-    public function __construct(public readonly string $name, public readonly ?string $classname = null)
-    {
-    }
+    public function __construct(public readonly string $name, public readonly ?string $classname = null) {}
 
     public function render(): View
     {

@@ -8,7 +8,6 @@ use Illuminate\View\Component;
 
 class Topnav extends Component
 {
-
     public function render(): View|Closure|string
     {
         return view('topnav');

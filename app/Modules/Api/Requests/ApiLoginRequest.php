@@ -14,6 +14,7 @@ readonly class ApiLoginRequest
 
     /** @link $email */
     public const string email = 'email';
+
     #[Describe(['cast' => [self::class, 'sanitizeEmail']])]
     #[Field(
         description: 'User email address',
@@ -23,6 +24,7 @@ readonly class ApiLoginRequest
 
     /** @link $password */
     public const string password = 'password';
+
     #[Field(
         description: 'User password',
         rules: 'required'
@@ -31,6 +33,7 @@ readonly class ApiLoginRequest
 
     /** @link $device_name */
     public const string device_name = 'device_name';
+
     #[Field(
         description: 'Name of the requesting device',
         rules: 'required'

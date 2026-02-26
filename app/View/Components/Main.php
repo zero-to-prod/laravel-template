@@ -8,9 +8,7 @@ use Illuminate\View\Component;
 
 class Main extends Component
 {
-    public function __construct(public readonly ?string $classnames = null)
-    {
-    }
+    public function __construct(public readonly ?string $classnames = null) {}
 
     public function render(): View|Closure|string
     {

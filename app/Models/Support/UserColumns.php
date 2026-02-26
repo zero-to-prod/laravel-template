@@ -11,5 +11,4 @@ trait UserColumns
     public const string email_verified_at = 'email_verified_at';
     public const string created_at = 'created_at';
     public const string updated_at = 'updated_at';
-
 }

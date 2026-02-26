@@ -32,7 +32,7 @@ trait AddsViewLocation
             return $view_names[0];
         }
 
-        if (!in_array($view_name, $view_names, true)) {
+        if (! in_array($view_name, $view_names, true)) {
             throw new ViewNotFound("View: '$view_name' not found in $path.");
         }
 
@@ -65,7 +65,7 @@ trait AddsViewLocation
      */
     private static function collectViewNames(string $path, string $prefix, array &$result): void
     {
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             return;
         }
 

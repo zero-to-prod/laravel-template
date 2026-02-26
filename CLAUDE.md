@@ -247,6 +247,7 @@ $Parent = Parent::from([Parent::child => [Child::name => 'value']]);
 - **Test suites**: `Behavior/` (integration), `Unit/`, `Feature/` — tests use `DatabaseTransactions` or `RefreshDatabase`
 - **PHPUnit attributes**: Use `#[Test]` syntax, not `test_` method prefix convention
 - **Sanitization**: Done via DataModel `#[Describe(['cast' => ...])]` attributes, not in controllers
+- **Unguarded models**: All Eloquent models use `protected static $unguarded = true;` instead of `$fillable`. Do not use `$fillable` or `$guarded` unless explicitly specified
 
 ## Style Rules (Non-Negotiable)
 
@@ -377,14 +378,7 @@ class Post extends Model
 {
     use PostColumns;
 
-    /** @var list<string> */
-    protected $fillable = [
-        self::user_id,
-        self::title,
-        self::slug,
-        self::body,
-        self::published_at,
-    ];
+    protected static $unguarded = true;
 
     // Relationships
     public const string user = 'user';

@@ -15,12 +15,12 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use UserColumns;
+    use HasApiTokens;
 
     /** @use HasFactory<UserFactory> */
     use HasFactory;
     use Notifiable;
-    use HasApiTokens;
+    use UserColumns;
 
     /** @var list<string> */
     protected $fillable = [

@@ -13,6 +13,7 @@ trait IsSingleton
         }
 
         self::$instance = new self;
+
         return self::$instance;
     }
 }

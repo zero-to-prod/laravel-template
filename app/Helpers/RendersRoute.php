@@ -10,16 +10,19 @@ trait RendersRoute
 
     /** @see $route */
     public const string route = 'route';
+
     #[Describe(['default' => ''])]
     public string $route;
 
     /** @see $path_params */
     public const string path_params = 'path_params';
+
     #[Describe(['default' => []])]
     public array $path_params;
 
     /** @see $params */
     public const string params = 'params';
+
     #[Describe(['default' => []])]
     public array $params;
 

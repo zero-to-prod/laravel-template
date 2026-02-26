@@ -11,6 +11,7 @@ readonly class ApiToken
 
     /** @link $token */
     public const string token = 'token';
+
     #[Field('API authentication token')]
     public string $token;
 }

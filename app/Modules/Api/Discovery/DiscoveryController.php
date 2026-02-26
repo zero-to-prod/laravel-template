@@ -22,7 +22,7 @@ readonly class DiscoveryController
         foreach (Route::getRoutes() as $route) {
             $controller = $route->getControllerClass();
 
-            if ($controller === null || !class_exists($controller)) {
+            if ($controller === null || ! class_exists($controller)) {
                 continue;
             }
 
@@ -38,7 +38,7 @@ readonly class DiscoveryController
             $methods = array_values(
                 array_filter(
                     $route->methods(),
-                    static fn(string $method) => $method !== 'HEAD',
+                    static fn (string $method) => $method !== 'HEAD',
                 )
             );
 
@@ -59,7 +59,7 @@ readonly class DiscoveryController
                 'auth' => $auth,
             ];
 
-            if (!empty($pathParams)) {
+            if (! empty($pathParams)) {
                 $entry['path_params'] = $pathParams;
             }
 
@@ -67,7 +67,7 @@ readonly class DiscoveryController
                 $entry['request_schema'] = $this->buildSchema(new ReflectionClass($endpoint->request_schema));
             }
 
-            if (!empty($endpoint->errors)) {
+            if (! empty($endpoint->errors)) {
                 $entry['errors'] = $endpoint->errors;
             }
 
@@ -76,7 +76,7 @@ readonly class DiscoveryController
                 $entry['response_schema'] = $this->buildSchema(new ReflectionClass($endpoint->response_schema));
             }
 
-            if (!empty($endpoint->accepts)) {
+            if (! empty($endpoint->accepts)) {
                 $entry['accepts'] = $endpoint->accepts;
             }
 
@@ -97,13 +97,13 @@ readonly class DiscoveryController
         $schema = [];
 
         foreach ($reflection->getProperties() as $property) {
-            if (!$property->isPublic()) {
+            if (! $property->isPublic()) {
                 continue;
             }
 
             $type = $property->getType();
             $fieldAttributes = $property->getAttributes(Field::class);
-            $field = !empty($fieldAttributes) ? $fieldAttributes[0]->newInstance() : null;
+            $field = ! empty($fieldAttributes) ? $fieldAttributes[0]->newInstance() : null;
             $description = $field?->description ?? '';
             $rules = $field?->rules ?? '';
 
@@ -116,13 +116,13 @@ readonly class DiscoveryController
                 ...($rules !== '' ? ['rules' => $rules] : []),
             ];
 
-            if ($typeName !== 'mixed' && !in_array($typeName, ['string', 'int', 'float', 'bool', 'array', 'object'], true) && class_exists($typeName)) {
+            if ($typeName !== 'mixed' && ! in_array($typeName, ['string', 'int', 'float', 'bool', 'array', 'object'], true) && class_exists($typeName)) {
                 $entry['type'] = class_basename($typeName);
                 $entry['schema'] = $this->buildSchema(new ReflectionClass($typeName));
             }
 
             $describeAttributes = $property->getAttributes(Describe::class);
-            if (!empty($describeAttributes)) {
+            if (! empty($describeAttributes)) {
                 $args = $describeAttributes[0]->getArguments()[0] ?? [];
                 $nestedType = $args['type'] ?? null;
                 if ($nestedType !== null && class_exists($nestedType)) {
