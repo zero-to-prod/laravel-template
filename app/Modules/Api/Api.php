@@ -39,10 +39,10 @@ readonly class Api
         return $this->respond(ApiResponse::ok($this->resolveType($data), $data), 201);
     }
 
-    private function respond(ApiResponse $apiResponse, int $status): JsonResponse
+    private function respond(ApiResponse $ApiResponse, int $status): JsonResponse
     {
         return response()->json(
-            data: array_filter($apiResponse->toArray(), static fn (mixed $value) => ! empty($value) || is_bool($value)),
+            data: array_filter($ApiResponse->toArray(), static fn (mixed $value) => ! empty($value) || is_bool($value)),
             status: $status
         );
     }

@@ -12,19 +12,19 @@ use Illuminate\Validation\Rules\Password;
 
 readonly class RegisterController
 {
-    public function __invoke(RegisterConfig $registerConfig): RedirectResponse
+    public function __invoke(RegisterConfig $RegisterConfig): RedirectResponse
     {
         $Form = RegisterForm::from(request()->all());
-        $key = $registerConfig->rateLimitKey($Form->email ?? '');
+        $key = $RegisterConfig->rateLimitKey($Form->email ?? '');
 
         $tooManyAttempts = RateLimiter::tooManyAttempts(
             $key,
-            $registerConfig->rateLimitMaxAttempts()
+            $RegisterConfig->rateLimitMaxAttempts()
         );
 
         if ($tooManyAttempts) {
             return back()->withErrors([
-                RegisterForm::email => $registerConfig->tooManyAttemptsMessage(),
+                RegisterForm::email => $RegisterConfig->tooManyAttemptsMessage(),
             ]);
         }
 
