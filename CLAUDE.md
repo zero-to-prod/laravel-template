@@ -25,6 +25,10 @@ sail test --filter=test_method                # single test method
 sail pint                                     # fix all files
 sail pint --test                              # check without fixing
 
+# Rector (automated refactoring)
+sail php vendor/bin/rector process            # apply rules
+sail php vendor/bin/rector process --dry-run  # preview changes
+
 # Artisan & Composer
 sail artisan <command>
 sail composer <command>
