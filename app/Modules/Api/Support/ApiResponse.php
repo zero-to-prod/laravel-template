@@ -34,6 +34,7 @@ readonly class ApiResponse
     #[Describe(['default' => []])]
     public mixed $data;
 
+    /** @link $type */
     public const type = 'type';
 
     public string $type;
@@ -59,8 +60,8 @@ readonly class ApiResponse
         ]);
     }
 
-    public static function fromValidator(Validator $Validator, string $message = 'unprocessable entity'): self
+    public static function fromValidator(Validator $Validator, string $message = 'unprocessable entity', mixed $data = []): self
     {
-        return self::error($message, $Validator->errors()->toArray());
+        return self::error($message, $Validator->errors()->toArray(), $data);
     }
 }

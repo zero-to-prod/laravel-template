@@ -9,9 +9,9 @@ use Illuminate\Validation\Validator;
 
 readonly class Api
 {
-    public function unprocessableEntity(Validator $Validator): JsonResponse
+    public function unprocessableEntity(Validator $Validator, mixed $data = []): JsonResponse
     {
-        return $this->respond(ApiResponse::fromValidator($Validator), 422);
+        return $this->respond(ApiResponse::fromValidator($Validator, data: $data), 422);
     }
 
     public function ok(mixed $data = []): JsonResponse

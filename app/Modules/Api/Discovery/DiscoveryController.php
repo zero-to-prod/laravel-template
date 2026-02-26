@@ -3,12 +3,10 @@
 namespace App\Modules\Api\Discovery;
 
 use App\Modules\Api\Support\Endpoint;
-use App\Modules\Api\Support\Field;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 use ReflectionClass;
 use ReflectionException;
-use Zerotoprod\DataModel\Describe;
 
 readonly class DiscoveryController
 {
@@ -64,7 +62,7 @@ readonly class DiscoveryController
             }
 
             if ($endpoint->request_schema !== null) {
-                $entry['request_schema'] = $this->buildSchema(new ReflectionClass($endpoint->request_schema));
+                $entry['request_schema'] = build_schema($endpoint->request_schema);
             }
 
             if (! empty($endpoint->errors)) {
@@ -73,7 +71,7 @@ readonly class DiscoveryController
 
             if ($endpoint->response_schema !== null) {
                 $entry['response_type'] = class_basename($endpoint->response_schema);
-                $entry['response_schema'] = $this->buildSchema(new ReflectionClass($endpoint->response_schema));
+                $entry['response_schema'] = build_schema($endpoint->response_schema);
             }
 
             if (! empty($endpoint->accepts)) {
@@ -90,51 +88,5 @@ readonly class DiscoveryController
             'data' => $endpoints,
             'errors' => [],
         ]);
-    }
-
-    private function buildSchema(ReflectionClass $ReflectionClass): array
-    {
-        $schema = [];
-
-        foreach ($ReflectionClass->getProperties() as $property) {
-            if (! $property->isPublic()) {
-                continue;
-            }
-
-            $type = $property->getType();
-            $fieldAttributes = $property->getAttributes(Field::class);
-            $field = ! empty($fieldAttributes) ? $fieldAttributes[0]->newInstance() : null;
-            $description = $field?->description ?? '';
-            $rules = $field?->rules ?? '';
-
-            $typeName = $type?->getName() ?? 'mixed';
-
-            $entry = [
-                'type' => $typeName,
-                'nullable' => $type?->allowsNull() ?? true,
-                ...($description !== '' ? ['description' => $description] : []),
-                ...($rules !== '' ? ['rules' => $rules] : []),
-            ];
-
-            if ($typeName !== 'mixed' && ! in_array($typeName, ['string', 'int', 'float', 'bool', 'array', 'object'], true) && class_exists($typeName)) {
-                $entry['type'] = class_basename($typeName);
-                $entry['schema'] = $this->buildSchema(new ReflectionClass($typeName));
-            }
-
-            $describeAttributes = $property->getAttributes(Describe::class);
-            if (! empty($describeAttributes)) {
-                $args = $describeAttributes[0]->getArguments()[0] ?? [];
-                $nestedType = $args['type'] ?? null;
-                if ($nestedType !== null && class_exists($nestedType)) {
-                    $entry['type'] = 'array';
-                    $entry['items_type'] = class_basename($nestedType);
-                    $entry['items'] = $this->buildSchema(new ReflectionClass($nestedType));
-                }
-            }
-
-            $schema[$property->getName()] = $entry;
-        }
-
-        return $schema;
     }
 }

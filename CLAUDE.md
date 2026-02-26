@@ -65,7 +65,44 @@ readonly class ApiLoginRequest {
 
 ### Route Singletons (`app/Routes/`)
 
-Routes are defined as singleton classes with string constants, accessed via helpers: `api()->login`, `web()->register`. URL templates use `{{key}}` placeholders resolved by `render_url()`.
+Routes are defined as singleton classes with string constants, accessed via helpers: `api()->login`, `web()->register`.
+
+**Static routes** — simple string properties accessed directly:
+
+```php
+public string $posts = self::prefix.'/posts';
+
+// Usage
+$this->getJson(api()->posts);
+```
+
+**Dynamic routes** — use `{param}` placeholders (Laravel route syntax) with a dedicated route class and a helper method on `ApiRoutes`. The route class uses `RendersRoute` and defines a constant for each parameter. The helper method returns a hydrated route instance whose `render()` method resolves the URL:
+
+```php
+// app/Routes/PostRoute.php
+class PostRoute
+{
+    use RendersRoute;
+
+    public const string post = 'post';
+}
+
+// app/Routes/ApiRoutes.php
+public string $posts_show = self::prefix.'/posts/{'.PostRoute::post.'}';
+
+public function post(string $post): PostRoute
+{
+    return PostRoute::from([
+        PostRoute::route => $this->posts_show,
+        PostRoute::path_params => [PostRoute::post => $post],
+    ]);
+}
+
+// Usage (tests, controllers, etc.)
+api()->post($Post->id)->render()  // → 'api/posts/42'
+```
+
+The `{param}` syntax serves double duty: Laravel uses it for route registration, and `render_url()` replaces it for URL generation.
 
 ### Key Helpers (`app/Helpers/`)
 
@@ -244,6 +281,40 @@ $Parent = Parent::from([Parent::child => [Child::name => 'value']]);
 // $Parent->child is a fully hydrated Child instance
 ```
 
+### Typed Collections (`mapOf`)
+
+When a DataModel property holds a collection of typed objects, use the `mapOf` cast from `DataModelHelper` to automatically hydrate each element. This replaces manual `->map()` calls in controllers:
+
+```php
+use Illuminate\Support\Collection;
+
+/** @link $Posts */
+public const string Posts = 'Posts';
+/** @var Collection<int, PostResource> */
+#[Describe([
+    'cast' => [self::class, 'mapOf'],
+    'type' => PostResource::class,
+])]
+#[Field('Collection of post resources')]
+public Collection $Posts;
+```
+
+Pass raw arrays — `mapOf` handles hydration into the target type:
+
+```php
+// CORRECT — let mapOf hydrate each item
+PaginatedPosts::from([
+    PaginatedPosts::Posts => $raw_arrays,
+]);
+
+// WRONG — manually mapping before hydration
+PaginatedPosts::from([
+    PaginatedPosts::Posts => collect($models)->map(fn ($m) => PostResource::from($m->toArray()))->all(),
+]);
+```
+
+Available `mapOf` options: `type` (target class/enum), `coerce` (wrap single element in array), `level` (nesting depth), `key_by` (key associative array by field), `using`/`map_via` (custom mapping).
+
 ## Conventions
 
 - **Readonly classes**: All classes are `readonly` by default
@@ -252,6 +323,27 @@ $Parent = Parent::from([Parent::child => [Child::name => 'value']]);
 - **PHPUnit attributes**: Use `#[Test]` syntax, not `test_` method prefix convention
 - **Sanitization**: Done via DataModel `#[Describe(['cast' => ...])]` attributes, not in controllers
 - **Unguarded models**: All Eloquent models use `protected static $unguarded = true;` instead of `$fillable`. Do not use `$fillable` or `$guarded` unless explicitly specified
+- **Collection property naming**: Name collection properties after what they contain (PascalCase, since `Collection` is a class instance), not generically. Never use `$items`, `$data`, `$results`, `$list`:
+
+```php
+// CORRECT — PascalCase, named after the domain object
+public Collection $Posts;
+public Collection $Orders;
+
+// WRONG — generic or lowercase
+public Collection $items;
+public Collection $data;
+public Collection $posts;
+```
+- **Typed closure params**: Always type-hint closure/arrow function parameters when the type is known. Rector enforces this via `AddClosureParamTypeFromIterableMethodCallRector` for iterable method calls (e.g. `Collection::map()`):
+
+```php
+// CORRECT
+->map(static fn (Post $Post) => PostResource::from($Post->toArray()))
+
+// WRONG — missing type hint
+->map(static fn ($Post) => PostResource::from($Post->toArray()))
+```
 
 ## Style Rules (Non-Negotiable)
 
@@ -490,4 +582,30 @@ Schema::create('orders', static function (Blueprint $Blueprint) {
     $Blueprint->decimal('total', 10, 2);
     $Blueprint->timestamps();
 });
+```
+
+### 10. Validation rules must enforce database column size limits
+
+Every `#[Field]` validation rule for a string or text field **must** include a `max` rule matching the database column's maximum size. This prevents users from submitting data that exceeds what the database can store.
+
+| DB Column Type | Max Rule |
+|----------------|----------|
+| `string()` / VARCHAR(255) | `max:255` |
+| `string('col', N)` / VARCHAR(N) | `max:N` |
+| `text()` / TEXT | `max:65535` |
+| `mediumText()` | `max:16777215` |
+| `longText()` | `max:4294967295` |
+| `char(26)` / ULID | `max:26` |
+
+```php
+// CORRECT — max matches DB column size
+#[Field(description: 'Post title', rules: 'required|string|max:255')]       // string() → VARCHAR(255)
+#[Field(description: 'Post body', rules: 'required|string|max:65535')]      // text() → TEXT
+#[Field(description: 'User email', rules: 'required|email|max:255')]        // string() → VARCHAR(255)
+#[Field(description: 'Post ULID or slug', rules: 'required|string|max:255')]// max of possible inputs
+
+// WRONG — no max, allows unbounded input
+#[Field(description: 'Post title', rules: 'required|string')]
+#[Field(description: 'Post body', rules: 'required|string')]
+#[Field(description: 'User email', rules: 'required|email')]
 ```
