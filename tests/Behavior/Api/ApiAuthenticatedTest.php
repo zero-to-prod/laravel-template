@@ -4,15 +4,12 @@ namespace Tests\Behavior\Api;
 
 use App\Models\User;
 use App\Modules\Api\Support\ApiResponse;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ApiAuthenticatedTest extends TestCase
 {
-    use RefreshDatabase;
-
     #[Test]
     public function authenticated_user_can_access_endpoint(): void
     {
@@ -25,7 +22,7 @@ class ApiAuthenticatedTest extends TestCase
             ->assertJson([
                 ApiResponse::success => true,
                 ApiResponse::message => 'Authorized',
-                ApiResponse::type => 'Authorized'
+                ApiResponse::type => 'Authorized',
             ]);
     }
 
@@ -38,7 +35,7 @@ class ApiAuthenticatedTest extends TestCase
             ->assertJson([
                 ApiResponse::success => false,
                 ApiResponse::message => 'unauthorized',
-                ApiResponse::type => 'error'
+                ApiResponse::type => 'error',
             ]);
     }
 

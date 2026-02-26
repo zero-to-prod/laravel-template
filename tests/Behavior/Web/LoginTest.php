@@ -5,20 +5,19 @@ namespace Tests\Behavior\Web;
 use App\Models\User;
 use App\Modules\Login\LoginForm;
 use App\Modules\Login\LoginFormFactory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
-    use RefreshDatabase;
-
-    #[Test] public function route_is_accessible(): void
+    #[Test]
+    public function route_is_accessible(): void
     {
         $this->get(web()->login)->assertOk();
     }
 
-    #[Test] public function login_with_valid_credentials(): void
+    #[Test]
+    public function login_with_valid_credentials(): void
     {
         $User = User::factory([User::password => User::password])->create();
         $LoginForm = LoginFormFactory::factory()
@@ -34,7 +33,8 @@ class LoginTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    #[Test] public function validation_fails_with_invalid_email(): void
+    #[Test]
+    public function validation_fails_with_invalid_email(): void
     {
         $this->post(
             web()->login,
@@ -44,7 +44,8 @@ class LoginTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function validation_fails_with_invalid_password(): void
+    #[Test]
+    public function validation_fails_with_invalid_password(): void
     {
         $this->post(
             web()->login,
@@ -54,7 +55,8 @@ class LoginTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function login_fails_with_invalid_credentials(): void
+    #[Test]
+    public function login_fails_with_invalid_credentials(): void
     {
         $user = User::factory()->create();
         $LoginForm = LoginFormFactory::factory()
@@ -70,7 +72,8 @@ class LoginTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function login_fails_with_non_existent_user(): void
+    #[Test]
+    public function login_fails_with_non_existent_user(): void
     {
         $LoginForm = LoginFormFactory::factory()
             ->set(LoginForm::email, 'nonexistent@example.com')
@@ -84,7 +87,8 @@ class LoginTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function user_can_login_with_remember_me(): void
+    #[Test]
+    public function user_can_login_with_remember_me(): void
     {
         $User = User::factory()->create();
         $LoginForm = LoginFormFactory::factory()
@@ -102,7 +106,8 @@ class LoginTest extends TestCase
         $this->assertNotNull($User->fresh()->remember_token);
     }
 
-    #[Test] public function user_stays_logged_in_with_remember_me(): void
+    #[Test]
+    public function user_stays_logged_in_with_remember_me(): void
     {
         $User = User::factory()->create();
         $LoginForm = LoginFormFactory::factory()
@@ -123,7 +128,8 @@ class LoginTest extends TestCase
         $this->assertAuthenticatedAs($User);
     }
 
-    #[Test] public function old_input_is_preserved_on_validation_failure(): void
+    #[Test]
+    public function old_input_is_preserved_on_validation_failure(): void
     {
         $LoginForm = LoginFormFactory::factory()->make();
 
@@ -137,7 +143,8 @@ class LoginTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function intended_url_is_preserved_after_login(): void
+    #[Test]
+    public function intended_url_is_preserved_after_login(): void
     {
         $user = User::factory()->create();
         $LoginForm = LoginFormFactory::factory()
@@ -154,10 +161,11 @@ class LoginTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    #[Test] public function input_is_sanitized_during_login(): void
+    #[Test]
+    public function input_is_sanitized_during_login(): void
     {
         User::factory()->create([
-            User::email => 'test@example.com'
+            User::email => 'test@example.com',
         ]);
 
         $LoginForm = LoginFormFactory::factory()
@@ -172,7 +180,8 @@ class LoginTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    #[Test] public function validation_fails_with_missing_required_fields(): void
+    #[Test]
+    public function validation_fails_with_missing_required_fields(): void
     {
         $this->post(web()->login)
             ->assertSessionHasErrors([
@@ -183,7 +192,8 @@ class LoginTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function user_cannot_login_when_already_authenticated(): void
+    #[Test]
+    public function user_cannot_login_when_already_authenticated(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);

@@ -5,21 +5,20 @@ namespace Tests\Behavior\Web;
 use App\Models\User;
 use App\Modules\Register\RegisterForm;
 use App\Modules\Register\RegisterFormFactory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
 {
-    use RefreshDatabase;
-
-    #[Test] public function route_is_accessible(): void
+    #[Test]
+    public function route_is_accessible(): void
     {
         $this->get(web()->register)->assertOk();
     }
 
-    #[Test] public function registration(): void
+    #[Test]
+    public function registration(): void
     {
         $RegisterForm = RegisterFormFactory::factory()->make();
 
@@ -29,13 +28,14 @@ class RegisterTest extends TestCase
         )->assertRedirect(web()->home);
 
         $this->assertAuthenticated();
-        $this->assertDatabaseHas((new User())->getTable(), [
+        $this->assertDatabaseHas((new User)->getTable(), [
             User::name => $RegisterForm->name,
             User::email => $RegisterForm->email,
         ]);
     }
 
-    #[Test] public function validation_fails_with_invalid_name(): void
+    #[Test]
+    public function validation_fails_with_invalid_name(): void
     {
         $this->post(
             web()->register,
@@ -45,7 +45,8 @@ class RegisterTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function validation_fails_with_invalid_email(): void
+    #[Test]
+    public function validation_fails_with_invalid_email(): void
     {
         $this->post(
             web()->register,
@@ -55,7 +56,8 @@ class RegisterTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function validation_fails_with_duplicate_email(): void
+    #[Test]
+    public function validation_fails_with_duplicate_email(): void
     {
         $RegisterForm = RegisterFormFactory::factory()->make();
         User::factory()->create([User::email => $RegisterForm->email]);
@@ -68,7 +70,8 @@ class RegisterTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function validation_fails_with_mismatched_passwords(): void
+    #[Test]
+    public function validation_fails_with_mismatched_passwords(): void
     {
         $this->post(
             web()->register,
@@ -78,7 +81,8 @@ class RegisterTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function password_is_hashed_after_registration(): void
+    #[Test]
+    public function password_is_hashed_after_registration(): void
     {
         $RegisterForm = RegisterFormFactory::factory()->make();
 
@@ -89,7 +93,8 @@ class RegisterTest extends TestCase
         $this->assertTrue(Hash::check($RegisterForm->password, $user->password));
     }
 
-    #[Test] public function validation_fails_with_missing_required_fields(): void
+    #[Test]
+    public function validation_fails_with_missing_required_fields(): void
     {
         $this->post(web()->register)
             ->assertSessionHasErrors([
@@ -101,7 +106,8 @@ class RegisterTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function old_input_is_preserved_on_validation_failure(): void
+    #[Test]
+    public function old_input_is_preserved_on_validation_failure(): void
     {
         $RegisterForm = RegisterFormFactory::factory()
             ->set(RegisterForm::email, 'invalid-email')

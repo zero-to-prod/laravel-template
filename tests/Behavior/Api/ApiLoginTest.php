@@ -4,14 +4,11 @@ namespace Tests\Behavior\Api;
 
 use App\Models\User;
 use App\Modules\Api\Requests\ApiLoginRequest;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ApiLoginTest extends TestCase
 {
-    use RefreshDatabase;
-
     #[Test]
     public function login_with_valid_credentials(): void
     {

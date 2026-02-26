@@ -4,15 +4,12 @@ namespace Tests\Behavior\Api;
 
 use App\Models\User;
 use App\Modules\Api\Support\ApiResponse;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ApiLogoutTest extends TestCase
 {
-    use RefreshDatabase;
-
     #[Test]
     public function authenticated_user_can_logout(): void
     {
@@ -26,12 +23,12 @@ class ApiLogoutTest extends TestCase
             ->assertJson([
                 ApiResponse::success => true,
                 ApiResponse::message => 'Logout',
-                ApiResponse::type => 'Logout'
+                ApiResponse::type => 'Logout',
             ]);
 
         $this->assertDatabaseMissing('personal_access_tokens', [
             'tokenable_id' => $User->id,
-            'name' => 'test-device'
+            'name' => 'test-device',
         ]);
     }
 
@@ -56,12 +53,12 @@ class ApiLogoutTest extends TestCase
 
         $this->assertDatabaseMissing('personal_access_tokens', [
             'tokenable_id' => $User->id,
-            'name' => 'device-1'
+            'name' => 'device-1',
         ]);
 
         $this->assertDatabaseHas('personal_access_tokens', [
             'tokenable_id' => $User->id,
-            'name' => 'device-2'
+            'name' => 'device-2',
         ]);
 
         // Second token should still work

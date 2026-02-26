@@ -179,11 +179,11 @@ readonly class ApiLoginRequest
 ### Instantiation
 
 ```php
-$request = ApiLoginRequest::from([
-    'email' => 'USER@EXAMPLE.COM',
-    'password' => 'secret',
+$ApiLoginRequest = ApiLoginRequest::from([
+    ApiLoginRequest::email => 'USER@EXAMPLE.COM',
+    ApiLoginRequest::password => 'secret',
 ]);
-// $request->email === 'user@example.com' (sanitizeEmail applied via cast)
+// $ApiLoginRequest->email === 'user@example.com' (sanitizeEmail applied via cast)
 ```
 
 ### `#[Describe]` Attribute Options
@@ -236,8 +236,8 @@ readonly class ApiToken
 Typed properties referencing other DataModel classes are automatically hydrated:
 
 ```php
-$parent = Parent::from(['child' => ['name' => 'value']]);
-// $parent->child is a fully hydrated Child instance
+$Parent = Parent::from([Parent::child => [Child::name => 'value']]);
+// $Parent->child is a fully hydrated Child instance
 ```
 
 ## Conventions
@@ -348,7 +348,72 @@ Log::info('Login attempt failed');
 $User = User::where('email', $ApiLoginRequest->email)->first();
 ```
 
-### 7. Use constants in tests
+### 7. Always use constants for column and property references
+
+Never use raw strings for database columns or DataModel properties. Every Eloquent model must have a `Support\*Columns` trait defining its column constants. DataModel classes define their own property constants inline.
+
+**Eloquent models** — extract column names into a `Support\{Model}Columns` trait:
+
+```php
+// app/Models/Support/UserColumns.php
+trait UserColumns
+{
+    public const string name = 'name';
+    public const string email = 'email';
+    public const string password = 'password';
+    public const string remember_token = 'remember_token';
+    public const string email_verified_at = 'email_verified_at';
+    public const string created_at = 'created_at';
+    public const string updated_at = 'updated_at';
+}
+
+// app/Models/User.php
+class User extends Authenticatable
+{
+    use UserColumns;
+
+    protected $fillable = [
+        self::name,
+        self::email,
+        self::password,
+    ];
+
+    protected $hidden = [
+        self::password,
+        self::remember_token,
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            self::email_verified_at => 'datetime',
+            self::password => 'hashed',
+        ];
+    }
+}
+```
+
+**DataModel classes** — constants defined inline on the class:
+
+```php
+// CORRECT
+$ApiLoginRequest = ApiLoginRequest::from([
+    ApiLoginRequest::email => 'user@example.com',
+    ApiLoginRequest::password => 'secret',
+    ApiLoginRequest::device_name => 'web',
+]);
+
+// CORRECT — queries use model constants
+$User = User::where(User::email, $ApiLoginRequest->email)->first();
+
+// WRONG — raw strings
+$ApiLoginRequest = ApiLoginRequest::from(['email' => 'user@example.com']);
+$User = User::where('email', $value);
+```
+
+This applies everywhere: production code, tests, factories, seeders, migrations, and queries. Use `self::` within the class, `ClassName::` externally.
+
+### 8. Use constants in tests
 
 Always use backed enum values and DataModel property constants in test assertions and setup — never raw strings:
 
@@ -371,4 +436,29 @@ $this->postJson('/api/login', [
 ]);
 
 $response->assertJsonPath('success', true);
+```
+
+### 9. Migration columns must have comments
+
+Every column in a migration must include a `->comment()` call. Tables must use `$table->comment()`.
+
+```php
+// CORRECT
+Schema::create('orders', static function (Blueprint $Blueprint) {
+    $Blueprint->comment('Customer orders placed through the storefront');
+    $Blueprint->id()->comment('Primary key');
+    $Blueprint->foreignId('user_id')->constrained()->comment('The customer who placed the order');
+    $Blueprint->string('status')->comment('Current order status');
+    $Blueprint->decimal('total', 10, 2)->comment('Order total in USD');
+    $Blueprint->timestamps();
+});
+
+// WRONG — no comments
+Schema::create('orders', static function (Blueprint $Blueprint) {
+    $Blueprint->id();
+    $Blueprint->foreignId('user_id')->constrained();
+    $Blueprint->string('status');
+    $Blueprint->decimal('total', 10, 2);
+    $Blueprint->timestamps();
+});
 ```

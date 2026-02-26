@@ -7,7 +7,8 @@ use Tests\TestCase;
 
 class HomeTest extends TestCase
 {
-    #[Test] public function home_ok(): void
+    #[Test]
+    public function home_ok(): void
     {
         $this->get(web()->home)->assertOk();
     }

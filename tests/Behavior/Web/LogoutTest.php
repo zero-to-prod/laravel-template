@@ -3,20 +3,19 @@
 namespace Tests\Behavior\Web;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class LogoutTest extends TestCase
 {
-    use RefreshDatabase;
-
-    #[Test] public function route_is_accessible(): void
+    #[Test]
+    public function route_is_accessible(): void
     {
         $this->get(web()->logout)->assertRedirect(web()->home);
     }
 
-    #[Test] public function authenticated_user_can_logout(): void
+    #[Test]
+    public function authenticated_user_can_logout(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -27,7 +26,8 @@ class LogoutTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function session_is_invalidated_after_logout(): void
+    #[Test]
+    public function session_is_invalidated_after_logout(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);
@@ -40,7 +40,8 @@ class LogoutTest extends TestCase
         $this->assertNotEquals($sessionId, session()->getId());
     }
 
-    #[Test] public function guest_user_is_redirected_to_home(): void
+    #[Test]
+    public function guest_user_is_redirected_to_home(): void
     {
         $this->get(web()->logout)
             ->assertRedirect(web()->home);
@@ -48,7 +49,8 @@ class LogoutTest extends TestCase
         $this->assertGuest();
     }
 
-    #[Test] public function session_token_is_regenerated_after_logout(): void
+    #[Test]
+    public function session_token_is_regenerated_after_logout(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user);
