@@ -252,11 +252,30 @@ $parent = Parent::from(['child' => ['name' => 'value']]);
 
 These rules are mandatory. Never deviate from them.
 
-### 1. PSR-12 baseline
+### 1. DaisyUI components only
+
+Use DaisyUI component classes for all UI. Do not create custom components unless explicitly requested.
+
+```html
+<!-- CORRECT — DaisyUI classes -->
+<button class="btn btn-primary">Submit</button>
+<div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+        <input type="email" class="input input-bordered w-full" />
+        <div class="alert alert-error">Invalid credentials</div>
+    </div>
+</div>
+
+<!-- WRONG — custom component styles -->
+<button class="rounded-lg bg-blue-600 px-4 py-2 text-white">Submit</button>
+<div class="rounded-xl border p-6 shadow-lg">...</div>
+```
+
+### 2. PSR-12 baseline
 
 Follow PSR-12 unless a rule below overrides it.
 
-### 2. Variable casing matches the class name
+### 3. Variable casing matches the class name
 
 When a variable holds an instance of a class, name it in the same case as the class:
 
@@ -272,7 +291,7 @@ $request = ApiLoginRequest::from(request()->all());
 $validator = Validator::make(...);
 ```
 
-### 3. Primitives are snake_case
+### 4. Primitives are snake_case
 
 Variables holding primitive values (string, int, float, bool, array) use snake_case:
 
@@ -287,7 +306,7 @@ $Email = $ApiLoginRequest->email;
 $isValid = $Validator->passes();
 ```
 
-### 4. Vertical alignment on argument names
+### 5. Vertical alignment on argument names
 
 Name variables to match the parameter they will be passed to:
 
@@ -311,7 +330,7 @@ return $this->respond(
 );
 ```
 
-### 5. No magic strings in business logic
+### 6. No magic strings in business logic
 
 Back repeated or meaningful strings with an Enum or class constants. One-off strings (e.g. a single test value, a log message) are fine as literals.
 
@@ -329,7 +348,7 @@ Log::info('Login attempt failed');
 $User = User::where('email', $ApiLoginRequest->email)->first();
 ```
 
-### 6. Use constants in tests
+### 7. Use constants in tests
 
 Always use backed enum values and DataModel property constants in test assertions and setup — never raw strings:
 
