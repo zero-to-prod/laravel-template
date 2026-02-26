@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Rector\RenameParamToMatchTypeExactCaseRector;
 use Rector\Config\RectorConfig;
-use Rector\Naming\Rector\ClassMethod\RenameParamToMatchTypeRector;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
 
 return RectorConfig::configure()
@@ -13,5 +13,5 @@ return RectorConfig::configure()
     ])
     ->withRules([
         RenameVariableToMatchNewTypeRector::class,
-        RenameParamToMatchTypeRector::class,
+        RenameParamToMatchTypeExactCaseRector::class,
     ]);

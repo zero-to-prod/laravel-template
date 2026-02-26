@@ -92,11 +92,11 @@ readonly class DiscoveryController
         ]);
     }
 
-    private function buildSchema(ReflectionClass $reflection): array
+    private function buildSchema(ReflectionClass $reflectionClass): array
     {
         $schema = [];
 
-        foreach ($reflection->getProperties() as $property) {
+        foreach ($reflectionClass->getProperties() as $property) {
             if (! $property->isPublic()) {
                 continue;
             }
