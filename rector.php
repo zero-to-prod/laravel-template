@@ -6,7 +6,6 @@ use App\Rector\AddTypeToConstOnReadonlyClassRector;
 use App\Rector\RenameParamToMatchTypeExactCaseRector;
 use Rector\Config\RectorConfig;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
-use Rector\Php83\Rector\ClassConst\AddTypeToConstRector;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromIterableMethodCallRector;
 
 return RectorConfig::configure()

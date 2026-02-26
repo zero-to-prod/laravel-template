@@ -11,31 +11,31 @@ readonly class ApiResponse
     use DataModel;
 
     /** @link $success */
-    public const success = 'success';
+    public const string success = 'success';
 
     #[Describe(['default' => true])]
     public bool $success;
 
     /** @link $message */
-    public const message = 'message';
+    public const string message = 'message';
 
     #[Describe(['nullable'])]
     public ?string $message;
 
     /** @link $errors */
-    public const errors = 'errors';
+    public const string errors = 'errors';
 
     #[Describe(['default' => []])]
     public array $errors;
 
     /** @link $data */
-    public const data = 'data';
+    public const string data = 'data';
 
     #[Describe(['default' => []])]
     public mixed $data;
 
     /** @link $type */
-    public const type = 'type';
+    public const string type = 'type';
 
     public string $type;
 
