@@ -10,5 +10,6 @@ readonly class Field
     public function __construct(
         public string $description = '',
         public string $rules = '',
+        public mixed $example = null,
     ) {}
 }

@@ -14,9 +14,12 @@ readonly class Api
         return $this->respond(ApiResponse::fromValidator($Validator, data: $data), 422);
     }
 
-    public function ok(mixed $data = []): JsonResponse
+    public function ok(mixed $data = [], ?array $fields = null): JsonResponse
     {
-        return $this->respond(ApiResponse::ok($this->resolveType($data), $data), 200);
+        $type = $this->resolveType($data);
+        $data = $fields ? $this->filterFields($data, $fields) : $data;
+
+        return $this->respond(ApiResponse::ok($type, $data), 200);
     }
 
     public function unauthorized(ErrorCode $ErrorCode = ErrorCode::unauthorized): JsonResponse
@@ -34,9 +37,12 @@ readonly class Api
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 409);
     }
 
-    public function created(mixed $data = []): JsonResponse
+    public function created(mixed $data = [], ?array $fields = null): JsonResponse
     {
-        return $this->respond(ApiResponse::ok($this->resolveType($data), $data), 201);
+        $type = $this->resolveType($data);
+        $data = $fields ? $this->filterFields($data, $fields) : $data;
+
+        return $this->respond(ApiResponse::ok($type, $data), 201);
     }
 
     private function respond(ApiResponse $ApiResponse, int $status): JsonResponse
@@ -45,6 +51,29 @@ readonly class Api
             data: array_filter($ApiResponse->toArray(), static fn (mixed $value) => ! empty($value) || is_bool($value)),
             status: $status
         );
+    }
+
+    private function filterFields(mixed $data, array $fields): array
+    {
+        $array = is_object($data) && method_exists($data, 'toArray')
+            ? $data->toArray()
+            : (array) $data;
+
+        $result = [];
+
+        foreach ($fields as $key => $value) {
+            if (is_int($key)) {
+                if (array_key_exists($value, $array)) {
+                    $result[$value] = $array[$value];
+                }
+            } elseif (is_array($value) && array_key_exists($key, $array)) {
+                $result[$key] = is_array($array[$key])
+                    ? array_map(fn (mixed $item) => $this->filterFields($item, $value), $array[$key])
+                    : $this->filterFields($array[$key], $value);
+            }
+        }
+
+        return $result;
     }
 
     private function resolveType(mixed $data): string

@@ -109,7 +109,55 @@ The `{param}` syntax serves double duty: Laravel uses it for route registration,
 - `DataModel` trait — Wraps `zero-to-prod/data-model` for `from()`, `toArray()`, `toJson()`
 - `HasFieldRules` trait — Extracts Laravel validation rules from `#[Field]` attributes via reflection
 - `RendersRoute` trait — Builds URLs with path params and query strings
-- `functions.php` — Global helpers: `api()`, `web()`, `api_response()`, `render_url()`
+- `RunsQuery` trait — Dispatches an event and delegates to `handle()` for query objects
+- `functions.php` — Global helpers: `api()`, `web()`, `api_response()`, `build_schema()`, `render_url()`
+
+### Query Objects (`app/Queries/`)
+
+All database queries live in dedicated query classes under `app/Queries/`. Each query class uses the `RunsQuery` trait, which provides a static `get()` entry point that dispatches an event and delegates to `handle()`.
+
+**Query class** — uses `RunsQuery`, implements `handle()` with only primitives or DataModel parameters (never Eloquent models):
+
+```php
+// app/Queries/PostShow.php
+use App\Helpers\RunsQuery;
+use App\Models\Post;
+use Illuminate\Database\Eloquent\Builder;
+
+/**
+ * @method static null|Post get(string $user_id, string $post)
+ */
+class PostShow
+{
+    use RunsQuery;
+
+    public function handle(string $user_id, string $post): ?Post
+    {
+        return Post::query()
+            ->where(Post::user_id, $user_id)
+            ->where(function (Builder $Query) use ($post) {
+                $Query->where(Post::id, $post)
+                    ->orWhere(Post::slug, $post);
+            })
+            ->first();
+    }
+}
+```
+
+**Usage in controllers:**
+
+```php
+$Post = PostShow::get(request()->user()->id, $ShowPostRequest->post);
+```
+
+**Key rules:**
+- One query per class, one `handle()` method
+- **One side effect per query class** — a query that creates a Tag must not also attach a pivot row. Split into separate query classes (e.g. `TagStore` + `TagAttach`). The controller orchestrates multiple queries, not the query itself
+- Only accept primitives (`string`, `int`, `bool`, `array`) or DataModel instances as parameters — never Eloquent models, `User`, `Request`, etc.
+- **Queries must not derive or transform values** — pass pre-computed values as arguments. If a slug is needed, compute it in the controller and pass both `$name` and `$slug` to the query. The query is a data access layer, not a business logic layer
+- **Never inline table names** — use Eloquent model classes or Pivot model classes (e.g. `PostTag::class`) instead of raw strings like `'post_tag'`. This applies to queries, assertions (`assertDatabaseHas`), and `DB::table()` calls
+- Add a `@method` docblock for IDE autocomplete of the static `get()` call
+- Tests go in `tests/Unit/Queries/` and test the query class directly via `QueryClass::get()`
 
 ### API Response Pattern
 
@@ -498,16 +546,40 @@ class Post extends Model
 }
 ```
 
-**Pivot tables** — pivot column names are backed by FK constants on related models. For `post_tag`, `Comment::post_id` resolves to `'post_id'` and `Post::tag_id` resolves to `'tag_id'`:
+**Pivot tables** — every pivot table gets a Pivot model class (e.g. `PostTag`) with a `Support\*Columns` trait defining its column constants. Use the model class in assertions and queries — never raw table name strings:
 
 ```php
-// CORRECT — pivot column names use FK constants from related models
-$this->assertDatabaseMissing('post_tag', [
-    Comment::post_id => $Post->id,
-    Post::tag_id     => $Tag->id,
+// app/Models/Support/PostTagColumns.php
+trait PostTagColumns
+{
+    public const string post_id = 'post_id';
+    public const string tag_id = 'tag_id';
+}
+
+// app/Models/PostTag.php
+class PostTag extends Pivot
+{
+    use PostTagColumns;
+
+    protected $table = 'post_tag';
+    public $incrementing = false;
+    public $timestamps = false;
+    protected static $unguarded = true;
+}
+
+// BelongsToMany relationships must reference the pivot model via ->using()
+public function tags(): BelongsToMany
+{
+    return $this->belongsToMany(Tag::class)->using(PostTag::class);
+}
+
+// CORRECT — use PostTag model class and its column constants
+$this->assertDatabaseMissing(PostTag::class, [
+    PostTag::post_id => $Post->id,
+    PostTag::tag_id  => $Tag->id,
 ]);
 
-// WRONG — raw strings
+// WRONG — raw table name string
 $this->assertDatabaseMissing('post_tag', [
     'post_id' => $Post->id,
     'tag_id'  => $Tag->id,
@@ -608,4 +680,29 @@ Every `#[Field]` validation rule for a string or text field **must** include a `
 #[Field(description: 'Post title', rules: 'required|string')]
 #[Field(description: 'Post body', rules: 'required|string')]
 #[Field(description: 'User email', rules: 'required|email')]
+```
+
+### 11. Extract all database queries into query objects
+
+Never inline Eloquent queries in controllers, middleware, or other non-query classes. Every database query must live in a dedicated class under `app/Queries/` using the `RunsQuery` trait. Query parameters must be primitives or DataModel instances — never Eloquent models or framework objects.
+
+```php
+// CORRECT — query extracted to a dedicated class
+$Post = PostShow::get(request()->user()->id, $ShowPostRequest->post);
+
+// WRONG — inline query in a controller
+$Post = request()->user()
+    ->posts()
+    ->where(Post::id, $ShowPostRequest->post)
+    ->orWhere(function (Builder $Query) use ($ShowPostRequest) {
+        $Query->where(Post::slug, $ShowPostRequest->post)
+            ->where(Post::user_id, request()->user()->id);
+    })
+    ->first();
+
+// WRONG — passing Eloquent model to a query
+$Post = PostShow::get($User, $post);  // $User is an Eloquent model
+
+// CORRECT — pass the primitive ID instead
+$Post = PostShow::get($User->id, $post);
 ```

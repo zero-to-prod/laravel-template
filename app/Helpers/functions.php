@@ -45,11 +45,14 @@ if (! function_exists('build_schema')) {
             $rules = $Field?->rules ?? '';
             $type_name = $Type?->getName() ?? 'mixed';
 
+            $example = $Field?->example;
+
             $entry = [
                 'type' => $type_name,
                 'nullable' => $Type?->allowsNull() ?? true,
                 ...($description !== '' ? ['description' => $description] : []),
                 ...($rules !== '' ? ['rules' => $rules] : []),
+                ...($example !== null ? ['example' => $example] : []),
             ];
 
             if ($type_name !== 'mixed' && ! in_array($type_name, ['string', 'int', 'float', 'bool', 'array', 'object'], true) && class_exists($type_name)) {
