@@ -352,45 +352,76 @@ $User = User::where('email', $ApiLoginRequest->email)->first();
 
 Never use raw strings for database columns or DataModel properties. Every Eloquent model must have a `Support\*Columns` trait defining its column constants. DataModel classes define their own property constants inline.
 
-**Eloquent models** — extract column names into a `Support\{Model}Columns` trait:
+**Eloquent models** — extract column names into a `Support\{Model}Columns` trait. Always include `id`:
 
 ```php
-// app/Models/Support/UserColumns.php
-trait UserColumns
+// app/Models/Support/PostColumns.php
+trait PostColumns
 {
-    public const string name = 'name';
-    public const string email = 'email';
-    public const string password = 'password';
-    public const string remember_token = 'remember_token';
-    public const string email_verified_at = 'email_verified_at';
+    public const string id = 'id';
+    public const string user_id = 'user_id';
+    public const string title = 'title';
+    public const string slug = 'slug';
+    public const string body = 'body';
+    public const string published_at = 'published_at';
     public const string created_at = 'created_at';
     public const string updated_at = 'updated_at';
 }
+```
 
-// app/Models/User.php
-class User extends Authenticatable
+**Relationship constants** — define on the model class itself (not the columns trait), grouped under a `// Relationships` comment. The constant value must match the method name:
+
+```php
+// app/Models/Post.php
+class Post extends Model
 {
-    use UserColumns;
+    use PostColumns;
 
+    /** @var list<string> */
     protected $fillable = [
-        self::name,
-        self::email,
-        self::password,
+        self::user_id,
+        self::title,
+        self::slug,
+        self::body,
+        self::published_at,
     ];
 
-    protected $hidden = [
-        self::password,
-        self::remember_token,
-    ];
+    // Relationships
+    public const string user = 'user';
+    public const string comments = 'comments';
+    public const string tags = 'tags';
 
-    protected function casts(): array
+    public function user(): BelongsTo
     {
-        return [
-            self::email_verified_at => 'datetime',
-            self::password => 'hashed',
-        ];
+        return $this->belongsTo(User::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
     }
 }
+```
+
+**Pivot tables** — pivot column names are backed by FK constants on related models. For `post_tag`, `Comment::post_id` resolves to `'post_id'` and `Post::tag_id` resolves to `'tag_id'`:
+
+```php
+// CORRECT — pivot column names use FK constants from related models
+$this->assertDatabaseMissing('post_tag', [
+    Comment::post_id => $Post->id,
+    Post::tag_id     => $Tag->id,
+]);
+
+// WRONG — raw strings
+$this->assertDatabaseMissing('post_tag', [
+    'post_id' => $Post->id,
+    'tag_id'  => $Tag->id,
+]);
 ```
 
 **DataModel classes** — constants defined inline on the class:
