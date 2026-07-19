@@ -25,16 +25,6 @@ readonly class User
     ])]
     public string $name;
 
-    public const string handle = 'handle';
-
-    #[Describe([
-        Describe::cast => [DataModelCast::class, 'sanitizeEmail'],
-        Field::field => [
-            Field::description => "The user's unique slug, used as the local part of every mailbox address",
-        ],
-    ])]
-    public string $handle;
-
     public const string email = 'email';
 
     #[Describe(GenericEmail::describe)]
@@ -67,18 +57,6 @@ readonly class User
         Field::field => [Field::description => 'Remember login session'],
     ])]
     public bool $remember_token;
-
-    public const string mailbox_id = 'mailbox_id';
-
-    #[Describe([
-        Describe::nullable => true,
-        Describe::cast => [DataModelCast::class, 'sanitizeNullable'],
-        Field::field => [
-            Field::description => 'References mailboxes.address — the mailbox pre-filled as the default "from" address across compose forms',
-            Field::rules => [self::class, 'mailboxIdRules'],
-        ],
-    ])]
-    public ?string $mailbox_id;
 
     public const string email_verified_at = 'email_verified_at';
     public const string created_at = 'created_at';

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Api\Requests;
 
+use App\DataModels\Fields\GenericEmail;
 use App\Helpers\DataModel;
 use App\Helpers\HasFieldRules;
 use App\Modules\Api\Support\Field;
@@ -12,31 +13,28 @@ readonly class ApiLoginRequest
     use DataModel;
     use HasFieldRules;
 
-    /** @link $email */
     public const string email = 'email';
 
-    #[Describe(['cast' => [self::class, 'sanitizeEmail']])]
-    #[Field(
-        description: 'User email address',
-        rules: 'required|email'
-    )]
+    #[Describe(GenericEmail::describe)]
     public string $email;
 
-    /** @link $password */
     public const string password = 'password';
 
-    #[Field(
-        description: 'User password',
-        rules: 'required'
-    )]
+    #[Describe([
+        Field::field => [
+            Field::description => 'User password',
+            Field::rules => 'required',
+        ],
+    ])]
     public string $password;
 
-    /** @link $device_name */
     public const string device_name = 'device_name';
 
-    #[Field(
-        description: 'Name of the requesting device',
-        rules: 'required'
-    )]
+    #[Describe([
+        Field::field => [
+            Field::description => 'Name of the requesting device',
+            Field::rules => 'required',
+        ],
+    ])]
     public string $device_name;
 }

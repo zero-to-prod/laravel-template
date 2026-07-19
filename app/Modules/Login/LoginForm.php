@@ -15,20 +15,34 @@ readonly class LoginForm
     /** @link $email */
     public const string email = 'email';
 
-    #[Describe(['cast' => [self::class, 'sanitizeEmail']])]
-    #[Field(description: 'User email address', rules: 'required|string|email|max:255')]
+    #[Describe([
+        Describe::cast => [self::class, 'sanitizeEmail'],
+        Field::field => [
+            Field::description => 'User email address',
+            Field::rules => 'required|string|email|max:255',
+        ],
+    ])]
     public string $email;
 
     /** @link $password */
     public const string password = 'password';
 
-    #[Field(description: 'User password', rules: 'required|string|max:255')]
+    #[Describe([
+        Field::field => [
+            Field::description => 'User password',
+            Field::rules => 'required|string|max:255',
+        ],
+    ])]
     public string $password;
 
     /** @link $remember_token */
     public const string remember_token = 'remember_token';
 
-    #[Describe(['default' => false])]
-    #[Field(description: 'Remember login session')]
+    #[Describe([
+        Describe::default => false,
+        Field::field => [
+            Field::description => 'Remember login session',
+        ],
+    ])]
     public bool $remember_token;
 }

@@ -5,9 +5,9 @@ namespace Tests\Behavior\Web;
 use App\Models\User;
 use App\Modules\Register\RegisterConfig;
 use App\Routes\Web;
-use Database\Factories\UserFactory;
 use Illuminate\Support\Facades\RateLimiter;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Factories\UserFactory;
 use Tests\TestCase;
 
 class RegisterRateLimitTest extends TestCase
