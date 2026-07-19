@@ -2,10 +2,14 @@
 
 namespace App\Modules\Register;
 
-use App\Models\User;
+use App\DataModels\Fields\GenericString;
+use App\DataModels\User;
+use App\Helpers\Rule;
 use App\Routes\Web;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
@@ -15,8 +19,8 @@ readonly class RegisterController
 {
     public function __invoke(RegisterConfig $RegisterConfig): RedirectResponse
     {
-        $Form = RegisterForm::from(request()->all());
-        $key = $RegisterConfig->rateLimitKey($Form->email ?? '');
+        $User = User::from(request()->all());
+        $key = $RegisterConfig->rateLimitKey($User->email ?? '');
 
         $tooManyAttempts = RateLimiter::tooManyAttempts(
             $key,
@@ -25,30 +29,36 @@ readonly class RegisterController
 
         if ($tooManyAttempts) {
             return back()->withErrors([
-                RegisterForm::email => $RegisterConfig->tooManyAttemptsMessage(),
+                User::email => $RegisterConfig->tooManyAttemptsMessage(),
             ]);
         }
 
         RateLimiter::hit($key);
 
-        $Validator = Validator::make($Form->toArray(), [
-            ...$Form->rules(),
-            RegisterForm::password => ['required', 'confirmed', Password::defaults()],
-        ]);
+        $rules = $User->rules();
+        $rules[User::name] = [Rule::required->value, Rule::string->value, Rule::max(GenericString::length)];
+        $rules[User::email] = [...$rules[User::email], Rule::unique('users')];
+        $rules[User::password] = [Rule::required->value, Rule::confirmed->value, Password::defaults()];
+
+        $Validator = Validator::make($User->toArray(), $rules);
 
         if ($Validator->fails()) {
             return back()
                 ->withErrors($Validator)
-                ->withInput($Form->toArray());
+                ->withInput($User->toArray());
         }
 
-        Auth::login(
-            User::create([
-                User::name => $Form->name,
-                User::email => $Form->email,
-                User::password => Hash::make($Form->password),
-            ])
-        );
+        DB::transaction(static function () use ($User) {
+            $ModelUser = \App\Models\User::create([
+                User::name => $User->name,
+                User::email => $User->email,
+                User::password => Hash::make($User->password),
+            ]);
+
+            Auth::login($ModelUser);
+
+            event(new Registered($ModelUser));
+        });
 
         return redirect()->intended(Web::home->value);
     }

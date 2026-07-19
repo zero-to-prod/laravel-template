@@ -39,7 +39,5 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->hasHeader(HttpHeader::HxRequest->value)) {
                 return response()->noContent(401)->header(HttpHeader::HxRedirect->value, Web::login->value);
             }
-
-            return null;
         });
     })->create();

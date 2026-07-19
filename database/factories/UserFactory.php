@@ -22,4 +22,9 @@ class UserFactory extends Factory
             User::remember_token => Str::random(10),
         ];
     }
+
+    public function unverified(): static
+    {
+        return $this->state([User::email_verified_at => null]);
+    }
 }

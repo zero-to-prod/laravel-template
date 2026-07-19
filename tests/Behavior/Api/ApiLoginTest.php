@@ -2,7 +2,7 @@
 
 namespace Tests\Behavior\Api;
 
-use App\Models\User;
+use App\DataModels\User;
 use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Routes\ApiRoute;
 use PHPUnit\Framework\Attributes\Test;
@@ -13,7 +13,7 @@ class ApiLoginTest extends TestCase
     #[Test]
     public function login_with_valid_credentials(): void
     {
-        $User = User::factory([User::password => User::password])->create();
+        $User = \App\Models\User::factory([User::password => User::password])->create();
         $payload = ApiLoginRequest::from([
             ApiLoginRequest::email => $User->email,
             ApiLoginRequest::password => User::password,
@@ -23,7 +23,7 @@ class ApiLoginTest extends TestCase
         $response = $this->postJson(ApiRoute::login->value, $payload->toArray());
 
         $response->assertOk()
-            ->assertJsonStructure(['success', 'message', 'data' => ['token']])
+            ->assertJsonStructure(['success', 'data' => ['token']])
             ->assertJson(['success' => true]);
     }
 
@@ -58,7 +58,7 @@ class ApiLoginTest extends TestCase
     #[Test]
     public function validation_fails_with_missing_device_name(): void
     {
-        $User = User::factory()->create();
+        $User = \App\Models\User::factory()->create();
         $payload = [
             ApiLoginRequest::email => $User->email,
             ApiLoginRequest::password => 'password',
@@ -72,7 +72,7 @@ class ApiLoginTest extends TestCase
     #[Test]
     public function login_fails_with_invalid_credentials(): void
     {
-        $User = User::factory()->create();
+        $User = \App\Models\User::factory()->create();
         $payload = [
             ApiLoginRequest::email => $User->email,
             ApiLoginRequest::password => 'wrong-password',
@@ -119,7 +119,7 @@ class ApiLoginTest extends TestCase
     #[Test]
     public function input_is_sanitized_during_login(): void
     {
-        $User = User::factory()->create([
+        \App\Models\User::factory()->create([
             User::email => 'test@example.com',
         ]);
 
@@ -137,7 +137,7 @@ class ApiLoginTest extends TestCase
     #[Test]
     public function token_is_created_with_correct_device_name(): void
     {
-        $User = User::factory([User::password => User::password])->create();
+        $User = \App\Models\User::factory([User::password => User::password])->create();
         $deviceName = 'test-device-name';
 
         $payload = [

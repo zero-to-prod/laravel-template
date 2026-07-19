@@ -1,62 +1,24 @@
 @php
-    use App\Modules\Register\RegisterForm;
+    use App\DataModels\User;
     use App\Routes\Web;
 @endphp
 
-<x-main>
-    <div class="card card-compact sm:m-auto sm:mt-24 sm:max-w-sm">
-        <div class="card-body">
-            <h1 class="card-title">Register</h1>
-            <form class="space-y-4" method="POST" action="{{Web::register->value}}" class="flex flex-col">
-                @csrf
-                <label class="w-full form-control">
-                    <div class="label">
-                        <span class="label-text">Full Name</span>
-                    </div>
-                    <label class="flex items-center gap-2 input input-bordered bg-base-200">
-                        <x-svg name="user" classname="h-4 w-4 opacity-70"/>
-                        <input name="{{RegisterForm::name}}" value="{{old(RegisterForm::name)}}" type="text" class="grow"
-                               placeholder="First and Last Name" required/>
-                    </label>
-                </label>
-                <label class="w-full form-control">
-                    <div class="label">
-                        <span class="label-text">Email</span>
-                    </div>
-                    <label class="flex items-center gap-2 input input-bordered bg-base-200">
-                        <x-svg name="email" classname="h-4 w-4 opacity-70"/>
-                        <input name="{{RegisterForm::email}}" value="{{old(RegisterForm::email)}}" type="email" class="grow" placeholder="Email"/>
-                    </label>
-                </label>
-                <label class="w-full form-control">
-                    <div class="label">
-                        <span class="label-text">Password</span>
-                    </div>
-                    <label class="flex items-center gap-2 input input-bordered bg-base-200">
-                        <x-svg name="key" classname="h-4 w-4 opacity-70"/>
-                        <input name="{{RegisterForm::password}}" type="password" class="grow" placeholder="Password"/>
-                    </label>
-                </label>
-                <label class="w-full form-control">
-                    <div class="label">
-                        <span class="label-text">Password Confirmation</span>
-                    </div>
-                    <label class="flex items-center gap-2 input input-bordered bg-base-200">
-                        <x-svg name="key" classname="h-4 w-4 opacity-70"/>
-                        <input name="{{RegisterForm::password_confirmation}}" type="password" class="grow" placeholder="Password Confirmation"/>
-                    </label>
-                </label>
-                <div>
-                    <button class="btn btn-primary mt-4 w-full">Register</button>
-                </div>
-                @if(isset($errors))
-                    <x-errors classname="shadow" :$errors :take="1"/>
-                @endif
-            </form>
-            <div class="divider">or</div>
-            @guest
-                <a href="{{Web::login->value}}" class="link link-primary text-center p-3">Login</a>
-            @endguest
-        </div>
-    </div>
-</x-main>
+<x-auth-card title="Register">
+    <form class="space-y-4" method="POST" action="{{Web::register->value}}">
+        @csrf
+        <x-text-input legend="Full Name" :name="User::name" :value="old(User::name)" icon="user"
+                      placeholder="First and Last Name" required/>
+        <x-text-input legend="Email" :name="User::email" :value="old(User::email)" type="email" icon="email"
+                      :required="User::isRequired(User::email)" placeholder="Email"/>
+        <x-text-input legend="Password" :name="User::password" type="password" icon="key"
+                      :required="User::isRequired(User::password)" placeholder="Password"/>
+        <x-text-input legend="Password Confirmation" :name="User::password_confirmation" type="password" icon="key"
+                      placeholder="Password Confirmation"/>
+        <button class="btn btn-primary mt-4 w-full">Register</button>
+    </form>
+    <x-slot:footer>
+        @guest
+            <a href="{{Web::login->value}}" class="link link-primary text-center p-3">Login</a>
+        @endguest
+    </x-slot:footer>
+</x-auth-card>
