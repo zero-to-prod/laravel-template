@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Factories\UserFactory;
 use Tests\TestCase;
 
 class VerificationTest extends TestCase
@@ -137,7 +138,7 @@ class VerificationTest extends TestCase
     public function registering_sends_an_email_verification_notification(): void
     {
         Notification::fake();
-        $RegisterForm = ModelUser::factory()->make();
+        $RegisterForm = UserFactory::factory()->make();
 
         $this->post(Web::register->value, $RegisterForm->toArray())
             ->assertRedirect(Web::home->value);
