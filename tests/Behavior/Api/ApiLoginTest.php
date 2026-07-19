@@ -4,6 +4,7 @@ namespace Tests\Behavior\Api;
 
 use App\Models\User;
 use App\Modules\Api\Requests\ApiLoginRequest;
+use App\Routes\ApiRoute;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ApiLoginTest extends TestCase
             ApiLoginRequest::device_name => 'test-device',
         ]);
 
-        $response = $this->postJson(api()->login, $payload->toArray());
+        $response = $this->postJson(ApiRoute::login->value, $payload->toArray());
 
         $response->assertOk()
             ->assertJsonStructure(['success', 'message', 'data' => ['token']])
@@ -35,7 +36,7 @@ class ApiLoginTest extends TestCase
             ApiLoginRequest::device_name => 'test-device',
         ];
 
-        $this->postJson(api()->login, $payload)
+        $this->postJson(ApiRoute::login->value, $payload)
             ->assertStatus(422)
             ->assertJsonValidationErrors(ApiLoginRequest::email);
     }
@@ -49,7 +50,7 @@ class ApiLoginTest extends TestCase
             ApiLoginRequest::device_name => 'test-device',
         ];
 
-        $this->postJson(api()->login, $payload)
+        $this->postJson(ApiRoute::login->value, $payload)
             ->assertStatus(422)
             ->assertJsonValidationErrors(ApiLoginRequest::password);
     }
@@ -63,7 +64,7 @@ class ApiLoginTest extends TestCase
             ApiLoginRequest::password => 'password',
         ];
 
-        $this->postJson(api()->login, $payload)
+        $this->postJson(ApiRoute::login->value, $payload)
             ->assertStatus(422)
             ->assertJsonValidationErrors(ApiLoginRequest::device_name);
     }
@@ -78,7 +79,7 @@ class ApiLoginTest extends TestCase
             ApiLoginRequest::device_name => 'test-device',
         ];
 
-        $this->postJson(api()->login, $payload)
+        $this->postJson(ApiRoute::login->value, $payload)
             ->assertStatus(401)
             ->assertJson([
                 'success' => false,
@@ -95,7 +96,7 @@ class ApiLoginTest extends TestCase
             ApiLoginRequest::device_name => 'test-device',
         ];
 
-        $this->postJson(api()->login, $payload)
+        $this->postJson(ApiRoute::login->value, $payload)
             ->assertStatus(401)
             ->assertJson([
                 'success' => false,
@@ -106,7 +107,7 @@ class ApiLoginTest extends TestCase
     #[Test]
     public function validation_fails_with_missing_required_fields(): void
     {
-        $this->postJson(api()->login, [])
+        $this->postJson(ApiRoute::login->value, [])
             ->assertStatus(422)
             ->assertJsonValidationErrors([
                 ApiLoginRequest::email,
@@ -128,7 +129,7 @@ class ApiLoginTest extends TestCase
             ApiLoginRequest::device_name => 'test-device',
         ];
 
-        $this->postJson(api()->login, $payload)
+        $this->postJson(ApiRoute::login->value, $payload)
             ->assertOk()
             ->assertJsonStructure(['data' => ['token']]);
     }
@@ -145,7 +146,7 @@ class ApiLoginTest extends TestCase
             ApiLoginRequest::device_name => $deviceName,
         ];
 
-        $this->postJson(api()->login, $payload)->assertOk();
+        $this->postJson(ApiRoute::login->value, $payload)->assertOk();
 
         $this->assertDatabaseHas('personal_access_tokens', [
             'name' => $deviceName,

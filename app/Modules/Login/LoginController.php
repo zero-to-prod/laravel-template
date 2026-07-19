@@ -2,6 +2,7 @@
 
 namespace App\Modules\Login;
 
+use App\Routes\Web;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -9,9 +10,6 @@ use Illuminate\Validation\ValidationException;
 
 readonly class LoginController
 {
-    /**
-     * @throws ValidationException
-     */
     public function __invoke(): RedirectResponse
     {
         $LoginForm = LoginForm::from(request()->all());
@@ -20,7 +18,7 @@ readonly class LoginController
         if (Auth::attempt($Validator->validate(), $LoginForm->remember_token)) {
             request()->session()->regenerate();
 
-            return redirect()->intended(web()->home);
+            return redirect()->intended(Web::home->value);
         }
 
         throw ValidationException::withMessages([

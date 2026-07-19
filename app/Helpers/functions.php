@@ -2,21 +2,13 @@
 
 use App\Modules\Api\Api;
 use App\Modules\Api\Support\Field;
-use App\Routes\ApiRoutes;
-use App\Routes\WebRoutes;
+use App\Routes\Web;
 use Zerotoprod\DataModel\Describe;
 
-if (! function_exists('api')) {
-    function api(): ApiRoutes
-    {
-        return ApiRoutes::getInstance();
-    }
-}
-
 if (! function_exists('web')) {
-    function web(): WebRoutes
+    function web(): Web
     {
-        return WebRoutes::getInstance();
+        return Web::getInstance();
     }
 }
 

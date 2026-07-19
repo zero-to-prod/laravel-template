@@ -10,13 +10,11 @@ use View;
 
 trait AddsViewLocation
 {
-    /**
-     * @throws ViewNotFound
-     */
+    /** @throws ViewNotFound */
     public function localView(?string $view_name = null, string $classname = self::class): string
     {
         try {
-            $namespace_to_path = lcfirst(str_replace('\\', DIRECTORY_SEPARATOR, (new ReflectionClass($classname))->getNamespaceName()));
+            $namespace_to_path = lcfirst(str_replace('\\', DIRECTORY_SEPARATOR, new ReflectionClass($classname)->getNamespaceName()));
         } catch (ReflectionException $reflectionException) {
             throw new RuntimeException($reflectionException->getMessage(), 0, $reflectionException);
         }
@@ -39,9 +37,7 @@ trait AddsViewLocation
         return $view_name;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public static function getViewNames(string $path): array
     {
         return self::getViewNamesRecursive($path, '');
@@ -60,9 +56,7 @@ trait AddsViewLocation
         return $result;
     }
 
-    /**
-     * Recursively collect view names into the result array (avoids array_merge overhead)
-     */
+    /** Recursively collect view names into the result array (avoids array_merge overhead) */
     private static function collectViewNames(string $path, string $prefix, array &$result): void
     {
         if (! is_dir($path)) {
@@ -82,12 +76,10 @@ trait AddsViewLocation
             $itemPath = $path.DIRECTORY_SEPARATOR.$item;
 
             if (is_dir($itemPath)) {
-                // Recursively scan subdirectories
                 $subPrefix = $prefix === '' ? $item : $prefix.'.'.$item;
                 self::collectViewNames($itemPath, $subPrefix, $result);
             } elseif (str_ends_with($item, '.blade.php')) {
-                // Add view file with appropriate prefix
-                $viewName = substr($item, 0, -10); // Remove '.blade.php' (10 chars)
+                $viewName = substr($item, 0, -10);
                 $result[] = $prefix === '' ? $viewName : $prefix.'.'.$viewName;
             }
         }

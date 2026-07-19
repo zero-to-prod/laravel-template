@@ -1,3 +1,6 @@
+@php
+use App\Routes\Web;
+@endphp
 <div class="fixed top-0 z-10 shadow-md navbar bg-base-100">
     <div class="navbar-start">
         <div class="navbar-start">
@@ -17,7 +20,7 @@
                     </li>
                 </ul>
             </div>
-            <a href="{{web()->home}}"
+            <a href="{{Web::home->value}}"
                class="hidden text-xl btn btn-ghost no-animation lg:inline-flex"
                title="Go Home"
             >
@@ -29,11 +32,11 @@
     </div>
     <div class="navbar-end">
         @auth
-            <a href="{{web()->logout}}" class="text-lg btn btn-ghost no-animation">
+            <a href="{{Web::logout->value}}" class="text-lg btn btn-ghost no-animation">
                 Logout
             </a>
         @else
-            <a href="{{web()->login}}" class="text-lg btn btn-ghost no-animation">
+            <a href="{{Web::login->value}}" class="text-lg btn btn-ghost no-animation">
                 Login
             </a>
         @endauth

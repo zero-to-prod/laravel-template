@@ -1,19 +1,34 @@
 <?php
 
-namespace App\Modules\Api\Discovery;
+namespace App\Modules\Api\Schema;
 
+use App\Helpers\CacheKeys;
 use App\Modules\Api\Support\Endpoint;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
 
-readonly class DiscoveryController
+readonly class SchemaController
 {
     /**
      * @throws ReflectionException
      */
     public function __invoke(): JsonResponse
+    {
+        return api_response()->ok(
+            app()->isProduction()
+                ? Cache::rememberForever(CacheKeys::api_schema, $this->buildSchema(...))
+                : $this->buildSchema(),
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function buildSchema(): array
     {
         $endpoints = [];
 
@@ -24,7 +39,8 @@ readonly class DiscoveryController
                 continue;
             }
 
-            $ReflectionAttribute = new ReflectionClass($controller)->getAttributes(Endpoint::class);
+            $ReflectionClass = new ReflectionClass($controller);
+            $ReflectionAttribute = $ReflectionClass->getAttributes(Endpoint::class);
 
             if (empty($ReflectionAttribute)) {
                 continue;
@@ -74,19 +90,26 @@ readonly class DiscoveryController
                 $entry['response_schema'] = build_schema($endpoint->response_schema);
             }
 
+            $has_body = ! empty(array_intersect($methods, ['POST', 'PUT', 'PATCH']));
+
             if (! empty($endpoint->accepts)) {
                 $entry['accepts'] = $endpoint->accepts;
+            } elseif ($has_body && $endpoint->request_schema !== null) {
+                $entry['accepts'] = [Endpoint::json];
+            }
+
+            $ReturnType = $ReflectionClass->getMethod('__invoke')->getReturnType();
+            $content_type = $ReturnType instanceof ReflectionNamedType
+                ? Endpoint::content_types[$ReturnType->getName()] ?? null
+                : null;
+
+            if ($content_type !== null) {
+                $entry['content_type'] = $content_type;
             }
 
             $endpoints[] = $entry;
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'api_discovery',
-            'type' => 'api_discovery',
-            'data' => $endpoints,
-            'errors' => [],
-        ]);
+        return $endpoints;
     }
 }

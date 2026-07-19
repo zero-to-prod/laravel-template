@@ -37,6 +37,11 @@ readonly class Api
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 409);
     }
 
+    public function unsupportedMediaType(ErrorCode $ErrorCode): JsonResponse
+    {
+        return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 415);
+    }
+
     public function created(mixed $data = [], ?array $fields = null): JsonResponse
     {
         $type = $this->resolveType($data);

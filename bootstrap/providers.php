@@ -1,6 +1,9 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\FolioServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\FolioServiceProvider::class,
+    AppServiceProvider::class,
+    FolioServiceProvider::class,
 ];

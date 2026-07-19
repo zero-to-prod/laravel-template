@@ -3,6 +3,7 @@
 namespace Tests\Behavior\Web;
 
 use App\Models\User;
+use App\Routes\Web;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -11,7 +12,7 @@ class LogoutTest extends TestCase
     #[Test]
     public function route_is_accessible(): void
     {
-        $this->get(web()->logout)->assertRedirect(web()->home);
+        $this->get(Web::logout->value)->assertRedirect(Web::home->value);
     }
 
     #[Test]
@@ -20,8 +21,8 @@ class LogoutTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $this->get(web()->logout)
-            ->assertRedirect(web()->home);
+        $this->get(Web::logout->value)
+            ->assertRedirect(Web::home->value);
 
         $this->assertGuest();
     }
@@ -34,7 +35,7 @@ class LogoutTest extends TestCase
 
         $sessionId = session()->getId();
 
-        $this->get(web()->logout);
+        $this->get(Web::logout->value);
 
         $this->assertGuest();
         $this->assertNotEquals($sessionId, session()->getId());
@@ -43,8 +44,8 @@ class LogoutTest extends TestCase
     #[Test]
     public function guest_user_is_redirected_to_home(): void
     {
-        $this->get(web()->logout)
-            ->assertRedirect(web()->home);
+        $this->get(Web::logout->value)
+            ->assertRedirect(Web::home->value);
 
         $this->assertGuest();
     }
@@ -57,7 +58,7 @@ class LogoutTest extends TestCase
 
         $oldToken = session()->token();
 
-        $this->get(web()->logout);
+        $this->get(Web::logout->value);
 
         $this->assertNotEquals($oldToken, session()->token());
     }

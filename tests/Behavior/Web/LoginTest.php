@@ -5,6 +5,7 @@ namespace Tests\Behavior\Web;
 use App\Models\User;
 use App\Modules\Login\LoginForm;
 use App\Modules\Login\LoginFormFactory;
+use App\Routes\Web;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -13,7 +14,7 @@ class LoginTest extends TestCase
     #[Test]
     public function route_is_accessible(): void
     {
-        $this->get(web()->login)->assertOk();
+        $this->get(Web::login->value)->assertOk();
     }
 
     #[Test]
@@ -26,9 +27,9 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
-        )->assertRedirect(web()->home);
+        )->assertRedirect(Web::home->value);
 
         $this->assertAuthenticated();
     }
@@ -37,7 +38,7 @@ class LoginTest extends TestCase
     public function validation_fails_with_invalid_email(): void
     {
         $this->post(
-            web()->login,
+            Web::login->value,
             LoginFormFactory::factory()->set(LoginForm::email, '')->context()
         )->assertSessionHasErrors(LoginForm::email);
 
@@ -48,7 +49,7 @@ class LoginTest extends TestCase
     public function validation_fails_with_invalid_password(): void
     {
         $this->post(
-            web()->login,
+            Web::login->value,
             LoginFormFactory::factory()->set(LoginForm::password, '')->context()
         )->assertSessionHasErrors(LoginForm::password);
 
@@ -65,7 +66,7 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
         )->assertSessionHasErrors(LoginForm::email);
 
@@ -80,7 +81,7 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
         )->assertSessionHasErrors(LoginForm::email);
 
@@ -97,11 +98,11 @@ class LoginTest extends TestCase
             ->make();
 
         $response = $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
         );
 
-        $response->assertRedirect(web()->home);
+        $response->assertRedirect(Web::home->value);
         $this->assertAuthenticatedAs($User);
         $this->assertNotNull($User->fresh()->remember_token);
     }
@@ -116,14 +117,14 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
         );
 
-        $this->post(web()->logout);
+        $this->post(Web::logout->value);
         $this->withSession([]);
 
-        $this->get(web()->home);
+        $this->get(Web::home->value);
 
         $this->assertAuthenticatedAs($User);
     }
@@ -134,7 +135,7 @@ class LoginTest extends TestCase
         $LoginForm = LoginFormFactory::factory()->make();
 
         $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
         )
             ->assertSessionHasInput(LoginForm::email)
@@ -151,12 +152,12 @@ class LoginTest extends TestCase
             ->set(LoginForm::email, $user->email)
             ->make();
 
-        session(['url.intended' => web()->home]);
+        session(['url.intended' => Web::home->value]);
 
         $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
-        )->assertRedirect(web()->home);
+        )->assertRedirect(Web::home->value);
 
         $this->assertAuthenticated();
     }
@@ -173,9 +174,9 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
-        )->assertRedirect(web()->home);
+        )->assertRedirect(Web::home->value);
 
         $this->assertAuthenticated();
     }
@@ -183,7 +184,7 @@ class LoginTest extends TestCase
     #[Test]
     public function validation_fails_with_missing_required_fields(): void
     {
-        $this->post(web()->login)
+        $this->post(Web::login->value)
             ->assertSessionHasErrors([
                 LoginForm::email,
                 LoginForm::password,
@@ -203,8 +204,8 @@ class LoginTest extends TestCase
             ->make();
 
         $this->post(
-            web()->login,
+            Web::login->value,
             $LoginForm->toArray()
-        )->assertRedirect(web()->home);
+        )->assertRedirect(Web::home->value);
     }
 }

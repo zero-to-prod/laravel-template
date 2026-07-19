@@ -2,37 +2,34 @@
 
 namespace App\Helpers;
 
-use Zerotoprod\DataModel\Describe;
+use Illuminate\Http\Request;
 
 trait RendersRoute
 {
-    use DataModel;
-
-    /** @see $route */
-    public const string route = 'route';
-
-    #[Describe(['default' => ''])]
-    public string $route;
-
-    /** @see $path_params */
-    public const string path_params = 'path_params';
-
-    #[Describe(['default' => []])]
-    public array $path_params;
-
-    /** @see $params */
-    public const string params = 'params';
-
-    #[Describe(['default' => []])]
-    public array $params;
-
-    public function render(): string
+    public function isActive(Request $request, array $route = []): bool
     {
-        $query = http_build_query($this->params);
-        $route = render_url($this->route, $this->path_params);
+        return $request->is(ltrim(self::render($this->value, $route), '/').'*');
+    }
+
+    public function isExact(Request $request, array $route = []): bool
+    {
+        return $request->path() === ltrim(self::render($this->value, $route), '/');
+    }
+
+    private static function render(
+        string $url,
+        array $route = [],
+        array|object $query = [],
+        string $numeric_prefix = '',
+        ?string $arg_separator = null,
+        int $encoding_type = 1
+    ): string {
+        foreach ($route as $search => $replace) {
+            $url = str_replace("{{$search}}", $replace, $url);
+        }
 
         return $query
-            ? $route.'?'.$query
-            : $route;
+            ? $url.'?'.http_build_query($query, $numeric_prefix, $arg_separator, $encoding_type)
+            : $url;
     }
 }

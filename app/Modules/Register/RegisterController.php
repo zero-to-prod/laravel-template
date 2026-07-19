@@ -3,6 +3,7 @@
 namespace App\Modules\Register;
 
 use App\Models\User;
+use App\Routes\Web;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -49,6 +50,6 @@ readonly class RegisterController
             ])
         );
 
-        return redirect()->intended(web()->home);
+        return redirect()->intended(Web::home->value);
     }
 }

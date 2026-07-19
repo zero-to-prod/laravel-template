@@ -4,6 +4,7 @@ namespace Tests\Behavior\Api;
 
 use App\Models\User;
 use App\Modules\Api\Support\ApiResponse;
+use App\Routes\ApiRoute;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -16,7 +17,7 @@ class ApiAuthenticatedTest extends TestCase
         $User = User::factory()->create();
         Sanctum::actingAs($User);
 
-        $response = $this->getJson(api()->authenticated);
+        $response = $this->getJson(ApiRoute::authenticated->value);
 
         $response->assertOk()
             ->assertJson([
@@ -29,7 +30,7 @@ class ApiAuthenticatedTest extends TestCase
     #[Test]
     public function unauthenticated_user_cannot_access_endpoint(): void
     {
-        $response = $this->getJson(api()->authenticated);
+        $response = $this->getJson(ApiRoute::authenticated->value);
 
         $response->assertStatus(401)
             ->assertJson([
@@ -48,7 +49,7 @@ class ApiAuthenticatedTest extends TestCase
         $token->accessToken->save();
 
         $this->withToken($token->plainTextToken)
-            ->getJson(api()->authenticated)
+            ->getJson(ApiRoute::authenticated->value)
             ->assertStatus(401);
     }
 
@@ -56,7 +57,7 @@ class ApiAuthenticatedTest extends TestCase
     public function invalid_token_cannot_access_endpoint(): void
     {
         $this->withToken('invalid-token')
-            ->getJson(api()->authenticated)
+            ->getJson(ApiRoute::authenticated->value)
             ->assertStatus(401);
     }
 
@@ -69,11 +70,11 @@ class ApiAuthenticatedTest extends TestCase
         $token2 = $User->createToken('device-2')->plainTextToken;
 
         $this->withToken($token1)
-            ->getJson(api()->authenticated)
+            ->getJson(ApiRoute::authenticated->value)
             ->assertOk();
 
         $this->withToken($token2)
-            ->getJson(api()->authenticated)
+            ->getJson(ApiRoute::authenticated->value)
             ->assertOk();
     }
 
@@ -83,7 +84,7 @@ class ApiAuthenticatedTest extends TestCase
         $User = User::factory()->create();
         Sanctum::actingAs($User);
 
-        $this->getJson(api()->authenticated)
+        $this->getJson(ApiRoute::authenticated->value)
             ->assertOk()
             ->assertJsonStructure([
                 'success',

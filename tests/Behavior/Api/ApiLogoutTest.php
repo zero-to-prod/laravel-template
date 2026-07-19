@@ -4,6 +4,7 @@ namespace Tests\Behavior\Api;
 
 use App\Models\User;
 use App\Modules\Api\Support\ApiResponse;
+use App\Routes\ApiRoute;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class ApiLogoutTest extends TestCase
         $token = $User->createToken('test-device')->plainTextToken;
 
         $response = $this->withToken($token)
-            ->postJson(api()->logout);
+            ->postJson(ApiRoute::logout->value);
 
         $response->assertOk()
             ->assertJson([
@@ -35,7 +36,7 @@ class ApiLogoutTest extends TestCase
     #[Test]
     public function unauthenticated_user_cannot_logout(): void
     {
-        $response = $this->postJson(api()->logout);
+        $response = $this->postJson(ApiRoute::logout->value);
 
         $response->assertStatus(401);
     }
@@ -48,7 +49,7 @@ class ApiLogoutTest extends TestCase
         $token2 = $User->createToken('device-2')->plainTextToken;
 
         $this->withToken($token1)
-            ->postJson(api()->logout)
+            ->postJson(ApiRoute::logout->value)
             ->assertOk();
 
         $this->assertDatabaseMissing('personal_access_tokens', [
@@ -63,7 +64,7 @@ class ApiLogoutTest extends TestCase
 
         // Second token should still work
         $this->withToken($token2)
-            ->getJson(api()->authenticated)
+            ->getJson(ApiRoute::authenticated->value)
             ->assertOk();
     }
 
@@ -76,7 +77,7 @@ class ApiLogoutTest extends TestCase
         $token->accessToken->save();
 
         $this->withToken($token->plainTextToken)
-            ->postJson(api()->logout)
+            ->postJson(ApiRoute::logout->value)
             ->assertStatus(401);
     }
 
@@ -84,7 +85,7 @@ class ApiLogoutTest extends TestCase
     public function invalid_token_cannot_logout(): void
     {
         $this->withToken('invalid-token')
-            ->postJson(api()->logout)
+            ->postJson(ApiRoute::logout->value)
             ->assertStatus(401);
     }
 
@@ -94,7 +95,7 @@ class ApiLogoutTest extends TestCase
         $User = User::factory()->create();
         Sanctum::actingAs($User);
 
-        $this->postJson(api()->logout)
+        $this->postJson(ApiRoute::logout->value)
             ->assertOk()
             ->assertJsonStructure([
                 'success',
@@ -110,11 +111,11 @@ class ApiLogoutTest extends TestCase
         $token = $User->createToken('test-device')->plainTextToken;
 
         $this->withToken($token)
-            ->postJson(api()->logout)
+            ->postJson(ApiRoute::logout->value)
             ->assertOk();
 
         $this->withToken($token)
-            ->postJson(api()->authenticated)
+            ->postJson(ApiRoute::authenticated->value)
             ->assertStatus(405);
     }
 }

@@ -1,12 +1,13 @@
 @php
     use App\Modules\Register\RegisterForm;
+    use App\Routes\Web;
 @endphp
 
 <x-main>
     <div class="card card-compact sm:m-auto sm:mt-24 sm:max-w-sm">
         <div class="card-body">
             <h1 class="card-title">Register</h1>
-            <form class="space-y-4" method="POST" action="{{web()->register}}" class="flex flex-col">
+            <form class="space-y-4" method="POST" action="{{Web::register->value}}" class="flex flex-col">
                 @csrf
                 <label class="w-full form-control">
                     <div class="label">
@@ -54,7 +55,7 @@
             </form>
             <div class="divider">or</div>
             @guest
-                <a href="{{web()->login}}" class="link link-primary text-center p-3">Login</a>
+                <a href="{{Web::login->value}}" class="link link-primary text-center p-3">Login</a>
             @endguest
         </div>
     </div>

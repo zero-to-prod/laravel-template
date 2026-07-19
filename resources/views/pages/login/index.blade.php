@@ -1,12 +1,13 @@
 <?php
 
+use App\Routes\Web;
 use Illuminate\View\View;
 
 use function Laravel\Folio\render;
 
 render(function (View $view) {
     if (auth()->check()) {
-        return redirect(web()->home);
+        return redirect(Web::home->value);
     }
 
     return $view;
@@ -16,7 +17,7 @@ render(function (View $view) {
     <div class="card card-compact sm:m-auto sm:mt-24 sm:max-w-sm">
         <div class="card-body">
             <h1 class="card-title">Login</h1>
-            <form class="space-y-2" method="POST" action="{{web()->login}}">
+            <form class="space-y-2" method="POST" action="{{Web::login->value}}">
                 @csrf
                 <label class="w-full form-control">
                     <div class="label">
@@ -44,7 +45,7 @@ render(function (View $view) {
                 @endif
             </form>
             <div class="divider">or</div>
-            <a href="{{web()->register}}" class="link link-primary text-center p-3">Register</a>
+            <a href="{{Web::register->value}}" class="link link-primary text-center p-3">Register</a>
         </div>
     </div>
 </x-main>
