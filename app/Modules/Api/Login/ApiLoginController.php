@@ -2,7 +2,8 @@
 
 namespace App\Modules\Api\Login;
 
-use App\Models\User;
+use App\DataModels\User;
+use App\Models\User as UserModel;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Modules\Api\Support\Endpoint;
@@ -27,7 +28,7 @@ readonly class ApiLoginController
             return api_response()->unprocessableEntity($Validator);
         }
 
-        $User = User::where(User::email, $ApiLoginForm->email)->first();
+        $User = UserModel::where(User::email, $ApiLoginForm->email)->first();
 
         if (! $User || ! $User->matchesPassword($ApiLoginForm->password)) {
             return api_response()->unauthorized(ErrorCode::invalid_credentials);

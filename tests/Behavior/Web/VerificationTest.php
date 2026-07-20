@@ -2,6 +2,7 @@
 
 namespace Tests\Behavior\Web;
 
+use App\DataModels\User;
 use App\Helpers\HttpHeader;
 use App\Models\User as ModelUser;
 use App\Routes\Web;
@@ -143,7 +144,7 @@ class VerificationTest extends TestCase
         $this->post(Web::register->value, $RegisterForm->toArray())
             ->assertRedirect(Web::home->value);
 
-        $ModelUser = ModelUser::where(ModelUser::email, $RegisterForm->email)->firstOrFail();
+        $ModelUser = ModelUser::where(User::email, $RegisterForm->email)->firstOrFail();
 
         Notification::assertSentTo($ModelUser, VerifyEmail::class);
         $this->assertFalse($ModelUser->hasVerifiedEmail());

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Support\UserColumns;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -23,27 +22,26 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory;
     use HasUlids;
     use Notifiable;
-    use UserColumns;
 
     /** @var list<string> */
     protected $fillable = [
-        self::name,
-        self::email,
-        self::password,
+        \App\DataModels\User::name,
+        \App\DataModels\User::email,
+        \App\DataModels\User::password,
     ];
 
     /** @var list<string> */
     protected $hidden = [
-        self::password,
-        self::remember_token,
+        \App\DataModels\User::password,
+        \App\DataModels\User::remember_token,
     ];
 
     /** @return array<string, string> */
     protected function casts(): array
     {
         return [
-            self::email_verified_at => 'datetime',
-            self::password => 'hashed',
+            \App\DataModels\User::email_verified_at => 'datetime',
+            \App\DataModels\User::password => 'hashed',
         ];
     }
 

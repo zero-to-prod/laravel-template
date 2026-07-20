@@ -2,7 +2,7 @@
 
 namespace Tests\Behavior\Web;
 
-use App\Models\User;
+use App\DataModels\User;
 use App\Modules\Register\RegisterConfig;
 use App\Routes\Web;
 use Illuminate\Support\Facades\RateLimiter;
@@ -27,7 +27,7 @@ class RegisterRateLimitTest extends TestCase
             ->assertSessionHasErrors(User::email);
 
         $this->assertGuest();
-        $this->assertDatabaseMissing((new User)->getTable(), [
+        $this->assertDatabaseMissing((new \App\Models\User)->getTable(), [
             User::email => $RegisterForm->email,
         ]);
     }

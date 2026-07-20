@@ -2,7 +2,8 @@
 
 namespace Tests\Behavior\Web;
 
-use App\Models\User;
+use App\DataModels\User;
+use \App\Models\User as ModelUser;
 use App\Modules\Login\LoginForm;
 use App\Modules\Login\LoginFormFactory;
 use App\Routes\Web;
@@ -20,7 +21,7 @@ class LoginTest extends TestCase
     #[Test]
     public function login_with_valid_credentials(): void
     {
-        $User = User::factory([User::password => User::password])->create();
+        $User = ModelUser::factory([User::password => User::password])->create();
         $LoginForm = LoginFormFactory::factory()
             ->set(LoginForm::email, $User->email)
             ->set(LoginForm::password, User::password)
@@ -59,7 +60,7 @@ class LoginTest extends TestCase
     #[Test]
     public function login_fails_with_invalid_credentials(): void
     {
-        $user = User::factory()->create();
+        $user = ModelUser::factory()->create();
         $LoginForm = LoginFormFactory::factory()
             ->set(LoginForm::email, $user->email)
             ->set(LoginForm::password, 'wrong-password')
@@ -91,7 +92,7 @@ class LoginTest extends TestCase
     #[Test]
     public function user_can_login_with_remember_me(): void
     {
-        $User = User::factory()->create();
+        $User = ModelUser::factory()->create();
         $LoginForm = LoginFormFactory::factory()
             ->set(LoginForm::email, $User->email)
             ->set(LoginForm::remember_token, true)
@@ -110,7 +111,7 @@ class LoginTest extends TestCase
     #[Test]
     public function user_stays_logged_in_with_remember_me(): void
     {
-        $User = User::factory()->create();
+        $User = ModelUser::factory()->create();
         $LoginForm = LoginFormFactory::factory()
             ->set(LoginForm::email, $User->email)
             ->set(LoginForm::remember_token, true)
@@ -147,7 +148,7 @@ class LoginTest extends TestCase
     #[Test]
     public function intended_url_is_preserved_after_login(): void
     {
-        $user = User::factory()->create();
+        $user = ModelUser::factory()->create();
         $LoginForm = LoginFormFactory::factory()
             ->set(LoginForm::email, $user->email)
             ->make();
@@ -165,7 +166,7 @@ class LoginTest extends TestCase
     #[Test]
     public function input_is_sanitized_during_login(): void
     {
-        User::factory()->create([
+        ModelUser::factory()->create([
             User::email => 'test@example.com',
         ]);
 
@@ -196,7 +197,7 @@ class LoginTest extends TestCase
     #[Test]
     public function user_cannot_login_when_already_authenticated(): void
     {
-        $user = User::factory()->create();
+        $user = ModelUser::factory()->create();
         $this->actingAs($user);
 
         $LoginForm = LoginFormFactory::factory()
