@@ -2,8 +2,8 @@
 
 namespace App\Modules\Register;
 
-use App\DataModels\Fields\GenericString;
 use App\DataModels\User;
+use App\Helpers\FieldViewDefaults;
 use App\Helpers\Rule;
 use App\Models\User as ModelUser;
 use App\Routes\Web;
@@ -35,15 +35,15 @@ readonly class RegisterController
         );
 
         if ($tooManyAttempts) {
-            return back()->withErrors([
-                User::email => $RegisterConfig->tooManyAttemptsMessage(),
-            ]);
+            return back()->withErrors(
+                [User::email => $RegisterConfig->tooManyAttemptsMessage()],
+                FieldViewDefaults::bag(User::class)
+            );
         }
 
         RateLimiter::hit($key);
 
         $rules = $User->rules();
-        $rules[User::name] = [Rule::required->value, Rule::string->value, Rule::max(GenericString::length)];
         $rules[User::email] = [...$rules[User::email], Rule::unique('users')];
         $rules[User::password] = [Rule::required->value, Rule::confirmed->value, Password::defaults()];
 
@@ -51,7 +51,7 @@ readonly class RegisterController
 
         if ($Validator->fails()) {
             return back()
-                ->withErrors($Validator)
+                ->withErrors($Validator, FieldViewDefaults::bag(User::class))
                 ->withInput($User->toArray());
         }
 

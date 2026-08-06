@@ -18,12 +18,15 @@
     $bag ??= FieldViewDefaults::bag($model);
     $type ??= $model ? $model::type($name) : 'text';
     $placeholder ??= FieldViewDefaults::placeholder($model, $name);
+    $icon ??= FieldViewDefaults::icon($model, $name);
     $legend ??= FieldViewDefaults::legend($model, $name);
     $autocomplete ??= $model && $model::isSensitive($name) ? 'new-password' : null;
     $value ??= FieldViewDefaults::value($model, $name);
     $title = FieldViewDefaults::description($model, $name);
+    $required = $attributes->get('required') ?? FieldViewDefaults::required($model, $name);
+    $attributes = $attributes->except('required');
 @endphp
-<x-field :legend="$legend" :name="$error" :bag="$bag" :model="$model" :required="$attributes->get('required')">
+<x-field :legend="$legend" :name="$error" :bag="$bag" :model="$model" :required="$required">
     @isset($note)
         <x-slot:note>{{ $note }}</x-slot>
     @elseif($configured)
@@ -36,6 +39,7 @@
                    @if($placeholder) placeholder="{{ $placeholder }}" @endif
                    @if($autocomplete) autocomplete="{{ $autocomplete }}" @endif
                    @if($title) title="{{ $title }}" @endif
+                   @if($required) required @endif
                    class="grow" {{ $attributes }}/>
         </label>
     @else
@@ -43,6 +47,7 @@
                @if($placeholder) placeholder="{{ $placeholder }}" @endif
                @if($autocomplete) autocomplete="{{ $autocomplete }}" @endif
                @if($title) title="{{ $title }}" @endif
+               @if($required) required @endif
                class="input w-full @error($error, $bag) input-error @enderror" {{ $attributes }}/>
     @endif
     {{ $slot }}

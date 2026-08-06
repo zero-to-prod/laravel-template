@@ -45,6 +45,12 @@ trait HasFieldRules
     }
 
     /** @throws ReflectionException */
+    public static function icon(string $property): ?string
+    {
+        return self::resolveField($property)?->icon;
+    }
+
+    /** @throws ReflectionException */
     public static function description(string $property): ?string
     {
         $description = self::resolveField($property)?->description;
@@ -65,7 +71,13 @@ trait HasFieldRules
             return 'password';
         }
 
-        return in_array(Rule::url->value, $Field->resolvedRules(), true) ? 'url' : 'text';
+        $rules = $Field->resolvedRules();
+
+        return match (true) {
+            in_array(Rule::url->value, $rules, true) => 'url',
+            in_array(Rule::email->value, $rules, true) => 'email',
+            default => 'text',
+        };
     }
 
     /** @throws ReflectionException */

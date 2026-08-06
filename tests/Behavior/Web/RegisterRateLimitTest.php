@@ -1,6 +1,7 @@
 <?php
 
 use App\DataModels\User;
+use App\Helpers\FieldViewDefaults;
 use App\Models\User as ModelUser;
 use App\Modules\Register\RegisterConfig;
 use App\Routes\Web;
@@ -17,7 +18,7 @@ test('registration is blocked after too many attempts', function (): void {
     }
 
     $this->post(Web::register->value, $RegisterForm->toArray())
-        ->assertSessionHasErrors(User::email);
+        ->assertSessionHasErrors(User::email, errorBag: FieldViewDefaults::bag(User::class));
 
     $this->assertGuest();
     $this->assertDatabaseMissing((new ModelUser)->getTable(), [

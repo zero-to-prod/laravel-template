@@ -21,6 +21,9 @@ readonly class LoginForm implements DescribesFields
         Field::field => [
             Field::description => 'User email address',
             Field::rules => 'required|string|email|max:255',
+            Field::legend => 'Email',
+            Field::placeholder => 'Email',
+            Field::icon => 'email',
         ],
     ])]
     public string $email;
@@ -32,6 +35,10 @@ readonly class LoginForm implements DescribesFields
         Field::field => [
             Field::description => 'User password',
             Field::rules => 'required|string|max:255',
+            Field::sensitive => true,
+            Field::legend => 'Password',
+            Field::placeholder => 'Password',
+            Field::icon => 'key',
         ],
     ])]
     public string $password;

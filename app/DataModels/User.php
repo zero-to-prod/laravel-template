@@ -3,6 +3,7 @@
 namespace App\DataModels;
 
 use App\DataModels\Fields\GenericEmail;
+use App\DataModels\Fields\GenericString;
 use App\Helpers\DataModel;
 use App\Helpers\DataModelCast;
 use App\Helpers\DescribesFields;
@@ -22,6 +23,10 @@ readonly class User implements DescribesFields
         Describe::cast => [DataModelCast::class, 'sanitize'],
         Field::field => [
             Field::description => "The user's full display name",
+            Field::rules => [GenericString::class, 'rules'],
+            Field::legend => 'Full Name',
+            Field::placeholder => 'First and Last Name',
+            Field::icon => 'user',
         ],
     ])]
     public string $name;
@@ -37,6 +42,10 @@ readonly class User implements DescribesFields
         Field::field => [
             Field::description => 'User password',
             Field::rules => [self::class, 'passwordRules'],
+            Field::sensitive => true,
+            Field::legend => 'Password',
+            Field::placeholder => 'Password',
+            Field::icon => 'key',
         ],
     ])]
     public string $password;
@@ -47,6 +56,10 @@ readonly class User implements DescribesFields
         Describe::nullable => true,
         Field::field => [
             Field::description => 'Confirmation of the password field; must match it',
+            Field::sensitive => true,
+            Field::legend => 'Password Confirmation',
+            Field::placeholder => 'Password Confirmation',
+            Field::icon => 'key',
         ],
     ])]
     public ?string $password_confirmation;

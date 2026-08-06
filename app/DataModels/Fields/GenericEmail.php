@@ -16,6 +16,9 @@ class GenericEmail
         Field::field => [
             Field::description => self::comment,
             Field::rules => [self::class, 'rules'],
+            Field::legend => 'Email',
+            Field::placeholder => 'Email',
+            Field::icon => 'email',
         ],
     ];
 

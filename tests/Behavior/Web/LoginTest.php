@@ -1,6 +1,7 @@
 <?php
 
 use App\DataModels\User;
+use App\Helpers\FieldViewDefaults;
 use App\Models\User as ModelUser;
 use App\Modules\Login\LoginForm;
 use App\Modules\Login\LoginFormFactory;
@@ -29,7 +30,7 @@ test('validation fails with invalid email', function (): void {
     $this->post(
         Web::login->value,
         LoginFormFactory::factory()->set([LoginForm::email => ''])->context()
-    )->assertSessionHasErrors(LoginForm::email);
+    )->assertSessionHasErrors(LoginForm::email, errorBag: FieldViewDefaults::bag(LoginForm::class));
 
     $this->assertGuest();
 });
@@ -38,7 +39,7 @@ test('validation fails with invalid password', function (): void {
     $this->post(
         Web::login->value,
         LoginFormFactory::factory()->set([LoginForm::password => ''])->context()
-    )->assertSessionHasErrors(LoginForm::password);
+    )->assertSessionHasErrors(LoginForm::password, errorBag: FieldViewDefaults::bag(LoginForm::class));
 
     $this->assertGuest();
 });
@@ -108,6 +109,34 @@ test('user stays logged in with remember me', function (): void {
     $this->assertAuthenticatedAs($User);
 });
 
+test('validation errors are displayed on the form', function (): void {
+    $this->from(Web::login->value)
+        ->followingRedirects()
+        ->post(
+            Web::login->value,
+            LoginFormFactory::factory()->set([LoginForm::email => ''])->context()
+        )
+        ->assertOk()
+        ->assertSee('The email field is required.');
+});
+
+test('failed authentication is displayed on the form', function (): void {
+    $User = ModelUser::factory()->createOne();
+
+    $this->from(Web::login->value)
+        ->followingRedirects()
+        ->post(
+            Web::login->value,
+            LoginFormFactory::factory()
+                ->set([LoginForm::email => $User->email])
+                ->set([LoginForm::password => 'wrong-password'])
+                ->make()
+                ->toArray()
+        )
+        ->assertOk()
+        ->assertSee('These credentials do not match our records.');
+});
+
 test('old input is preserved on validation failure', function (): void {
     $LoginForm = LoginFormFactory::factory()->make();
 
@@ -159,7 +188,7 @@ test('validation fails with missing required fields', function (): void {
         ->assertSessionHasErrors([
             LoginForm::email,
             LoginForm::password,
-        ]);
+        ], errorBag: FieldViewDefaults::bag(LoginForm::class));
 
     $this->assertGuest();
 });

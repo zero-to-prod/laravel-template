@@ -2,7 +2,7 @@
 @php
     use App\Helpers\FieldViewDefaults;
     $bag ??= FieldViewDefaults::bag($model);
-    $required ??= $model && $name ? $model::isRequired($name) : false;
+    $required ??= FieldViewDefaults::required($model, $name);
     $legend ??= FieldViewDefaults::legend($model, $name);
     $title = FieldViewDefaults::description($model, $name);
 @endphp

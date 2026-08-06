@@ -1,6 +1,7 @@
 <?php
 
 use App\DataModels\User;
+use App\Helpers\FieldViewDefaults;
 use App\Models\User as ModelUser;
 use App\Routes\Web;
 use Illuminate\Support\Facades\Hash;
@@ -29,7 +30,7 @@ test('validation fails with invalid name', function (): void {
     $this->post(
         Web::register->value,
         UserFactory::factory()->set([User::name => ''])->context()
-    )->assertSessionHasErrors(User::name);
+    )->assertSessionHasErrors(User::name, errorBag: FieldViewDefaults::bag(User::class));
 
     $this->assertGuest();
 });
@@ -38,7 +39,7 @@ test('validation fails with invalid email', function (): void {
     $this->post(
         Web::register->value,
         UserFactory::factory()->set([User::email => ''])->context()
-    )->assertSessionHasErrors(User::email);
+    )->assertSessionHasErrors(User::email, errorBag: FieldViewDefaults::bag(User::class));
 
     $this->assertGuest();
 });
@@ -50,7 +51,7 @@ test('validation fails with duplicate email', function (): void {
     $this->post(
         Web::register->value,
         $RegisterForm->toArray()
-    )->assertSessionHasErrors(User::email);
+    )->assertSessionHasErrors(User::email, errorBag: FieldViewDefaults::bag(User::class));
 
     $this->assertGuest();
 });
@@ -59,7 +60,7 @@ test('validation fails with mismatched passwords', function (): void {
     $this->post(
         Web::register->value,
         UserFactory::factory()->set([User::password_confirmation => 'mismatch'])->context()
-    )->assertSessionHasErrors(User::password);
+    )->assertSessionHasErrors(User::password, errorBag: FieldViewDefaults::bag(User::class));
 
     $this->assertGuest();
 });
@@ -80,7 +81,7 @@ test('validation fails with missing required fields', function (): void {
             User::name,
             User::email,
             User::password,
-        ]);
+        ], errorBag: FieldViewDefaults::bag(User::class));
 
     $this->assertGuest();
 });

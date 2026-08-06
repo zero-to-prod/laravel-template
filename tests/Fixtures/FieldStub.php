@@ -21,6 +21,7 @@ readonly class FieldStub implements DescribesFields
             Field::description => 'Homepage',
             Field::legend => 'Website',
             Field::placeholder => 'https://example.com',
+            Field::icon => 'link',
             Field::rules => [Rule::required, Rule::url],
             Field::messages => [Rule::required->value => 'A website is required.'],
             Field::attributes => 'website address',

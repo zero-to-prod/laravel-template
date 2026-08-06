@@ -19,6 +19,9 @@ interface DescribesFields
     public static function legend(string $property): ?string;
 
     /** @throws ReflectionException */
+    public static function icon(string $property): ?string;
+
+    /** @throws ReflectionException */
     public static function description(string $property): ?string;
 
     /** @throws ReflectionException */

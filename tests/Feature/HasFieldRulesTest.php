@@ -66,6 +66,12 @@ test('legend is read from field metadata', function (): void {
         ->and(FieldStub::legend(FieldStub::untagged))->toBeNull();
 });
 
+test('icon is read from field metadata', function (): void {
+    expect(FieldStub::icon(FieldStub::website))->toBe('link')
+        ->and(FieldStub::icon(FieldStub::blank))->toBeNull()
+        ->and(FieldStub::icon(FieldStub::untagged))->toBeNull();
+});
+
 test('description is read from field metadata and an empty description is null', function (): void {
     expect(FieldStub::description(FieldStub::website))->toBe('Homepage')
         ->and(FieldStub::description(FieldStub::blank))->toBeNull()

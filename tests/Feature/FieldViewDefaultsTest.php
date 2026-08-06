@@ -19,6 +19,11 @@ test('placeholder requires a model', function (): void {
         ->and(FieldViewDefaults::placeholder(null, FieldStub::website))->toBeNull();
 });
 
+test('icon requires a model', function (): void {
+    expect(FieldViewDefaults::icon(FieldStub::make(), FieldStub::website))->toBe('link')
+        ->and(FieldViewDefaults::icon(null, FieldStub::website))->toBeNull();
+});
+
 test('description requires both a model and a name', function (): void {
     expect(FieldViewDefaults::description(FieldStub::make(), FieldStub::website))->toBe('Homepage')
         ->and(FieldViewDefaults::description(FieldStub::make(), null))->toBeNull()

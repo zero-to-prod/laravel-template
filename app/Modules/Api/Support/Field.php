@@ -74,4 +74,9 @@ readonly class Field
 
     #[Describe([Describe::nullable => true])]
     public ?string $legend;
+
+    public const string icon = 'icon';
+
+    #[Describe([Describe::nullable => true])]
+    public ?string $icon;
 }

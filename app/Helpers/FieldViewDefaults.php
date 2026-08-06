@@ -23,6 +23,16 @@ class FieldViewDefaults
      *
      * @throws ReflectionException
      */
+    public static function required(mixed $model, ?string $name): bool
+    {
+        return $model && $name ? $model::isRequired($name) : false;
+    }
+
+    /**
+     * @param  DescribesFields|class-string<DescribesFields>|null  $model
+     *
+     * @throws ReflectionException
+     */
     public static function legend(mixed $model, ?string $name): ?string
     {
         return $model && $name ? $model::legend($name) : null;
@@ -36,6 +46,16 @@ class FieldViewDefaults
     public static function placeholder(mixed $model, string $name): ?string
     {
         return $model ? $model::placeholder($name) : null;
+    }
+
+    /**
+     * @param  DescribesFields|class-string<DescribesFields>|null  $model
+     *
+     * @throws ReflectionException
+     */
+    public static function icon(mixed $model, string $name): ?string
+    {
+        return $model ? $model::icon($name) : null;
     }
 
     /**
