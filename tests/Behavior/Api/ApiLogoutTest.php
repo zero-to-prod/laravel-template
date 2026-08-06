@@ -1,121 +1,101 @@
 <?php
 
-namespace Tests\Behavior\Api;
-
 use App\Models\User;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\ApiRoute;
 use Laravel\Sanctum\Sanctum;
-use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
-class ApiLogoutTest extends TestCase
-{
-    #[Test]
-    public function authenticated_user_can_logout(): void
-    {
-        $User = User::factory()->create();
-        $token = $User->createToken('test-device')->plainTextToken;
+test('authenticated user can logout', function (): void {
+    $User = User::factory()->create();
+    $token = $User->createToken('test-device')->plainTextToken;
 
-        $response = $this->withToken($token)
-            ->postJson(ApiRoute::logout->value);
+    $response = $this->assertMatchesSchema(
+        $this->withToken($token)->postJson(ApiRoute::logout->value)
+    );
 
-        $response->assertOk()
-            ->assertJson([
-                ApiResponse::success => true,
-                ApiResponse::message => 'Logout',
-                ApiResponse::type => 'Logout',
-            ]);
-
-        $this->assertDatabaseMissing('personal_access_tokens', [
-            'tokenable_id' => $User->id,
-            'name' => 'test-device',
-        ]);
-    }
-
-    #[Test]
-    public function unauthenticated_user_cannot_logout(): void
-    {
-        $response = $this->postJson(ApiRoute::logout->value);
-
-        $response->assertStatus(401);
-    }
-
-    #[Test]
-    public function logout_only_removes_current_token(): void
-    {
-        $User = User::factory()->create();
-        $token1 = $User->createToken('device-1')->plainTextToken;
-        $token2 = $User->createToken('device-2')->plainTextToken;
-
-        $this->withToken($token1)
-            ->postJson(ApiRoute::logout->value)
-            ->assertOk();
-
-        $this->assertDatabaseMissing('personal_access_tokens', [
-            'tokenable_id' => $User->id,
-            'name' => 'device-1',
+    $response->assertOk()
+        ->assertJson([
+            ApiResponse::success => true,
+            ApiResponse::message => 'Logout',
+            ApiResponse::type => 'Logout',
         ]);
 
-        $this->assertDatabaseHas('personal_access_tokens', [
-            'tokenable_id' => $User->id,
-            'name' => 'device-2',
+    $this->assertDatabaseMissing('personal_access_tokens', [
+        'tokenable_id' => $User->id,
+        'name' => 'test-device',
+    ]);
+});
+
+test('unauthenticated user cannot logout', function (): void {
+    $response = $this->postJson(ApiRoute::logout->value);
+
+    $response->assertStatus(401);
+});
+
+test('logout only removes current token', function (): void {
+    $User = User::factory()->create();
+    $token1 = $User->createToken('device-1')->plainTextToken;
+    $token2 = $User->createToken('device-2')->plainTextToken;
+
+    $this->withToken($token1)
+        ->postJson(ApiRoute::logout->value)
+        ->assertOk();
+
+    $this->assertDatabaseMissing('personal_access_tokens', [
+        'tokenable_id' => $User->id,
+        'name' => 'device-1',
+    ]);
+
+    $this->assertDatabaseHas('personal_access_tokens', [
+        'tokenable_id' => $User->id,
+        'name' => 'device-2',
+    ]);
+
+    // Second token should still work
+    $this->withToken($token2)
+        ->getJson(ApiRoute::authenticated->value)
+        ->assertOk();
+});
+
+test('expired token cannot logout', function (): void {
+    $User = User::factory()->create();
+    $token = $User->createToken('test-token');
+    $token->accessToken->expires_at = now()->subDay();
+    $token->accessToken->save();
+
+    $this->withToken($token->plainTextToken)
+        ->postJson(ApiRoute::logout->value)
+        ->assertStatus(401);
+});
+
+test('invalid token cannot logout', function (): void {
+    $this->assertMatchesSchema(
+        $this->withToken('invalid-token')->postJson(ApiRoute::logout->value)
+    )->assertStatus(401);
+});
+
+test('response structure is correct', function (): void {
+    $User = User::factory()->create();
+    Sanctum::actingAs($User);
+
+    $this->postJson(ApiRoute::logout->value)
+        ->assertOk()
+        ->assertJsonStructure([
+            'success',
+            'message',
+            'type',
         ]);
+});
 
-        // Second token should still work
-        $this->withToken($token2)
-            ->getJson(ApiRoute::authenticated->value)
-            ->assertOk();
-    }
+test('logged out token cannot be reused', function (): void {
+    $User = User::factory()->create();
+    $token = $User->createToken('test-device')->plainTextToken;
 
-    #[Test]
-    public function expired_token_cannot_logout(): void
-    {
-        $User = User::factory()->create();
-        $token = $User->createToken('test-token');
-        $token->accessToken->expires_at = now()->subDay();
-        $token->accessToken->save();
+    $this->withToken($token)
+        ->postJson(ApiRoute::logout->value)
+        ->assertOk();
 
-        $this->withToken($token->plainTextToken)
-            ->postJson(ApiRoute::logout->value)
-            ->assertStatus(401);
-    }
-
-    #[Test]
-    public function invalid_token_cannot_logout(): void
-    {
-        $this->withToken('invalid-token')
-            ->postJson(ApiRoute::logout->value)
-            ->assertStatus(401);
-    }
-
-    #[Test]
-    public function response_structure_is_correct(): void
-    {
-        $User = User::factory()->create();
-        Sanctum::actingAs($User);
-
-        $this->postJson(ApiRoute::logout->value)
-            ->assertOk()
-            ->assertJsonStructure([
-                'success',
-                'message',
-                'type',
-            ]);
-    }
-
-    #[Test]
-    public function logged_out_token_cannot_be_reused(): void
-    {
-        $User = User::factory()->create();
-        $token = $User->createToken('test-device')->plainTextToken;
-
-        $this->withToken($token)
-            ->postJson(ApiRoute::logout->value)
-            ->assertOk();
-
-        $this->withToken($token)
-            ->postJson(ApiRoute::authenticated->value)
-            ->assertStatus(405);
-    }
-}
+    $this->withToken($token)
+        ->postJson(ApiRoute::authenticated->value)
+        ->assertStatus(405);
+});

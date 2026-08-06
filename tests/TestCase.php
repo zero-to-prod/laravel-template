@@ -5,10 +5,12 @@ namespace Tests;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
+use ZeroToProd\LaravelOpenapi\ValidatesSchema;
 
 abstract class TestCase extends BaseTestCase
 {
     use DatabaseTransactions;
+    use ValidatesSchema;
 
     private static bool $migrated = false;
 

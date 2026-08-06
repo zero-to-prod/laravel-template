@@ -8,9 +8,9 @@ use Illuminate\Http\RedirectResponse;
 
 readonly class VerifyEmailController
 {
-    public function __invoke(EmailVerificationRequest $Request): RedirectResponse
+    public function __invoke(EmailVerificationRequest $EmailVerificationRequest): RedirectResponse
     {
-        $Request->fulfill();
+        $EmailVerificationRequest->fulfill();
 
         return redirect(Web::home->value);
     }

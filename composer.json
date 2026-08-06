@@ -3,25 +3,35 @@
   "require": {
     "php": "^8.4",
     "laravel/folio": "^1.1",
-    "laravel/framework": "^12.0",
+    "laravel/framework": "^13.17",
     "laravel/sanctum": "^4.0",
-    "laravel/tinker": "^2.10.1",
+    "laravel/tinker": "^3.0",
     "zero-to-prod/data-model": "^81.10",
     "zero-to-prod/data-model-factory": "^71.5",
     "zero-to-prod/data-model-helper": "^82.1",
     "zero-to-prod/factory": "^0.1.1",
+    "zero-to-prod/laravel-openapi": "^2.2",
     "zero-to-prod/package-helper": "^1.1.3"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^3.5",
+    "devizzent/cebe-php-openapi": "^1.1",
     "fakerphp/faker": "^1.23",
+    "laravel/mcp": "^0.9.1",
     "laravel/pail": "^1.2.2",
     "laravel/pint": "^1.13",
     "laravel/sail": "^1.41",
+    "league/openapi-psr7-validator": "^0.24.0",
     "mockery/mockery": "^1.6",
     "nunomaduro/collision": "^8.6",
-    "phpunit/phpunit": "^11.5.3",
-    "roave/security-advisories": "dev-latest"
+    "nyholm/psr7": "^1.8",
+    "pestphp/pest": "^5.0",
+    "pestphp/pest-plugin-rector": "^5.0",
+    "phpstan/phpstan": "^2.2",
+    "phpunit/phpunit": "^13.2.6",
+    "rector/rector": "^2.5",
+    "roave/security-advisories": "dev-latest",
+    "symfony/psr-http-message-bridge": "^8.1"
   },
   "autoload": {
     "psr-4": {
@@ -63,6 +73,31 @@
     "dev": [
       "Composer\\Config::disableProcessTimeout",
       "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+    ],
+    "test-fresh": "pest --tia --fresh",
+    "test": "pest --tia",
+    "coverage": [
+      "@php artisan openapi:coverage --reset",
+      "pest --tia --fresh --coverage --min=100",
+      "@php artisan openapi:coverage"
+    ],
+    "analyse": "phpstan analyse",
+    "format": "pint",
+    "lint": "pint --test",
+    "rector": "rector process",
+    "rector-lint": "rector process --dry-run",
+    "openapi-validate": "@php artisan openapi:validate",
+    "openapi-coverage": "@php artisan openapi:coverage",
+    "check": [
+      "@lint",
+      "@rector-lint",
+      "@analyse",
+      "@openapi-validate",
+      "@coverage"
+    ],
+    "fix": [
+      "@rector",
+      "@format"
     ]
   },
   "extra": {

@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 
 trait RendersRoute
 {
-    public function isActive(Request $request, array $route = []): bool
+    public function isActive(Request $Request, array $route = []): bool
     {
-        return $request->is(ltrim(self::render($this->value, $route), '/').'*');
+        return $Request->is(ltrim(self::render($this->value, $route), '/').'*');
     }
 
-    public function isExact(Request $request, array $route = []): bool
+    public function isExact(Request $Request, array $route = []): bool
     {
-        return $request->path() === ltrim(self::render($this->value, $route), '/');
+        return $Request->path() === ltrim(self::render($this->value, $route), '/');
     }
 
     private static function render(

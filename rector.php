@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Rector\AddTypeToConstOnReadonlyClassRector;
 use App\Rector\RenameParamToMatchTypeExactCaseRector;
+use Pest\Rector\Set\PestSetList;
 use Rector\Config\RectorConfig;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromIterableMethodCallRector;
@@ -18,4 +19,6 @@ return RectorConfig::configure()
         RenameParamToMatchTypeExactCaseRector::class,
         AddClosureParamTypeFromIterableMethodCallRector::class,
         AddTypeToConstOnReadonlyClassRector::class,
+    ])->withSets([
+        PestSetList::CODING_STYLE,
     ]);

@@ -3,17 +3,12 @@
 namespace App\Modules\Api\Authenticated;
 
 use App\Modules\Api\Models\Authorized;
-use App\Modules\Api\Support\Endpoint;
-use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
+use ZeroToProd\LaravelOpenapi\ApiSchema;
 
-#[Endpoint(
-    description: 'Check if the current token is valid.',
-    errors: [ErrorCode::unauthorized],
-    response_schema: Authorized::class,
-)]
 readonly class AuthenticatedController
 {
+    #[ApiSchema(AuthenticatedSchema::schema)]
     public function __invoke(): JsonResponse
     {
         if (! auth('sanctum')->check()) {

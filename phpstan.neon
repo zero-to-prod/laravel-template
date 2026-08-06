@@ -1,0 +1,8 @@
+includes:
+    - vendor/pestphp/pest/extension.neon
+
+parameters:
+    level: 9
+    paths:
+        - app
+        - tests

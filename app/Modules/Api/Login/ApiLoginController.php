@@ -6,19 +6,14 @@ use App\DataModels\User;
 use App\Models\User as UserModel;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Api\Requests\ApiLoginRequest;
-use App\Modules\Api\Support\Endpoint;
 use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use ZeroToProd\LaravelOpenapi\ApiSchema;
 
-#[Endpoint(
-    description: 'Authenticate and receive an API token.',
-    errors: [ErrorCode::invalid_credentials],
-    request_schema: ApiLoginRequest::class,
-    response_schema: ApiToken::class,
-)]
 readonly class ApiLoginController
 {
+    #[ApiSchema(ApiLoginSchema::schema)]
     public function __invoke(): JsonResponse
     {
         $ApiLoginForm = ApiLoginRequest::from(request()->all());
