@@ -2,12 +2,14 @@
 
 namespace App\Modules\Register;
 
+use ReflectionException;
 use Zerotoprod\Factory\Factory;
 
 class RegisterFormFactory
 {
     use Factory;
 
+    /** @return array<string, mixed> */
     public function definition(): array
     {
         return [
@@ -18,6 +20,7 @@ class RegisterFormFactory
         ];
     }
 
+    /** @throws ReflectionException */
     public function make(): RegisterForm
     {
         return RegisterForm::from($this->context());

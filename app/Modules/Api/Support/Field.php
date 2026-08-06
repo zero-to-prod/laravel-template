@@ -18,25 +18,35 @@ readonly class Field
 
     public const string rules = 'rules';
 
+    /** @var string|array<array-key, mixed> */
     #[Describe([Describe::default => ''])]
     public string|array $rules;
 
-    public function resolvedRules(): string|array
+    /** @return list<string> */
+    public function resolvedRules(): array
     {
         $rules = is_callable($this->rules) ? ($this->rules)() : $this->rules;
 
-        if (! is_array($rules)) {
-            return $rules;
+        if (is_string($rules)) {
+            return $rules === '' ? [] : explode('|', $rules);
         }
 
-        return array_map(
-            static fn ($rule) => $rule instanceof BackedEnum ? $rule->value : $rule,
-            $rules
-        );
+        $resolved = [];
+
+        foreach (is_array($rules) ? $rules : [] as $rule) {
+            if ($rule instanceof BackedEnum) {
+                $resolved[] = (string) $rule->value;
+            } elseif (is_string($rule)) {
+                $resolved[] = $rule;
+            }
+        }
+
+        return $resolved;
     }
 
     public const string messages = 'messages';
 
+    /** @var array<string, string> */
     #[Describe([Describe::default => []])]
     public array $messages;
 

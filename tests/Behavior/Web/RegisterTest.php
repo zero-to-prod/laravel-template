@@ -28,7 +28,7 @@ test('registration', function (): void {
 test('validation fails with invalid name', function (): void {
     $this->post(
         Web::register->value,
-        UserFactory::factory()->set(User::name, '')->context()
+        UserFactory::factory()->set([User::name => ''])->context()
     )->assertSessionHasErrors(User::name);
 
     $this->assertGuest();
@@ -37,7 +37,7 @@ test('validation fails with invalid name', function (): void {
 test('validation fails with invalid email', function (): void {
     $this->post(
         Web::register->value,
-        UserFactory::factory()->set(User::email, '')->context()
+        UserFactory::factory()->set([User::email => ''])->context()
     )->assertSessionHasErrors(User::email);
 
     $this->assertGuest();
@@ -45,7 +45,7 @@ test('validation fails with invalid email', function (): void {
 
 test('validation fails with duplicate email', function (): void {
     $RegisterForm = UserFactory::factory()->make();
-    ModelUser::factory()->create([User::email => $RegisterForm->email]);
+    ModelUser::factory()->createOne([User::email => $RegisterForm->email]);
 
     $this->post(
         Web::register->value,
@@ -58,7 +58,7 @@ test('validation fails with duplicate email', function (): void {
 test('validation fails with mismatched passwords', function (): void {
     $this->post(
         Web::register->value,
-        UserFactory::factory()->set(User::password_confirmation, 'mismatch')->context()
+        UserFactory::factory()->set([User::password_confirmation => 'mismatch'])->context()
     )->assertSessionHasErrors(User::password);
 
     $this->assertGuest();
@@ -69,7 +69,7 @@ test('password is hashed after registration', function (): void {
 
     $this->post(Web::register->value, $RegisterForm->toArray());
 
-    $user = ModelUser::where(User::email, $RegisterForm->email)->first();
+    $user = ModelUser::query()->where(User::email, $RegisterForm->email)->firstOrFail();
     expect($user->password)->not->toBe($RegisterForm->password)
         ->and(Hash::check($RegisterForm->password, $user->password))->toBeTrue();
 });
@@ -90,7 +90,7 @@ test('validation errors are displayed on the form', function (): void {
         ->followingRedirects()
         ->post(
             Web::register->value,
-            UserFactory::factory()->set(User::name, '')->context()
+            UserFactory::factory()->set([User::name => ''])->context()
         )
         ->assertOk()
         ->assertSee('The name field is required.');
@@ -98,7 +98,7 @@ test('validation errors are displayed on the form', function (): void {
 
 test('old input is preserved on validation failure', function (): void {
     $RegisterForm = UserFactory::factory()
-        ->set(User::email, 'invalid-email')
+        ->set([User::email => 'invalid-email'])
         ->make();
 
     $this->post(Web::register->value, $RegisterForm->toArray())

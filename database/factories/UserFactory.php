@@ -3,15 +3,17 @@
 namespace Database\Factories;
 
 use App\DataModels\User;
+use App\Models\User as ModelUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/** @extends Factory<User> */
+/** @extends Factory<ModelUser> */
 class UserFactory extends Factory
 {
     protected static ?string $password;
 
+    /** @return array<string, mixed> */
     public function definition(): array
     {
         return [

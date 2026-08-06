@@ -11,9 +11,12 @@ trait DataModel
     use DataModelHelper;
     use \Zerotoprod\DataModel\DataModel;
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
-        return json_decode($this->toJson(), true);
+        $array = json_decode($this->toJson(), true);
+
+        return is_array($array) ? $array : [];
     }
 
     public function toJson(): string
@@ -21,28 +24,25 @@ trait DataModel
         return $this->collect()->toJson();
     }
 
-    public function dd(): void
-    {
-        dd($this);
-    }
-
+    /** @return Collection<string, mixed> */
     public function collect(): Collection
     {
-        return collect($this);
+        return collect(get_object_vars($this));
     }
 
-    public function dispatch()
+    /** @return array<int, mixed>|null */
+    public function dispatch(): ?array
     {
         return event($this);
     }
 
-    public static function sanitize($value): string
+    public static function sanitize(?string $value): string
     {
-        return Str::squish($value);
+        return Str::squish((string) $value);
     }
 
-    public static function sanitizeEmail($value): string
+    public static function sanitizeEmail(?string $value): string
     {
-        return Str::squish(strtolower($value));
+        return Str::squish(strtolower((string) $value));
     }
 }

@@ -17,7 +17,7 @@ test('guests are redirected to login when visiting the notice', function (): voi
 });
 
 test('an unverified user can view the notice', function (): void {
-    $ModelUser = ModelUser::factory()->unverified()->create();
+    $ModelUser = ModelUser::factory()->unverified()->createOne();
 
     $this->actingAs($ModelUser)
         ->get(Web::verificationNotice->value)
@@ -25,16 +25,33 @@ test('an unverified user can view the notice', function (): void {
 });
 
 test('a verified user visiting the notice is redirected home', function (): void {
-    $ModelUser = ModelUser::factory()->create();
+    $ModelUser = ModelUser::factory()->createOne();
 
     $this->actingAs($ModelUser)
         ->get(Web::verificationNotice->value)
         ->assertRedirect(Web::home->value);
 });
 
+test('a verified user reaches a protected route in production', function (): void {
+    config(['app.env' => 'production']);
+    $ModelUser = ModelUser::factory()->createOne();
+
+    $this->actingAs($ModelUser)
+        ->get(Web::dashboard->value)
+        ->assertNoContent();
+});
+
+test('an unverified user reaches a protected route outside production', function (): void {
+    $ModelUser = ModelUser::factory()->unverified()->createOne();
+
+    $this->actingAs($ModelUser)
+        ->get(Web::dashboard->value)
+        ->assertNoContent();
+});
+
 test('an unverified user is redirected to the notice from a protected route in production', function (): void {
     config(['app.env' => 'production']);
-    $ModelUser = ModelUser::factory()->unverified()->create();
+    $ModelUser = ModelUser::factory()->unverified()->createOne();
 
     $this->actingAs($ModelUser)
         ->get(Web::dashboard->value)
@@ -43,7 +60,7 @@ test('an unverified user is redirected to the notice from a protected route in p
 
 test('an unverified htmx request to a protected route returns a no content response with an hx redirect header in production', function (): void {
     config(['app.env' => 'production']);
-    $ModelUser = ModelUser::factory()->unverified()->create();
+    $ModelUser = ModelUser::factory()->unverified()->createOne();
 
     $this->actingAs($ModelUser)
         ->withHeader(HttpHeader::HxRequest->value, 'true')
@@ -54,7 +71,7 @@ test('an unverified htmx request to a protected route returns a no content respo
 
 test('a valid signed link marks the user as verified', function (): void {
     Event::fake([Verified::class]);
-    $ModelUser = ModelUser::factory()->unverified()->create();
+    $ModelUser = ModelUser::factory()->unverified()->createOne();
 
     $url = URL::temporarySignedRoute('verification.verify', now()->addMinutes(60), [
         'id' => $ModelUser->getKey(),
@@ -70,7 +87,7 @@ test('a valid signed link marks the user as verified', function (): void {
 });
 
 test('an invalid hash is rejected and leaves the user unverified', function (): void {
-    $ModelUser = ModelUser::factory()->unverified()->create();
+    $ModelUser = ModelUser::factory()->unverified()->createOne();
 
     $url = URL::temporarySignedRoute('verification.verify', now()->addMinutes(60), [
         'id' => $ModelUser->getKey(),
@@ -85,7 +102,7 @@ test('an invalid hash is rejected and leaves the user unverified', function (): 
 });
 
 test('an unsigned link is rejected', function (): void {
-    $ModelUser = ModelUser::factory()->unverified()->create();
+    $ModelUser = ModelUser::factory()->unverified()->createOne();
 
     $url = route('verification.verify', [
         'id' => $ModelUser->getKey(),
@@ -101,7 +118,7 @@ test('an unsigned link is rejected', function (): void {
 
 test('resending the notification dispatches a new verification email', function (): void {
     Notification::fake();
-    $ModelUser = ModelUser::factory()->unverified()->create();
+    $ModelUser = ModelUser::factory()->unverified()->createOne();
 
     $this->actingAs($ModelUser)
         ->post(Web::verificationSend->value)
@@ -118,7 +135,7 @@ test('registering sends an email verification notification', function (): void {
     $this->post(Web::register->value, $RegisterForm->toArray())
         ->assertRedirect(Web::home->value);
 
-    $ModelUser = ModelUser::where(User::email, $RegisterForm->email)->firstOrFail();
+    $ModelUser = ModelUser::query()->where(User::email, $RegisterForm->email)->firstOrFail();
 
     Notification::assertSentTo($ModelUser, VerifyEmail::class);
     expect($ModelUser->hasVerifiedEmail())->toBeFalse();

@@ -4,11 +4,12 @@ namespace App\Modules\Api\Requests;
 
 use App\DataModels\Fields\GenericEmail;
 use App\Helpers\DataModel;
+use App\Helpers\DescribesFields;
 use App\Helpers\HasFieldRules;
 use App\Modules\Api\Support\Field;
 use Zerotoprod\DataModel\Describe;
 
-readonly class ApiLoginRequest
+readonly class ApiLoginRequest implements DescribesFields
 {
     use DataModel;
     use HasFieldRules;

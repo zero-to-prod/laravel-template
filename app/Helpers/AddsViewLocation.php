@@ -3,21 +3,20 @@
 namespace App\Helpers;
 
 use App\Exceptions\ViewNotFound;
+use Illuminate\Support\Facades\View;
 use ReflectionClass;
-use ReflectionException;
 use RuntimeException;
-use View;
 
 trait AddsViewLocation
 {
     /** @throws ViewNotFound */
     public function localView(?string $view_name = null, string $classname = self::class): string
     {
-        try {
-            $namespace_to_path = lcfirst(str_replace('\\', DIRECTORY_SEPARATOR, new ReflectionClass($classname)->getNamespaceName()));
-        } catch (ReflectionException $reflectionException) {
-            throw new RuntimeException($reflectionException->getMessage(), 0, $reflectionException);
+        if (! class_exists($classname)) {
+            throw new RuntimeException("Class \"$classname\" does not exist.");
         }
+
+        $namespace_to_path = lcfirst(str_replace('\\', DIRECTORY_SEPARATOR, new ReflectionClass($classname)->getNamespaceName()));
         $path = base_path($namespace_to_path);
         View::addLocation($path);
         $view_names = self::getViewNames($path);
@@ -37,17 +36,13 @@ trait AddsViewLocation
         return $view_name;
     }
 
-    /** @return string[] */
+    /** @return list<string> */
     public static function getViewNames(string $path): array
     {
         return self::getViewNamesRecursive($path, '');
     }
 
-    /**
-     * Recursively scan directories for view files and return them in dot notation
-     *
-     * @return string[]
-     */
+    /** @return list<string> */
     private static function getViewNamesRecursive(string $path, string $prefix): array
     {
         $result = [];
@@ -56,19 +51,14 @@ trait AddsViewLocation
         return $result;
     }
 
-    /** Recursively collect view names into the result array (avoids array_merge overhead) */
+    /** @param  list<string>  $result */
     private static function collectViewNames(string $path, string $prefix, array &$result): void
     {
         if (! is_dir($path)) {
             return;
         }
 
-        $items = scandir($path);
-        if ($items === false) {
-            return;
-        }
-
-        foreach ($items as $item) {
+        foreach (scandir($path) ?: [] as $item) {
             if ($item === '.' || $item === '..') {
                 continue;
             }

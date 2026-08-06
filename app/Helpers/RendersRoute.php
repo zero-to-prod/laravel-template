@@ -6,30 +6,25 @@ use Illuminate\Http\Request;
 
 trait RendersRoute
 {
+    /** @param  array<string, string|int>  $route */
     public function isActive(Request $Request, array $route = []): bool
     {
         return $Request->is(ltrim(self::render($this->value, $route), '/').'*');
     }
 
+    /** @param  array<string, string|int>  $route */
     public function isExact(Request $Request, array $route = []): bool
     {
         return $Request->path() === ltrim(self::render($this->value, $route), '/');
     }
 
-    private static function render(
-        string $url,
-        array $route = [],
-        array|object $query = [],
-        string $numeric_prefix = '',
-        ?string $arg_separator = null,
-        int $encoding_type = 1
-    ): string {
+    /** @param  array<string, string|int>  $route */
+    private static function render(string $url, array $route = []): string
+    {
         foreach ($route as $search => $replace) {
-            $url = str_replace("{{$search}}", $replace, $url);
+            $url = str_replace("{{$search}}", (string) $replace, $url);
         }
 
-        return $query
-            ? $url.'?'.http_build_query($query, $numeric_prefix, $arg_separator, $encoding_type)
-            : $url;
+        return $url;
     }
 }

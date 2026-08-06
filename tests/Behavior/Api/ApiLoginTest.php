@@ -6,7 +6,7 @@ use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Routes\ApiRoute;
 
 test('login with valid credentials', function (): void {
-    $User = ModelUser::factory([User::password => User::password])->create();
+    $User = ModelUser::factory([User::password => User::password])->createOne();
     $payload = ApiLoginRequest::from([
         ApiLoginRequest::email => $User->email,
         ApiLoginRequest::password => User::password,
@@ -47,7 +47,7 @@ test('validation fails with invalid password', function (): void {
 });
 
 test('validation fails with missing device name', function (): void {
-    $User = ModelUser::factory()->create();
+    $User = ModelUser::factory()->createOne();
     $payload = [
         ApiLoginRequest::email => $User->email,
         ApiLoginRequest::password => 'password',
@@ -59,7 +59,7 @@ test('validation fails with missing device name', function (): void {
 });
 
 test('login fails with invalid credentials', function (): void {
-    $User = ModelUser::factory()->create();
+    $User = ModelUser::factory()->createOne();
     $payload = [
         ApiLoginRequest::email => $User->email,
         ApiLoginRequest::password => 'wrong-password',
@@ -100,7 +100,7 @@ test('validation fails with missing required fields', function (): void {
 });
 
 test('input is sanitized during login', function (): void {
-    ModelUser::factory()->create([
+    ModelUser::factory()->createOne([
         User::email => 'test@example.com',
     ]);
 
@@ -116,7 +116,7 @@ test('input is sanitized during login', function (): void {
 });
 
 test('token is created with correct device name', function (): void {
-    $User = ModelUser::factory([User::password => User::password])->create();
+    $User = ModelUser::factory([User::password => User::password])->createOne();
     $deviceName = 'test-device-name';
 
     $payload = [

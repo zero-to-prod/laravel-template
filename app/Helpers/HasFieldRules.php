@@ -10,70 +10,41 @@ use Zerotoprod\DataModel\Describe;
 
 trait HasFieldRules
 {
+    /**
+     * @return array{array<string, mixed>, array<string, list<string>>, array<string, string>, array<string, string>}
+     *
+     * @throws ReflectionException
+     */
     public function validator(): array
     {
         return [$this->toArray(), $this->rules(), $this->messages(), $this->attributes()];
     }
 
-    /**
-     * Whether the given property carries a `required` validation rule, so views can
-     * derive HTML `required`/optionality markers from the DataModel instead of hardcoding them.
-     *
-     * @throws ReflectionException
-     */
+    /** @throws ReflectionException */
     public static function isRequired(string $property): bool
     {
-        $Field = self::resolveField($property);
-
-        if ($Field === null) {
-            return false;
-        }
-
-        $rules = $Field->resolvedRules();
-        $rules = is_array($rules) ? $rules : explode('|', (string) $rules);
-
-        return in_array(Rule::required->value, $rules, true);
+        return in_array(Rule::required->value, self::resolveField($property)?->resolvedRules() ?? [], true);
     }
 
-    /**
-     * Whether the given property holds a secret (token, password, client secret, etc.) that a view
-     * must never echo back and should render as a masked input.
-     *
-     * @throws ReflectionException
-     */
+    /** @throws ReflectionException */
     public static function isSensitive(string $property): bool
     {
-        return self::resolveField($property)?->sensitive ?? false;
+        return self::resolveField($property)->sensitive ?? false;
     }
 
-    /**
-     * The placeholder text a view should render for this property, so views can derive it from
-     * the DataModel instead of hardcoding it.
-     *
-     * @throws ReflectionException
-     */
+    /** @throws ReflectionException */
     public static function placeholder(string $property): ?string
     {
         return self::resolveField($property)?->placeholder;
     }
 
-    /**
-     * The field label a view should render for this property, so views can derive it from
-     * the DataModel instead of hardcoding it.
-     *
-     * @throws ReflectionException
-     */
+    /** @throws ReflectionException */
     public static function legend(string $property): ?string
     {
         return self::resolveField($property)?->legend;
     }
 
-    /**
-     * The field description a view should render as an input's `title` attribute, so views can
-     * derive it from the DataModel instead of hardcoding it.
-     *
-     * @throws ReflectionException
-     */
+    /** @throws ReflectionException */
     public static function description(string $property): ?string
     {
         $description = self::resolveField($property)?->description;
@@ -81,12 +52,7 @@ trait HasFieldRules
         return $description === '' ? null : $description;
     }
 
-    /**
-     * The HTML `type` a view should render for this property, so views can derive it from the
-     * DataModel's validation rules and sensitivity instead of hardcoding it.
-     *
-     * @throws ReflectionException
-     */
+    /** @throws ReflectionException */
     public static function type(string $property): string
     {
         $Field = self::resolveField($property);
@@ -99,16 +65,13 @@ trait HasFieldRules
             return 'password';
         }
 
-        $rules = $Field->resolvedRules();
-        $rules = is_array($rules) ? $rules : explode('|', (string) $rules);
-
-        return in_array(Rule::url->value, $rules, true) ? 'url' : 'text';
+        return in_array(Rule::url->value, $Field->resolvedRules(), true) ? 'url' : 'text';
     }
 
     /** @throws ReflectionException */
     private static function resolveField(string $property): ?Field
     {
-        foreach (new static()->fields() as $name => $Field) {
+        foreach (self::fields() as $name => $Field) {
             if ($name === $property) {
                 return $Field;
             }
@@ -117,14 +80,18 @@ trait HasFieldRules
         return null;
     }
 
-    /** @throws ReflectionException */
+    /**
+     * @return array<string, list<string>>
+     *
+     * @throws ReflectionException
+     */
     public function rules(): array
     {
         $rules = [];
 
-        foreach ($this->fields() as $name => $Field) {
+        foreach (self::fields() as $name => $Field) {
             $fieldRules = $Field->resolvedRules();
-            if ($fieldRules !== '' && $fieldRules !== []) {
+            if ($fieldRules !== []) {
                 $rules[$name] = $fieldRules;
             }
         }
@@ -133,13 +100,15 @@ trait HasFieldRules
     }
 
     /**
+     * @return array<string, string>
+     *
      * @throws ReflectionException
      */
     public function messages(): array
     {
         $messages = [];
 
-        foreach ($this->fields() as $name => $Field) {
+        foreach (self::fields() as $name => $Field) {
             foreach ($Field->messages as $rule => $message) {
                 $messages["$name.$rule"] = $message;
             }
@@ -148,11 +117,16 @@ trait HasFieldRules
         return $messages;
     }
 
+    /**
+     * @return array<string, string>
+     *
+     * @throws ReflectionException
+     */
     public function attributes(): array
     {
         $attributes = [];
 
-        foreach ($this->fields() as $name => $Field) {
+        foreach (self::fields() as $name => $Field) {
             if ($Field->attributes !== '') {
                 $attributes[$name] = $Field->attributes;
             }
@@ -166,11 +140,11 @@ trait HasFieldRules
      *
      * @throws ReflectionException
      */
-    private function fields(): iterable
+    private static function fields(): iterable
     {
-        foreach (new ReflectionClass($this)->getProperties() as $property) {
+        foreach (new ReflectionClass(static::class)->getProperties() as $property) {
             $attributes = $property->getAttributes(Describe::class, ReflectionAttribute::IS_INSTANCEOF);
-            if (empty($attributes)) {
+            if ($attributes === []) {
                 continue;
             }
 

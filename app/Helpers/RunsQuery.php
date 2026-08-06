@@ -6,13 +6,10 @@ use Illuminate\Support\Facades\Event;
 
 trait RunsQuery
 {
-    private static array $_cache = [];
-
-    public static function get(...$args)
+    public static function get(mixed ...$args): mixed
     {
         Event::dispatch(self::class);
-        $return = (new self)->handle(...$args);
 
-        return $return;
+        return new self()->handle(...$args);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Modules\Register;
 use App\DataModels\Fields\GenericString;
 use App\DataModels\User;
 use App\Helpers\Rule;
+use App\Models\User as ModelUser;
 use App\Routes\Web;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -14,9 +15,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use ReflectionException;
+use Throwable;
 
 readonly class RegisterController
 {
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
     public function __invoke(RegisterConfig $RegisterConfig): RedirectResponse
     {
         $User = User::from(request()->all());
@@ -49,7 +56,7 @@ readonly class RegisterController
         }
 
         DB::transaction(static function () use ($User) {
-            $ModelUser = \App\Models\User::create([
+            $ModelUser = ModelUser::query()->create([
                 User::name => $User->name,
                 User::email => $User->email,
                 User::password => Hash::make($User->password),

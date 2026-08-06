@@ -18,6 +18,12 @@
         <include>
             <directory>app</directory>
         </include>
+        <exclude>
+            <!-- Compiled templates: coverage is attributed to the compiled file, never to the source. -->
+            <directory suffix=".blade.php">app</directory>
+            <!-- Build-time Rector rules: executed by `rector process`, never by the application. -->
+            <directory>app/Rector</directory>
+        </exclude>
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>

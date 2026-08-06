@@ -14,5 +14,5 @@ Route::post(Web::verificationSend->value, VerificationNotificationController::cl
     ->name('verification.send');
 
 Route::middleware(MiddlewareTag::verified->value)->group(function () {
-    Route::get(Web::dashboard->value, fn () => response());
+    Route::get(Web::dashboard->value, fn () => response()->noContent());
 });

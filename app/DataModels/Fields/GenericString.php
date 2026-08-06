@@ -19,6 +19,7 @@ class GenericString
         ],
     ];
 
+    /** @return list<Rule|string> */
     public static function rules(): array
     {
         return [

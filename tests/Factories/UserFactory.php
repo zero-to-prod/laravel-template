@@ -3,12 +3,14 @@
 namespace Tests\Factories;
 
 use App\DataModels\User;
+use ReflectionException;
 use Zerotoprod\Factory\Factory;
 
 class UserFactory
 {
     use Factory;
 
+    /** @return array<string, mixed> */
     public function definition(): array
     {
         return [
@@ -20,6 +22,7 @@ class UserFactory
         ];
     }
 
+    /** @throws ReflectionException */
     public function make(): User
     {
         return User::from($this->context());

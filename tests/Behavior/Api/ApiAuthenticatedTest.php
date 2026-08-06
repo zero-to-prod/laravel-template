@@ -6,7 +6,7 @@ use App\Routes\ApiRoute;
 use Laravel\Sanctum\Sanctum;
 
 test('authenticated user can access endpoint', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
     Sanctum::actingAs($User);
 
     $response = $this->assertMatchesSchema(
@@ -33,10 +33,9 @@ test('unauthenticated user cannot access endpoint', function (): void {
 });
 
 test('expired token cannot access endpoint', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
     $token = $User->createToken('test-token');
-    $token->accessToken->expires_at = now()->subDay();
-    $token->accessToken->save();
+    $token->accessToken->forceFill(['expires_at' => now()->subDay()])->save();
 
     $this->withToken($token->plainTextToken)
         ->getJson(ApiRoute::authenticated->value)
@@ -50,7 +49,7 @@ test('invalid token cannot access endpoint', function (): void {
 });
 
 test('multiple tokens work independently', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
 
     $token1 = $User->createToken('device-1')->plainTextToken;
     $token2 = $User->createToken('device-2')->plainTextToken;
@@ -65,7 +64,7 @@ test('multiple tokens work independently', function (): void {
 });
 
 test('response structure is correct', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
     Sanctum::actingAs($User);
 
     $this->getJson(ApiRoute::authenticated->value)

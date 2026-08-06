@@ -15,21 +15,17 @@ use PhpParser\Node\Stmt\Function_;
 use PHPStan\Reflection\ClassReflection;
 use Rector\Rector\AbstractRector;
 use Rector\Reflection\ReflectionResolver;
+use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-/**
- * Renames function/method parameters to match their class type hint exactly (PascalCase).
- *
- * Before: public function __construct(ViewErrorBag $errors)
- * After:  public function __construct(ViewErrorBag $ViewErrorBag)
- */
 final class RenameParamToMatchTypeExactCaseRector extends AbstractRector
 {
     public function __construct(
         private readonly ReflectionResolver $reflectionResolver,
     ) {}
 
+    /** @throws PoorDocumentationException */
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Rename param to match class type hint exactly (PascalCase)', [
@@ -82,7 +78,7 @@ final class RenameParamToMatchTypeExactCaseRector extends AbstractRector
             }
 
             // Skip promoted properties — renaming would change the property name
-            if ($param instanceof Param && $param->flags !== 0) {
+            if ($param->flags !== 0) {
                 continue;
             }
 

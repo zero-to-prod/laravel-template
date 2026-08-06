@@ -6,14 +6,17 @@ use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Validator;
+use ReflectionException;
 
 readonly class Api
 {
+    /** @throws ReflectionException */
     public function unprocessableEntity(Validator $Validator, mixed $data = []): JsonResponse
     {
         return $this->respond(ApiResponse::fromValidator($Validator, data: $data), 422);
     }
 
+    /** @param  array<array-key, mixed>|null  $fields */
     public function ok(mixed $data = [], ?array $fields = null): JsonResponse
     {
         $type = $this->resolveType($data);
@@ -22,26 +25,31 @@ readonly class Api
         return $this->respond(ApiResponse::ok($type, $data), 200);
     }
 
+    /** @throws ReflectionException */
     public function unauthorized(ErrorCode $ErrorCode = ErrorCode::unauthorized): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 401);
     }
 
+    /** @throws ReflectionException */
     public function notFound(ErrorCode $ErrorCode, mixed $data = []): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value], $data), 404);
     }
 
+    /** @throws ReflectionException */
     public function conflict(ErrorCode $ErrorCode): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 409);
     }
 
+    /** @throws ReflectionException */
     public function unsupportedMediaType(ErrorCode $ErrorCode): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 415);
     }
 
+    /** @param  array<array-key, mixed>|null  $fields */
     public function created(mixed $data = [], ?array $fields = null): JsonResponse
     {
         $type = $this->resolveType($data);
@@ -58,6 +66,10 @@ readonly class Api
         );
     }
 
+    /**
+     * @param  array<array-key, mixed>  $fields
+     * @return array<array-key, mixed>
+     */
     private function filterFields(mixed $data, array $fields): array
     {
         $array = is_object($data) && method_exists($data, 'toArray')
@@ -68,7 +80,7 @@ readonly class Api
 
         foreach ($fields as $key => $value) {
             if (is_int($key)) {
-                if (array_key_exists($value, $array)) {
+                if (is_string($value) && array_key_exists($value, $array)) {
                     $result[$value] = $array[$value];
                 }
             } elseif (is_array($value) && array_key_exists($key, $array)) {

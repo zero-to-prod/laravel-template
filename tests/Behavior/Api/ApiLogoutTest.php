@@ -6,7 +6,7 @@ use App\Routes\ApiRoute;
 use Laravel\Sanctum\Sanctum;
 
 test('authenticated user can logout', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
     $token = $User->createToken('test-device')->plainTextToken;
 
     $response = $this->assertMatchesSchema(
@@ -33,7 +33,7 @@ test('unauthenticated user cannot logout', function (): void {
 });
 
 test('logout only removes current token', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
     $token1 = $User->createToken('device-1')->plainTextToken;
     $token2 = $User->createToken('device-2')->plainTextToken;
 
@@ -58,10 +58,9 @@ test('logout only removes current token', function (): void {
 });
 
 test('expired token cannot logout', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
     $token = $User->createToken('test-token');
-    $token->accessToken->expires_at = now()->subDay();
-    $token->accessToken->save();
+    $token->accessToken->forceFill(['expires_at' => now()->subDay()])->save();
 
     $this->withToken($token->plainTextToken)
         ->postJson(ApiRoute::logout->value)
@@ -75,7 +74,7 @@ test('invalid token cannot logout', function (): void {
 });
 
 test('response structure is correct', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
     Sanctum::actingAs($User);
 
     $this->postJson(ApiRoute::logout->value)
@@ -88,7 +87,7 @@ test('response structure is correct', function (): void {
 });
 
 test('logged out token cannot be reused', function (): void {
-    $User = User::factory()->create();
+    $User = User::factory()->createOne();
     $token = $User->createToken('test-device')->plainTextToken;
 
     $this->withToken($token)

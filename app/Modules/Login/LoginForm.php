@@ -3,11 +3,12 @@
 namespace App\Modules\Login;
 
 use App\Helpers\DataModel;
+use App\Helpers\DescribesFields;
 use App\Helpers\HasFieldRules;
 use App\Modules\Api\Support\Field;
 use Zerotoprod\DataModel\Describe;
 
-readonly class LoginForm
+readonly class LoginForm implements DescribesFields
 {
     use DataModel;
     use HasFieldRules;

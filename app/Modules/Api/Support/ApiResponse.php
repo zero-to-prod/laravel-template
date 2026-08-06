@@ -4,6 +4,7 @@ namespace App\Modules\Api\Support;
 
 use App\Helpers\DataModel;
 use Illuminate\Validation\Validator;
+use ReflectionException;
 use Zerotoprod\DataModel\Describe;
 
 readonly class ApiResponse
@@ -25,6 +26,7 @@ readonly class ApiResponse
     /** @link $errors */
     public const string errors = 'errors';
 
+    /** @var array<array-key, mixed> */
     #[Describe(['default' => []])]
     public array $errors;
 
@@ -39,6 +41,7 @@ readonly class ApiResponse
 
     public string $type;
 
+    /** @throws ReflectionException */
     public static function ok(string $type, mixed $data = null, ?string $message = null): self
     {
         return self::from([
@@ -49,6 +52,11 @@ readonly class ApiResponse
         ]);
     }
 
+    /**
+     * @param  array<array-key, mixed>|null  $errors
+     *
+     * @throws ReflectionException
+     */
     public static function error(string $message, ?array $errors = null, mixed $data = []): self
     {
         return self::from([
@@ -60,6 +68,7 @@ readonly class ApiResponse
         ]);
     }
 
+    /** @throws ReflectionException */
     public static function fromValidator(Validator $Validator, string $message = 'unprocessable entity', mixed $data = []): self
     {
         return self::error($message, $Validator->errors()->toArray(), $data);

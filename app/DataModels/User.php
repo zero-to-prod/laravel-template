@@ -5,12 +5,13 @@ namespace App\DataModels;
 use App\DataModels\Fields\GenericEmail;
 use App\Helpers\DataModel;
 use App\Helpers\DataModelCast;
+use App\Helpers\DescribesFields;
 use App\Helpers\HasFieldRules;
 use App\Helpers\Rule;
 use App\Modules\Api\Support\Field;
 use Zerotoprod\DataModel\Describe;
 
-readonly class User
+readonly class User implements DescribesFields
 {
     use DataModel;
     use HasFieldRules;
@@ -62,6 +63,7 @@ readonly class User
     public const string created_at = 'created_at';
     public const string updated_at = 'updated_at';
 
+    /** @return list<Rule|string> */
     public static function passwordRules(): array
     {
         return [
@@ -71,6 +73,7 @@ readonly class User
         ];
     }
 
+    /** @return list<Rule|string> */
     public static function mailboxIdRules(): array
     {
         return [

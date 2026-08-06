@@ -21,7 +21,7 @@ class DataModelCast
         return Str::squish(strtolower((string) $value));
     }
 
-    public static function toIntNullable(mixed $value): ?int
+    public static function toIntNullable(int|string|null $value): ?int
     {
         return $value === null || $value === '' ? null : (int) $value;
     }

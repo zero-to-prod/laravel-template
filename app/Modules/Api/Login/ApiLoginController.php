@@ -9,10 +9,12 @@ use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class ApiLoginController
 {
+    /** @throws ReflectionException */
     #[ApiSchema(ApiLoginSchema::schema)]
     public function __invoke(): JsonResponse
     {
@@ -23,7 +25,7 @@ readonly class ApiLoginController
             return api_response()->unprocessableEntity($Validator);
         }
 
-        $User = UserModel::where(User::email, $ApiLoginForm->email)->first();
+        $User = UserModel::query()->where(User::email, $ApiLoginForm->email)->first();
 
         if (! $User || ! $User->matchesPassword($ApiLoginForm->password)) {
             return api_response()->unauthorized(ErrorCode::invalid_credentials);

@@ -19,6 +19,7 @@ class GenericEmail
         ],
     ];
 
+    /** @return list<Rule|string> */
     public static function rules(): array
     {
         return [

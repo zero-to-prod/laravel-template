@@ -8,7 +8,7 @@ test('route is accessible', function (): void {
 });
 
 test('authenticated user can logout', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->createOne();
     $this->actingAs($user);
 
     $this->get(Web::logout->value)
@@ -18,7 +18,7 @@ test('authenticated user can logout', function (): void {
 });
 
 test('session is invalidated after logout', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->createOne();
     $this->actingAs($user);
 
     $sessionId = session()->getId();
@@ -37,7 +37,7 @@ test('guest user is redirected to home', function (): void {
 });
 
 test('session token is regenerated after logout', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()->createOne();
     $this->actingAs($user);
 
     $oldToken = session()->token();
