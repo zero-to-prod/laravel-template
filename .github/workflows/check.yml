@@ -1,0 +1,55 @@
+name: check
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql/mysql-server:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_DATABASE: testing
+          MYSQL_USER: sail
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -ppassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: testing
+      DB_USERNAME: sail
+      DB_PASSWORD: password
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, mbstring, bcmath, intl, zip
+          coverage: pcov
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Grant testing database access
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -uroot -ppassword -e \
+            "GRANT ALL ON \`testing\`.* TO 'sail'@'%'; FLUSH PRIVILEGES;"
+
+      - run: composer check
