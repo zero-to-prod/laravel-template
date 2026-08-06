@@ -1,8 +1,6 @@
 name: check
 
-on:
-  push:
-  workflow_dispatch:
+on: push
 
 jobs:
   check:
@@ -10,27 +8,18 @@ jobs:
 
     services:
       mysql:
-        image: mysql/mysql-server:8.0
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: password
-          MYSQL_ROOT_HOST: '%'
           MYSQL_DATABASE: testing
-          MYSQL_USER: sail
-          MYSQL_PASSWORD: password
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -ppassword"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+        options: --health-cmd="mysqladmin ping -ppassword" --health-interval=5s --health-retries=10
 
     env:
-      DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
-      DB_PORT: 3306
       DB_DATABASE: testing
-      DB_USERNAME: sail
+      DB_USERNAME: root
       DB_PASSWORD: password
 
     steps:
@@ -39,27 +28,13 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: pdo_mysql, mbstring, bcmath, intl, zip
+          extensions: pdo_mysql
           coverage: pcov
-
-      - name: Copy .env
-        run: cp .env.example .env
 
       - uses: ramsey/composer-install@v4
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-          cache: npm
+      - run: cp .env.example .env
 
-      - name: Build assets
-        run: |
-          npm ci
-          npm run build
-
-      - name: Grant testing database access
-        run: |
-          mysql -h 127.0.0.1 -P 3306 -uroot -ppassword -e \
-            "GRANT ALL ON \`testing\`.* TO 'sail'@'%'; FLUSH PRIVILEGES;"
+      - run: npm ci && npm run build
 
       - run: composer check

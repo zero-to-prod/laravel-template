@@ -7,9 +7,9 @@ All commands run inside the Sail container via `./vendor/bin/sail` (aliased belo
 ```bash
 sail up -d
 sail down
-sail composer dev
-sail composer check # run all suites
-sail composer fix # atomated fixes
+sail composer dev # start development server
+sail composer check # validation
+sail composer fix # automated fixes
 ```
 
 Run `sail composer check` at the end of each turn.
