@@ -37,35 +37,58 @@ test('the request body schema is assembled from the property attributes', functi
 });
 
 test('a conforming request validates', function (): void {
-    $ApiLoginRequest = ApiLoginRequest::from([
+    expect(ApiLoginRequest::validator([
         ApiLoginRequest::email => 'user@example.com',
         ApiLoginRequest::password => 'secret',
         ApiLoginRequest::device_name => 'phone',
-    ]);
+    ])->passes())->toBeTrue();
+});
 
-    expect($ApiLoginRequest->validator()->passes())->toBeTrue();
+test('a non scalar value is a 422 rather than a hydration TypeError', function (): void {
+    // Validating the raw input keeps `from()` off any payload the schema
+    // rejects, so `password[]=x` cannot reach the typed property.
+    $errors = ApiLoginRequest::validator([
+        ApiLoginRequest::email => 'user@example.com',
+        ApiLoginRequest::password => ['x'],
+        ApiLoginRequest::device_name => 'phone',
+    ])->errors();
+
+    expect($errors->keys())->toBe([ApiLoginRequest::password])
+        ->and($errors->first(ApiLoginRequest::password))->toBe('The password field must be a string.');
+});
+
+test('a value the document does not allow is rejected rather than coerced', function (): void {
+    // The cast would have made this "123" and let it pass a `type: string`
+    // schema, leaving the runtime laxer than the published document.
+    $errors = ApiLoginRequest::validator([
+        ApiLoginRequest::email => 'user@example.com',
+        ApiLoginRequest::password => 123,
+        ApiLoginRequest::device_name => 'phone',
+    ])->errors();
+
+    expect($errors->keys())->toBe([ApiLoginRequest::password]);
 });
 
 test('a blank password conforms to the document but is still rejected', function (): void {
     // A required, non-nullable string translates to `required`, which rejects
     // "" without the document having to publish minLength: 1. That keeps the
     // 422 reachable by a request the document accepts.
-    $errors = ApiLoginRequest::from([
+    $errors = ApiLoginRequest::validator([
         ApiLoginRequest::email => 'user@example.com',
         ApiLoginRequest::password => '',
         ApiLoginRequest::device_name => 'phone',
-    ])->validator()->errors();
+    ])->errors();
 
     expect($errors->keys())->toBe([ApiLoginRequest::password])
         ->and($errors->first(ApiLoginRequest::password))->toBe('The password field is required.');
 });
 
 test('validate throws with the messages attached', function (): void {
-    ApiLoginRequest::from([
+    ApiLoginRequest::validator([
         ApiLoginRequest::email => 'nope',
         ApiLoginRequest::password => 'secret',
         ApiLoginRequest::device_name => 'phone',
-    ])->validator()->validate();
+    ])->validate();
 })->throws(ValidationException::class);
 
 test('a closure description overrides the fragment, and a non array schema is dropped', function (): void {
@@ -88,13 +111,13 @@ test('only properties flagged required are hoisted', function (): void {
 test('value checks run once the schema passes', function (): void {
     User::factory()->createOne(['email' => 'taken@example.com']);
 
-    $errors = OasRequestStub::from([
+    $errors = OasRequestStub::validator([
         OasRequestStub::email => 'taken@example.com',
         OasRequestStub::password => 'secret',
         OasRequestStub::password_confirmation => 'mismatch',
         OasRequestStub::nickname => 'nick',
         OasRequestStub::broken => 'x',
-    ])->validator()->errors();
+    ])->errors();
 
     expect($errors->keys())->toBe([OasRequestStub::email, OasRequestStub::password])
         ->and($errors->first(OasRequestStub::email))->toBe('That email is already taken.')
@@ -104,26 +127,26 @@ test('value checks run once the schema passes', function (): void {
 test('value checks are skipped when the schema already failed', function (): void {
     User::factory()->createOne(['email' => 'taken@example.com']);
 
-    $errors = OasRequestStub::from([
+    $errors = OasRequestStub::validator([
         OasRequestStub::email => '',
         OasRequestStub::password => 'secret',
         OasRequestStub::password_confirmation => 'secret',
         OasRequestStub::nickname => 'nick',
         OasRequestStub::broken => 'x',
-    ])->validator()->errors();
+    ])->errors();
 
     expect($errors->keys())->toBe([OasRequestStub::email])
         ->and($errors->first(OasRequestStub::email))->toBe('The email field is required.');
 });
 
 test('a passing value check adds nothing', function (): void {
-    $Validator = OasRequestStub::from([
+    $Validator = OasRequestStub::validator([
         OasRequestStub::email => 'free@example.com',
         OasRequestStub::password => 'secret',
         OasRequestStub::password_confirmation => 'secret',
         OasRequestStub::nickname => 'nick',
         OasRequestStub::broken => 'x',
-    ])->validator();
+    ]);
 
     expect($Validator->passes())->toBeTrue();
 });

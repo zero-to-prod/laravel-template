@@ -44,21 +44,30 @@ trait HasRequestSchema
      * The schema covers what OAS can express; the ValueChecks cover what it
      * cannot.
      *
+     * Takes the raw input rather than a hydrated instance. Hydration assigns
+     * straight to typed properties, so a non-scalar value is a TypeError before
+     * the validator ever sees it, and a cast would have the validator judging a
+     * value the client never sent. Validating first makes the runtime enforce
+     * the same document that `rules()` publishes, and makes `from()` total for
+     * anything that gets past here.
+     *
+     * @param  array<string, mixed>  $data
+     *
      * @throws ReflectionException
      */
-    public function validator(): Validator
+    public static function validator(array $data): Validator
     {
-        $data = $this->toArray();
-
         return SchemaValidator::make($data, self::rules())
             ->after(static function (Validator $Validator) use ($data): void {
                 // A ValueCheck may query the database, so only run one against
-                // a payload the schema already accepted.
+                // a payload the schema already accepted. Hydrating is safe by
+                // this point, and gives the checks the canonical values the
+                // casts produce rather than the raw ones.
                 if ($Validator->errors()->isNotEmpty()) {
                     return;
                 }
 
-                foreach (self::runChecks($data) as $Violation) {
+                foreach (self::runChecks(self::from($data)->toArray()) as $Violation) {
                     $Validator->errors()->add($Violation->path, $Violation->message);
                 }
             });
