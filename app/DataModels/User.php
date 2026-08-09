@@ -24,7 +24,7 @@ readonly class User implements DescribesFields
     #[Describe([
         Describe::cast => [DataModelCast::class, 'sanitize'],
         Field::field => [
-            Field::description => static function() {
+            Field::description => static function () {
                 return Users::email->comment();
             },
         ],
