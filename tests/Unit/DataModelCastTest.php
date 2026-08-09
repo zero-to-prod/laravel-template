@@ -3,6 +3,7 @@
 use App\Helpers\DataModelCast;
 
 test('sanitize squishes whitespace and coerces null to a string', function (): void {
+
     expect(DataModelCast::sanitize("  a   b \n"))->toBe('a b')
         ->and(DataModelCast::sanitize(null))->toBeEmpty();
 });

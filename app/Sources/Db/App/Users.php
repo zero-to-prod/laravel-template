@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Sources\Db\App;
+
+use App\Sources\Db\Support\Collation;
+use App\Sources\Db\Support\Column;
+use App\Sources\Db\Support\ColumnType;
+use App\Sources\Db\Support\HasColumnAttribute;
+use App\Sources\Db\Support\Table;
+
+/**
+ * Column attributes are read by name through HasColumnAttribute::__call(),
+ * which returns null for any key the column does not declare.
+ *
+ * @method string type()
+ * @method string|null comment()
+ * @method int|null length()
+ * @method bool|null nullable()
+ * @method bool|null unique()
+ * @method bool|null primary_key()
+ */
+#[Table(
+    schema: App::class,
+    attributes: [
+        Table::name => 'users',
+        Table::collate => Collation::utf8mb4_unicode_ci->value,
+    ])]
+enum Users: string
+{
+    use HasColumnAttribute;
+
+    #[Column([
+        Column::name => self::id,
+        Column::type => ColumnType::char->value,
+        Column::length => 26,
+        Column::nullable => false,
+        Column::primary_key => true,
+    ])]
+    case id = 'id';
+
+    #[Column([
+        Column::name => self::name,
+        Column::type => ColumnType::varchar->value,
+        Column::length => 255,
+        Column::nullable => false,
+    ])]
+    case name = 'name';
+
+    #[Column([
+        Column::name => self::email,
+        Column::comment => 'The users email',
+        Column::type => ColumnType::varchar->value,
+        Column::length => 255,
+        Column::nullable => false,
+        Column::unique => true,
+    ])]
+    case email = 'email';
+
+    #[Column([
+        Column::name => self::email_verified_at,
+        Column::type => ColumnType::timestamp->value,
+        Column::nullable => true,
+    ])]
+    case email_verified_at = 'email_verified_at';
+
+    #[Column([
+        Column::name => self::password,
+        Column::type => ColumnType::varchar->value,
+        Column::length => 255,
+        Column::nullable => false,
+    ])]
+    case password = 'password';
+
+    #[Column([
+        Column::name => self::remember_token,
+        Column::type => ColumnType::varchar->value,
+        Column::length => 100,
+        Column::nullable => true,
+    ])]
+    case remember_token = 'remember_token';
+
+    #[Column([
+        Column::name => self::created_at,
+        Column::type => ColumnType::timestamp->value,
+        Column::nullable => true,
+    ])]
+    case created_at = 'created_at';
+
+    #[Column([
+        Column::name => self::updated_at,
+        Column::type => ColumnType::timestamp->value,
+        Column::nullable => true,
+    ])]
+    case updated_at = 'updated_at';
+}

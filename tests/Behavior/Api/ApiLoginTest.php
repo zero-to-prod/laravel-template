@@ -41,7 +41,11 @@ test('validation fails with invalid password', function (): void {
         ApiLoginRequest::device_name => 'test-device',
     ];
 
-    $this->postJson(ApiRoute::login->value, $payload)
+    // The only 422 whose request still conforms to the document: blank is a
+    // server policy (NotBlank), not a published constraint. Every other 422
+    // case sends a body the document rejects, so the response validator would
+    // fail on the request before it ever looked at the response.
+    $this->assertMatchesSchema($this->postJson(ApiRoute::login->value, $payload))
         ->assertStatus(422)
         ->assertJsonValidationErrors(ApiLoginRequest::password);
 });
@@ -90,7 +94,7 @@ test('login fails with non existent user', function (): void {
 });
 
 test('validation fails with missing required fields', function (): void {
-    $this->assertMatchesSchema($this->postJson(ApiRoute::login->value, []))
+    $this->postJson(ApiRoute::login->value, [])
         ->assertStatus(422)
         ->assertJsonValidationErrors([
             ApiLoginRequest::email,

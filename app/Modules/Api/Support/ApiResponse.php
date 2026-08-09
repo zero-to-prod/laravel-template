@@ -3,7 +3,7 @@
 namespace App\Modules\Api\Support;
 
 use App\Helpers\DataModel;
-use Illuminate\Validation\Validator;
+use Illuminate\Contracts\Support\MessageProvider;
 use ReflectionException;
 use Zerotoprod\DataModel\Describe;
 
@@ -69,8 +69,8 @@ readonly class ApiResponse
     }
 
     /** @throws ReflectionException */
-    public static function fromValidator(Validator $Validator, string $message = 'unprocessable entity', mixed $data = []): self
+    public static function fromValidator(MessageProvider $MessageProvider, string $message = 'unprocessable entity', mixed $data = []): self
     {
-        return self::error($message, $Validator->errors()->toArray(), $data);
+        return self::error($message, $MessageProvider->getMessageBag()->toArray(), $data);
     }
 }

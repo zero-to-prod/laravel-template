@@ -2,6 +2,9 @@
 
 namespace App\Modules\Api\Support;
 
+use ZeroToProd\SchemaValidator\Property;
+use ZeroToProd\SchemaValidator\Schema;
+
 /**
  * OpenAPI components shared by every API endpoint.
  *
@@ -23,29 +26,29 @@ readonly class SharedSchema
         ],
         'schemas' => [
             'ApiError' => [
-                'type' => 'object',
-                'required' => [ApiResponse::success, ApiResponse::message, ApiResponse::type],
-                'properties' => [
-                    ApiResponse::success => ['type' => 'boolean', 'enum' => [false]],
-                    ApiResponse::message => ['type' => 'string'],
-                    ApiResponse::errors => ['type' => 'array', 'items' => ['type' => 'string']],
-                    ApiResponse::type => ['type' => 'string', 'enum' => ['error']],
+                Schema::type => Schema::object,
+                Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::type],
+                Schema::properties => [
+                    ApiResponse::success => [Property::type => Property::boolean, Property::enum => [false]],
+                    ApiResponse::message => [Property::type => Property::string],
+                    ApiResponse::errors => [Property::type => Schema::array, Schema::items => [Property::type => Property::string]],
+                    ApiResponse::type => [Property::type => Property::string, Property::enum => ['error']],
                 ],
             ],
             'ApiValidationError' => [
-                'type' => 'object',
-                'required' => [ApiResponse::success, ApiResponse::message, ApiResponse::errors, ApiResponse::type],
-                'properties' => [
-                    ApiResponse::success => ['type' => 'boolean', 'enum' => [false]],
-                    ApiResponse::message => ['type' => 'string'],
+                Schema::type => Schema::object,
+                Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::errors, ApiResponse::type],
+                Schema::properties => [
+                    ApiResponse::success => [Property::type => Property::boolean, Property::enum => [false]],
+                    ApiResponse::message => [Property::type => Property::string],
                     ApiResponse::errors => [
-                        'type' => 'object',
+                        Property::type => Schema::object,
                         'additionalProperties' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'string'],
+                            Property::type => Schema::array,
+                            Schema::items => [Property::type => Property::string],
                         ],
                     ],
-                    ApiResponse::type => ['type' => 'string', 'enum' => ['error']],
+                    ApiResponse::type => [Property::type => Property::string, Property::enum => ['error']],
                 ],
             ],
         ],

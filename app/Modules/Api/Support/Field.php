@@ -55,11 +55,6 @@ readonly class Field
     #[Describe([Describe::default => ''])]
     public string $attributes;
 
-    public const string example = 'example';
-
-    #[Describe([Describe::nullable => true])]
-    public mixed $example;
-
     public const string sensitive = 'sensitive';
 
     #[Describe([Describe::default => false])]

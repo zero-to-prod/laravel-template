@@ -5,6 +5,8 @@ namespace App\Modules\Api\Authenticated;
 use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
+use ZeroToProd\SchemaValidator\Property;
+use ZeroToProd\SchemaValidator\Schema;
 
 readonly class AuthenticatedSchema
 {
@@ -23,12 +25,12 @@ readonly class AuthenticatedSchema
                             'content' => [
                                 'application/json' => [
                                     'schema' => [
-                                        'type' => 'object',
-                                        'required' => [ApiResponse::success, ApiResponse::message, ApiResponse::type],
-                                        'properties' => [
-                                            ApiResponse::success => ['type' => 'boolean', 'enum' => [true]],
-                                            ApiResponse::message => ['type' => 'string'],
-                                            ApiResponse::type => ['type' => 'string', 'enum' => ['Authorized']],
+                                        Schema::type => Schema::object,
+                                        Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::type],
+                                        Schema::properties => [
+                                            ApiResponse::success => [Property::type => Property::boolean, Property::enum => [true]],
+                                            ApiResponse::message => [Property::type => Property::string],
+                                            ApiResponse::type => [Property::type => Property::string, Property::enum => ['Authorized']],
                                         ],
                                     ],
                                 ],
