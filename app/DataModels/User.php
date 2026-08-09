@@ -5,17 +5,17 @@ namespace App\DataModels;
 use App\DataModels\Fields\GenericEmail;
 use App\Helpers\DataModel;
 use App\Helpers\DataModelCast;
-use App\Helpers\DescribesFields;
-use App\Helpers\HasFieldRules;
+use App\Helpers\HasRules;
+use App\Helpers\Request;
 use App\Helpers\Rule;
 use App\Modules\Api\Support\Field;
 use App\Sources\Db\App\Users;
 use Zerotoprod\DataModel\Describe;
 
-readonly class User implements DescribesFields
+readonly class User
 {
     use DataModel;
-    use HasFieldRules;
+    use HasRules;
 
     public const string name = 'name';
 
@@ -32,16 +32,15 @@ readonly class User implements DescribesFields
     public const string email = 'email';
 
     #[Describe(GenericEmail::describe)]
+    #[Request([Request::rules => [GenericEmail::class, 'rules']])]
     public string $email;
 
     public const string password = 'password';
 
     #[Describe([
-        Field::field => [
-            Field::description => 'User password',
-            Field::rules => [self::class, 'passwordRules'],
-        ],
+        Field::field => [Field::description => 'User password'],
     ])]
+    #[Request([Request::rules => [self::class, 'passwordRules']])]
     public string $password;
 
     public const string password_confirmation = 'password_confirmation';

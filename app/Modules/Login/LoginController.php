@@ -12,10 +12,10 @@ readonly class LoginController
 {
     public function __invoke(): RedirectResponse
     {
-        $LoginForm = LoginForm::from(request()->all());
-        $Validator = Validator::make($LoginForm->toArray(), $LoginForm->rules());
+        $LoginRequest = LoginRequest::from(request()->all());
+        $Validator = Validator::make($LoginRequest->toArray(), $LoginRequest->rules());
 
-        if (Auth::attempt($Validator->validate(), $LoginForm->remember_token)) {
+        if (Auth::attempt($Validator->validate(), $LoginRequest->remember_token)) {
             request()->session()->regenerate();
 
             return redirect()->intended(Web::home->value);

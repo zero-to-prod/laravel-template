@@ -6,7 +6,6 @@ use App\View\DataModels\TextInput;
 use ReflectionClass;
 use ReflectionException;
 
-/** @phpstan-require-implements DescribesFields */
 trait HasTextInput
 {
     /**
@@ -22,8 +21,6 @@ trait HasTextInput
 
         return [
             TextInput::name => $property,
-            TextInput::required => static::isRequired($property),
-            TextInput::title => static::description($property),
             ...$attributes === [] ? [] : $attributes[0]->newInstance()->attributes,
         ];
     }

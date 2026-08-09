@@ -1,7 +1,7 @@
 <?php
 
 use App\Modules\Api\Support\ErrorCode;
-use Tests\Fixtures\FieldStub;
+use Tests\Fixtures\RequestStub;
 
 test('not found responds with 404 and echoes the supplied data', function (): void {
     $JsonResponse = api_response()->notFound(ErrorCode::unauthorized, ['id' => 1]);
@@ -85,14 +85,14 @@ test('fields filter flat keys, lists of records and nested objects', function ()
 
 test('fields filter a payload object by calling to array on it', function (): void {
     $JsonResponse = api_response()->ok(
-        FieldStub::make(),
-        [FieldStub::website]
+        RequestStub::make(),
+        [RequestStub::website]
     );
 
     expect($JsonResponse->getData(true))->toBe([
         'success' => true,
-        'message' => 'FieldStub',
+        'message' => 'RequestStub',
         'data' => ['website' => 'https://example.com'],
-        'type' => 'FieldStub',
+        'type' => 'RequestStub',
     ]);
 });

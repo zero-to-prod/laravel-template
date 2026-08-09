@@ -13,10 +13,7 @@ class GenericEmail
     public const string comment = 'User email address';
     public const array describe = [
         Describe::cast => [DataModelCast::class, 'sanitizeEmail'],
-        Field::field => [
-            Field::description => self::comment,
-            Field::rules => [self::class, 'rules'],
-        ],
+        Field::field => [Field::description => self::comment],
     ];
 
     /** @return list<Rule|string> */

@@ -110,8 +110,13 @@ readonly class ResponseSchema
         }
 
         $field = $attributes[0]->newInstance()->extra[Field::field] ?? null;
-        $description = is_array($field) ? $field[Field::description] ?? null : null;
 
-        return is_string($description) && $description !== '' ? $description : null;
+        if (! is_array($field)) {
+            return null;
+        }
+
+        $description = Field::from($field)->description;
+
+        return $description === '' ? null : $description;
     }
 }
