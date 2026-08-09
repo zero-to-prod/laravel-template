@@ -177,3 +177,17 @@ test('user cannot login when already authenticated', function (): void {
         $LoginForm->toArray()
     )->assertRedirect(Web::home->value);
 });
+
+test('validation errors are displayed on the form', function (): void {
+    $ModelUser = ModelUser::factory()->createOne();
+    $LoginForm = LoginFormFactory::factory()
+        ->set([LoginForm::email => $ModelUser->email])
+        ->set([LoginForm::password => 'wrong-password'])
+        ->make();
+
+    $this->from(Web::login->value)
+        ->followingRedirects()
+        ->post(Web::login->value, $LoginForm->toArray())
+        ->assertOk()
+        ->assertSee('These credentials do not match our records.');
+});

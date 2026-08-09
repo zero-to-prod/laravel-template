@@ -12,8 +12,6 @@ use App\Modules\Api\Support\Field;
 use App\Sources\Db\App\Users;
 use Zerotoprod\DataModel\Describe;
 
-use function App\Sources\Db\App\Users;
-
 readonly class User implements DescribesFields
 {
     use DataModel;

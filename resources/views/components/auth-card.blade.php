@@ -1,13 +1,11 @@
-@props(['title' => null, 'maxWidth' => 'sm:max-w-sm'])
+@props(['authCard' => []])
+@php
+    $AuthCard = App\View\DataModels\AuthCard::from($authCard);
+@endphp
 <x-main>
-    <div {{ $attributes->merge(['class' => "card sm:m-auto sm:mt-24 $maxWidth"]) }}>
+    <div class="{{ $AuthCard->classes() }}">
         <div class="card-body">
-            <x-page-header>
-                <x-slot:title>
-                    @if($title)
-                        <h1 class="card-title">{{ $title }}</h1>
-                    @endif
-                </x-slot:title>
+            <x-page-header :pageHeader="$AuthCard->pageHeader()">
                 @isset($controls)
                     <x-slot:controls>{{ $controls }}</x-slot:controls>
                 @endisset

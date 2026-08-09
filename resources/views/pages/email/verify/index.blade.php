@@ -1,6 +1,7 @@
 <?php
 
 use App\Routes\Web;
+use App\View\DataModels\AuthCard;
 use Illuminate\View\View;
 
 use function Laravel\Folio\{name, render};
@@ -15,7 +16,7 @@ render(function (View $view) {
     return $view;
 });
 ?>
-<x-auth-card title="Verify Your Email">
+<x-auth-card :authCard="[AuthCard::title => 'Verify Your Email']">
     <x-status-toast/>
     <p class="text-sm text-base-content/70">
         We've emailed you a verification link. Click it to activate your account.

@@ -1,5 +1,11 @@
+@props(['pageHeader' => []])
+@php
+    $PageHeader = App\View\DataModels\PageHeader::from($pageHeader);
+@endphp
 <div class="min-w-0">
-    {{ $title }}
+    @if($PageHeader->title)
+        <h1 class="{{ $PageHeader->classname }}">{{ $PageHeader->title }}</h1>
+    @endif
 </div>
 @isset($controls)
     <div class="hidden items-center gap-2 header:flex">
