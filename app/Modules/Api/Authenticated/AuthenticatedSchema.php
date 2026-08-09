@@ -2,51 +2,55 @@
 
 namespace App\Modules\Api\Authenticated;
 
-use App\Modules\Api\Support\ApiResponse;
+use App\Modules\Api\Models\Authorized;
+use App\Modules\Api\Support\DescribesOperation;
+use App\Modules\Api\Support\ResponseSchema;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
-use ZeroToProd\SchemaValidator\Property;
-use ZeroToProd\SchemaValidator\Schema;
+use ReflectionException;
+use ZeroToProd\LaravelOpenapi\ApiSchema;
 
-readonly class AuthenticatedSchema
+/**
+ * @phpstan-import-type PathItem from ApiSchema
+ * @phpstan-import-type Components from ApiSchema
+ */
+readonly class AuthenticatedSchema implements DescribesOperation
 {
-    public const array schema = [
-        'components' => SharedSchema::components,
-        'paths' => [
-            ApiRoute::authenticated->value => [
-                'get' => [
-                    'operationId' => 'apiAuthenticated',
-                    'summary' => 'Check if the current token is valid.',
-                    'tags' => ['Authentication'],
-                    'security' => [[SharedSchema::bearer => []]],
-                    'responses' => [
-                        '200' => [
-                            'description' => 'The token is valid.',
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        Schema::type => Schema::object,
-                                        Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::type],
-                                        Schema::properties => [
-                                            ApiResponse::success => [Property::type => Property::boolean, Property::enum => [true]],
-                                            ApiResponse::message => [Property::type => Property::string],
-                                            ApiResponse::type => [Property::type => Property::string, Property::enum => ['Authorized']],
-                                        ],
-                                    ],
+    /**
+     * @return array{paths?: array<string, PathItem>, components?: Components}
+     *
+     * @throws ReflectionException
+     */
+    public static function schema(): array
+    {
+        return [
+            'components' => SharedSchema::components,
+            'paths' => [
+                ApiRoute::authenticated->value => [
+                    'get' => [
+                        'operationId' => 'apiAuthenticated',
+                        'summary' => 'Check if the current token is valid.',
+                        'tags' => ['Authentication'],
+                        'security' => [[SharedSchema::bearer => []]],
+                        'responses' => [
+                            '200' => [
+                                'description' => 'The token is valid.',
+                                'content' => [
+                                    'application/json' => ['schema' => ResponseSchema::ok(Authorized::class)],
                                 ],
                             ],
-                        ],
-                        '401' => [
-                            'description' => 'The token was missing, expired or unrecognised.',
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => ['$ref' => SharedSchema::api_error],
+                            '401' => [
+                                'description' => 'The token was missing, expired or unrecognised.',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => ['$ref' => SharedSchema::api_error],
+                                    ],
                                 ],
                             ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ];
+        ];
+    }
 }

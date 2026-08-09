@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c969c41276a53a6bdf26f9bb7f01c527",
+    "content-hash": "72e61fa95321aaae2ffe92f743eddc2f",
     "packages": [
         {
             "name": "brick/math",
@@ -6467,16 +6467,16 @@
         },
         {
             "name": "zero-to-prod/laravel-openapi",
-            "version": "v2.2.0",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zero-to-prod/laravel-openapi.git",
-                "reference": "c8f3291cb52cd7917fa36a815f82bbd2c89a2496"
+                "reference": "6fe55890617302800e068642661a3125b8c8498c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zero-to-prod/laravel-openapi/zipball/c8f3291cb52cd7917fa36a815f82bbd2c89a2496",
-                "reference": "c8f3291cb52cd7917fa36a815f82bbd2c89a2496",
+                "url": "https://api.github.com/repos/zero-to-prod/laravel-openapi/zipball/6fe55890617302800e068642661a3125b8c8498c",
+                "reference": "6fe55890617302800e068642661a3125b8c8498c",
                 "shasum": ""
             },
             "require": {
@@ -6484,7 +6484,7 @@
                 "illuminate/http": "^13.0",
                 "illuminate/routing": "^13.0",
                 "illuminate/support": "^13.0",
-                "php": "^8.4"
+                "php": "^8.5"
             },
             "require-dev": {
                 "devizzent/cebe-php-openapi": "^1.1",
@@ -6526,9 +6526,9 @@
             "description": "OpenAPI support for Laravel.",
             "support": {
                 "issues": "https://github.com/zero-to-prod/laravel-openapi/issues",
-                "source": "https://github.com/zero-to-prod/laravel-openapi/tree/v2.2.0"
+                "source": "https://github.com/zero-to-prod/laravel-openapi/tree/v3.0.0"
             },
-            "time": "2026-08-06T18:52:01+00:00"
+            "time": "2026-08-09T19:48:27+00:00"
         },
         {
             "name": "zero-to-prod/package-helper",

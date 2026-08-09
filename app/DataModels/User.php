@@ -9,7 +9,10 @@ use App\Helpers\DescribesFields;
 use App\Helpers\HasFieldRules;
 use App\Helpers\Rule;
 use App\Modules\Api\Support\Field;
+use App\Sources\Db\App\Users;
 use Zerotoprod\DataModel\Describe;
+
+use function App\Sources\Db\App\Users;
 
 readonly class User implements DescribesFields
 {
@@ -21,7 +24,9 @@ readonly class User implements DescribesFields
     #[Describe([
         Describe::cast => [DataModelCast::class, 'sanitize'],
         Field::field => [
-            Field::description => "The user's full display name",
+            Field::description => static function() {
+                return Users::email->comment();
+            },
         ],
     ])]
     public string $name;

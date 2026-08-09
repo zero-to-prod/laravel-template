@@ -6,6 +6,7 @@ use App\Helpers\DataModel;
 use App\Helpers\DescribesFields;
 use App\Helpers\HasFieldRules;
 use App\Modules\Api\Support\Field;
+use App\Sources\Db\App\Users;
 use Zerotoprod\DataModel\Describe;
 
 readonly class LoginForm implements DescribesFields
@@ -17,6 +18,7 @@ readonly class LoginForm implements DescribesFields
     public const string email = 'email';
 
     #[Describe([
+        'source' => Users::email,
         Describe::cast => [self::class, 'sanitizeEmail'],
         Field::field => [
             Field::description => 'User email address',

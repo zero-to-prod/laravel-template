@@ -16,7 +16,9 @@ readonly class LogoutController
      * @throws ReflectionException
      * @throws AuthenticationException
      */
-    #[ApiSchema(LogoutSchema::schema)]
+    #[ApiSchema(static function (): array {
+        return LogoutSchema::schema();
+    })]
     public function __invoke(Request $Request): JsonResponse
     {
         User::authenticated($Request)->currentAccessToken()->delete();

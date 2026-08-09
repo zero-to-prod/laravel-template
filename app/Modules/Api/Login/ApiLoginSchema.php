@@ -4,14 +4,12 @@ namespace App\Modules\Api\Login;
 
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Api\Requests\ApiLoginRequest;
-use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\DescribesOperation;
+use App\Modules\Api\Support\ResponseSchema;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
 use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
-use ZeroToProd\SchemaValidator\Property;
-use ZeroToProd\SchemaValidator\Schema;
 
 /**
  * @phpstan-import-type PathItem from ApiSchema
@@ -44,24 +42,7 @@ readonly class ApiLoginSchema implements DescribesOperation
                             '200' => [
                                 'description' => 'The API token.',
                                 'content' => [
-                                    'application/json' => [
-                                        'schema' => [
-                                            Schema::type => Schema::object,
-                                            Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::data, ApiResponse::type],
-                                            Schema::properties => [
-                                                ApiResponse::success => [Property::type => Property::boolean, Property::enum => [true]],
-                                                ApiResponse::message => [Property::type => Property::string],
-                                                ApiResponse::data => [
-                                                    Property::type => Schema::object,
-                                                    Schema::required => [ApiToken::token],
-                                                    Schema::properties => [
-                                                        ApiToken::token => [Property::type => Property::string, Property::description => 'API authentication token'],
-                                                    ],
-                                                ],
-                                                ApiResponse::type => [Property::type => Property::string, Property::enum => ['ApiToken']],
-                                            ],
-                                        ],
-                                    ],
+                                    'application/json' => ['schema' => ResponseSchema::ok(ApiToken::class)],
                                 ],
                             ],
                             '401' => [

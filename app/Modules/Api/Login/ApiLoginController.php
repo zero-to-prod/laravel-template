@@ -7,14 +7,16 @@ use App\Models\User as UserModel;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Modules\Api\Support\ErrorCode;
-use App\Modules\Api\Support\RequestSchema;
 use Illuminate\Http\JsonResponse;
 use ReflectionException;
+use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class ApiLoginController
 {
     /** @throws ReflectionException */
-    #[RequestSchema(ApiLoginSchema::class)]
+    #[ApiSchema(static function (): array {
+        return ApiLoginSchema::schema();
+    })]
     public function __invoke(): JsonResponse
     {
         $Validator = ApiLoginRequest::validator(request()->all());

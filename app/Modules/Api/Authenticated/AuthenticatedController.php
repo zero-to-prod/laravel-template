@@ -4,11 +4,15 @@ namespace App\Modules\Api\Authenticated;
 
 use App\Modules\Api\Models\Authorized;
 use Illuminate\Http\JsonResponse;
+use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class AuthenticatedController
 {
-    #[ApiSchema(AuthenticatedSchema::schema)]
+    /** @throws ReflectionException */
+    #[ApiSchema(static function (): array {
+        return AuthenticatedSchema::schema();
+    })]
     public function __invoke(): JsonResponse
     {
         if (! auth('sanctum')->check()) {
