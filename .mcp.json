@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "laravel-openapi": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "laravel-openapi"]
+    },
+    "db-model": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "db-model"]
+    },
+    "schema-validator": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "schema-validator"]
+    }
+  }
+}
