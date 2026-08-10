@@ -48,11 +48,17 @@ trait HasResponseSchema
     }
 
     /**
+     * The `data` object on its own, without the envelope around it.
+     *
+     * Public because a collection endpoint publishes the same object as its
+     * `items`, and the alternative is a second hand-written copy of it that
+     * nothing keeps in step with this one.
+     *
      * @return array<string, mixed>
      *
      * @throws ReflectionException
      */
-    private static function data(): array
+    public static function data(): array
     {
         $properties = [];
 
