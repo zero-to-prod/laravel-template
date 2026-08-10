@@ -7,6 +7,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
+use ReflectionType;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
@@ -70,15 +71,7 @@ trait HasResponseSchema
     {
         $Type = $ReflectionProperty->getType();
 
-        $schema = [
-            Property::type => match ($Type instanceof ReflectionNamedType ? $Type->getName() : '') {
-                'int' => Property::integer,
-                'float' => Property::number,
-                'bool' => Property::boolean,
-                'array' => Schema::array,
-                default => Property::string,
-            },
-        ];
+        $schema = self::declared($ReflectionProperty) ?? self::fromType($Type);
 
         $description = self::description($ReflectionProperty);
 
@@ -90,6 +83,40 @@ trait HasResponseSchema
             $schema[Property::nullable] = true;
         }
 
+        return $schema;
+    }
+
+    /** @return array<string, mixed> */
+    private static function fromType(?ReflectionType $Type): array
+    {
+        return [
+            Property::type => match ($Type instanceof ReflectionNamedType ? $Type->getName() : '') {
+                'int' => Property::integer,
+                'float' => Property::number,
+                'bool' => Property::boolean,
+                'array' => Schema::array,
+                default => Property::string,
+            },
+        ];
+    }
+
+    /** @return array<string, mixed>|null */
+    private static function declared(ReflectionProperty $ReflectionProperty): ?array
+    {
+        $attributes = $ReflectionProperty->getAttributes(Response::class);
+
+        if ($attributes === []) {
+            return null;
+        }
+
+        $schema = $attributes[0]->newInstance()->attributes[Response::schema] ?? null;
+        $schema = $schema instanceof Closure ? $schema() : $schema;
+
+        if (! is_array($schema) || $schema === []) {
+            return null;
+        }
+
+        /** @var array<string, mixed> $schema */
         return $schema;
     }
 

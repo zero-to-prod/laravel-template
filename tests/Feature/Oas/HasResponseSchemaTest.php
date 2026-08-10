@@ -60,13 +60,26 @@ test('property types map to their openapi equivalents, nullables are optional, a
             ApiResponse::message => [Property::type => Property::string],
             ApiResponse::data => [
                 Schema::type => Schema::object,
-                Schema::required => ['name', 'count', 'ratio', 'active', 'tags'],
+                Schema::required => ['name', 'count', 'ratio', 'active', 'tags', 'label', 'empty_schema'],
                 Schema::properties => [
                     'name' => [Property::type => Property::string, Property::description => 'The display name'],
                     'count' => [Property::type => Property::integer],
                     'ratio' => [Property::type => Property::number],
                     'active' => [Property::type => Property::boolean],
                     'tags' => [Property::type => Schema::array],
+                    // The column's schema, with nullability taken from the
+                    // property rather than from the column.
+                    'verified_at' => [
+                        Property::type => Property::string,
+                        Property::format => Property::date_time,
+                        Property::description => 'When the users email was verified',
+                        Property::nullable => true,
+                    ],
+                    'label' => [
+                        Property::type => Property::string,
+                        Property::description => 'The overriding description',
+                    ],
+                    'empty_schema' => [Property::type => Property::string],
                     // Not required, but the model sends it as null rather than
                     // omitting it, so the schema has to accept null.
                     'nickname' => [Property::type => Property::string, Property::nullable => true],

@@ -33,7 +33,7 @@ readonly class SharedSchema
                     ApiResponse::message => [Property::type => Property::string],
                     ApiResponse::errors => [
                         Property::type => Schema::object,
-                        'additionalProperties' => [
+                        Schema::additionalProperties => [
                             Property::type => Schema::array,
                             Schema::items => [Property::type => Property::string],
                         ],
