@@ -14,7 +14,7 @@ readonly class ApiLoginResponse
 
     public const string token = 'token';
 
-    #[Response([Response::description => static function() {
+    #[Response([Response::description => static function () {
         return PersonalAccessTokens::token->comment();
     }])]
     public string $token;
