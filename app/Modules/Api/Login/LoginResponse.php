@@ -6,7 +6,7 @@ use App\Helpers\DataModel;
 use App\Modules\Api\Support\HasResponseSchema;
 use App\Modules\Api\Support\Response;
 
-readonly class ApiLoginResponse
+readonly class LoginResponse
 {
     use DataModel;
     use HasResponseSchema;

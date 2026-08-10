@@ -30,6 +30,18 @@ case user = self::prefix.'/user';
 Never a literal path anywhere else — the schema, the route file and the tests all
 read `ApiRoute::user->value`.
 
+**A case is per path, not per endpoint.** The case *value* is the path, so two
+methods on one path share one case: adding `PATCH /api/user` alongside
+`GET /api/user` adds a route, a module and a schema, but no case. Artifact 1 of
+the six is the one that is sometimes already done.
+
+Those modules stay separate all the way down — `User` and `UpdateUserName` each
+key `ApiRoute::user->value` in their own `<Name>Schema`, one under `get` and one
+under `patch`. The generator merges path fragments with
+`array_replace_recursive`, so the two operations land side by side and neither
+file has to know about the other. Two modules declaring the *same* method on the
+same path is the collision that silently loses one; nothing checks for it.
+
 ## 2. Request DTO (bodies only)
 
 `use DataModel; use HasRequestSchema;` — one `public const string` plus one typed
@@ -86,7 +98,7 @@ public ?string $email_verified_at;
 - `operationId`, `summary`, `tags`, and `security => [[SharedSchema::bearer => []]]` when authenticated.
 - Declare **every** status the method can return. One omitted is a test failure the first time it is reached.
 - 200 → `<Name>Response::schema()`. Errors → `$ref: SharedSchema::api_error`, or `api_validation_error` for 422.
-- Behind `auth:sanctum` the 401 is the middleware's bare `{message}`, not the envelope. Declare it inline. (Known wart; see [`agent-development-friction.md`](agent-development-friction.md) #9.)
+- Behind `auth:sanctum` the 401 is the middleware's bare `{message}`, not the envelope. `$ref: SharedSchema::middleware_error`, described by `SharedSchema::middleware_error_description`. (Why it is not the envelope: [`agent-development-friction.md`](agent-development-friction.md) #5.)
 
 ## 5. Controller
 
@@ -123,6 +135,26 @@ $this->assertMatchesSchema($this->withToken($token)->getJson(ApiRoute::user->val
 - A declared `security` requirement needs `->withToken('any-value')`, or the 401 can never be exercised either. `Sanctum::actingAs()` sets no header.
 - Derive expected `type`/`message` from the DTO (`class_basename(ApiUserResponse::class)`), never a literal.
 - For serialized dates, expect `$Model->toArray()[...]` — `Model::serializeDate()` output, not `toIso8601String()`.
+- Table names come from the enum too: `assertDatabaseHas(Users::table(), [...])`.
+
+### Covering the 422
+
+`assertMatchesSchema()` validates the request first, so a body the document
+rejects never reaches the 422 — the assertion fails describing the request. The
+one invalid body the document still admits is **a blank required string**: a
+required non-nullable string becomes Laravel's `required`, which refuses `''`,
+while league reads it as a perfectly good `string`. That gap is what makes the
+status reachable at all, and it is the default recipe for the test:
+
+```php
+$this->assertMatchesSchema(
+    $this->withToken($token)->patchJson(ApiRoute::user->value, [UpdateUserNameRequest::name => ''])
+)->assertStatus(422)->assertJsonValidationErrors(UpdateUserNameRequest::name);
+```
+
+Every other 422 — a missing field, a wrong type, an over-long value — needs an
+ordinary test with no `assertMatchesSchema()`. Write those too; they just do not
+count toward `openapi:coverage`. `ApiLoginTest` has one of each.
 
 ## Gates
 

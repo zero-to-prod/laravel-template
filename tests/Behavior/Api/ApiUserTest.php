@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use App\Modules\Api\Support\ApiResponse;
-use App\Modules\Api\User\ApiUserResponse;
+use App\Modules\Api\User\Show\UserShowResponse;
 use App\Routes\ApiRoute;
 
 test('authenticated user can retrieve their details', function (): void {
@@ -15,16 +15,16 @@ test('authenticated user can retrieve their details', function (): void {
     $response->assertOk()
         ->assertJson([
             ApiResponse::success => true,
-            ApiResponse::type => class_basename(ApiUserResponse::class),
+            ApiResponse::type => class_basename(UserShowResponse::class),
             ApiResponse::data => [
-                ApiUserResponse::id => $User->id,
-                ApiUserResponse::name => $User->name,
-                ApiUserResponse::email => $User->email,
+                UserShowResponse::id => $User->id,
+                UserShowResponse::name => $User->name,
+                UserShowResponse::email => $User->email,
                 // The model serializes its dates, so the response carries
                 // whatever Model::serializeDate() published.
-                ApiUserResponse::email_verified_at => $User->toArray()[ApiUserResponse::email_verified_at],
-                ApiUserResponse::created_at => $User->toArray()[ApiUserResponse::created_at],
-                ApiUserResponse::updated_at => $User->toArray()[ApiUserResponse::updated_at],
+                UserShowResponse::email_verified_at => $User->toArray()[UserShowResponse::email_verified_at],
+                UserShowResponse::created_at => $User->toArray()[UserShowResponse::created_at],
+                UserShowResponse::updated_at => $User->toArray()[UserShowResponse::updated_at],
             ],
         ]);
 });

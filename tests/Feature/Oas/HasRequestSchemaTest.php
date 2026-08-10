@@ -1,33 +1,33 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Api\Login\ApiLoginRequest;
+use App\Modules\Api\Login\LoginRequest;
 use Illuminate\Validation\ValidationException;
 use Tests\Fixtures\OasRequestStub;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 test('the request body schema is assembled from the property attributes', function (): void {
-    expect(ApiLoginRequest::schema())->toBe([
+    expect(LoginRequest::schema())->toBe([
         Schema::type => Schema::object,
         Schema::required => [
-            ApiLoginRequest::email,
-            ApiLoginRequest::password,
-            ApiLoginRequest::device_name,
+            LoginRequest::email,
+            LoginRequest::password,
+            LoginRequest::device_name,
         ],
         Schema::properties => [
-            ApiLoginRequest::email => [
+            LoginRequest::email => [
                 Property::type => Property::string,
                 Property::maxLength => 255,
                 Property::description => 'User email',
                 Property::format => Property::email,
             ],
-            ApiLoginRequest::password => [
+            LoginRequest::password => [
                 Property::type => Property::string,
                 Property::maxLength => 255,
                 Property::description => 'User password',
             ],
-            ApiLoginRequest::device_name => [
+            LoginRequest::device_name => [
                 Property::type => Property::string,
                 Property::maxLength => 255,
                 Property::description => 'Name of the requesting device',
@@ -37,57 +37,57 @@ test('the request body schema is assembled from the property attributes', functi
 });
 
 test('a conforming request validates', function (): void {
-    expect(ApiLoginRequest::validator([
-        ApiLoginRequest::email => 'user@example.com',
-        ApiLoginRequest::password => 'secret',
-        ApiLoginRequest::device_name => 'phone',
+    expect(LoginRequest::validator([
+        LoginRequest::email => 'user@example.com',
+        LoginRequest::password => 'secret',
+        LoginRequest::device_name => 'phone',
     ])->passes())->toBeTrue();
 });
 
 test('a non scalar value is a 422 rather than a hydration TypeError', function (): void {
     // Validating the raw input keeps `from()` off any payload the schema
     // rejects, so `password[]=x` cannot reach the typed property.
-    $errors = ApiLoginRequest::validator([
-        ApiLoginRequest::email => 'user@example.com',
-        ApiLoginRequest::password => ['x'],
-        ApiLoginRequest::device_name => 'phone',
+    $errors = LoginRequest::validator([
+        LoginRequest::email => 'user@example.com',
+        LoginRequest::password => ['x'],
+        LoginRequest::device_name => 'phone',
     ])->errors();
 
-    expect($errors->keys())->toBe([ApiLoginRequest::password])
-        ->and($errors->first(ApiLoginRequest::password))->toBe('The password field must be a string.');
+    expect($errors->keys())->toBe([LoginRequest::password])
+        ->and($errors->first(LoginRequest::password))->toBe('The password field must be a string.');
 });
 
 test('a value the document does not allow is rejected rather than coerced', function (): void {
     // The cast would have made this "123" and let it pass a `type: string`
     // schema, leaving the runtime laxer than the published document.
-    $errors = ApiLoginRequest::validator([
-        ApiLoginRequest::email => 'user@example.com',
-        ApiLoginRequest::password => 123,
-        ApiLoginRequest::device_name => 'phone',
+    $errors = LoginRequest::validator([
+        LoginRequest::email => 'user@example.com',
+        LoginRequest::password => 123,
+        LoginRequest::device_name => 'phone',
     ])->errors();
 
-    expect($errors->keys())->toBe([ApiLoginRequest::password]);
+    expect($errors->keys())->toBe([LoginRequest::password]);
 });
 
 test('a blank password conforms to the document but is still rejected', function (): void {
     // A required, non-nullable string translates to `required`, which rejects
     // "" without the document having to publish minLength: 1. That keeps the
     // 422 reachable by a request the document accepts.
-    $errors = ApiLoginRequest::validator([
-        ApiLoginRequest::email => 'user@example.com',
-        ApiLoginRequest::password => '',
-        ApiLoginRequest::device_name => 'phone',
+    $errors = LoginRequest::validator([
+        LoginRequest::email => 'user@example.com',
+        LoginRequest::password => '',
+        LoginRequest::device_name => 'phone',
     ])->errors();
 
-    expect($errors->keys())->toBe([ApiLoginRequest::password])
-        ->and($errors->first(ApiLoginRequest::password))->toBe('The password field is required.');
+    expect($errors->keys())->toBe([LoginRequest::password])
+        ->and($errors->first(LoginRequest::password))->toBe('The password field is required.');
 });
 
 test('validate throws with the messages attached', function (): void {
-    ApiLoginRequest::validator([
-        ApiLoginRequest::email => 'nope',
-        ApiLoginRequest::password => 'secret',
-        ApiLoginRequest::device_name => 'phone',
+    LoginRequest::validator([
+        LoginRequest::email => 'nope',
+        LoginRequest::password => 'secret',
+        LoginRequest::device_name => 'phone',
     ])->validate();
 })->throws(ValidationException::class);
 

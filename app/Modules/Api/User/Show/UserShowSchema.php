@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Modules\Api\User;
+namespace App\Modules\Api\User\Show;
 
 use App\Modules\Api\Support\DescribesOperation;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
 use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
-use ZeroToProd\SchemaValidator\Property;
-use ZeroToProd\SchemaValidator\Schema;
 
 /**
  * @phpstan-import-type PathItem from ApiSchema
  * @phpstan-import-type Components from ApiSchema
  */
-readonly class ApiUserSchema implements DescribesOperation
+readonly class UserShowSchema implements DescribesOperation
 {
     /**
      * @return array{paths?: array<string, PathItem>, components?: Components}
@@ -36,20 +34,14 @@ readonly class ApiUserSchema implements DescribesOperation
                             '200' => [
                                 'description' => 'The authenticated user.',
                                 'content' => [
-                                    'application/json' => ['schema' => ApiUserResponse::schema()],
+                                    'application/json' => ['schema' => UserShowResponse::schema()],
                                 ],
                             ],
                             '401' => [
-                                'description' => 'The token was missing, expired or unrecognised. Produced by the auth:sanctum middleware, so it does not use the standard error envelope.',
+                                'description' => SharedSchema::middleware_error_description,
                                 'content' => [
                                     'application/json' => [
-                                        'schema' => [
-                                            Schema::type => Schema::object,
-                                            Schema::required => ['message'],
-                                            Schema::properties => [
-                                                'message' => [Property::type => Property::string],
-                                            ],
-                                        ],
+                                        'schema' => ['$ref' => SharedSchema::middleware_error],
                                     ],
                                 ],
                             ],

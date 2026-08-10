@@ -9,21 +9,21 @@ use Illuminate\Http\JsonResponse;
 use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
-readonly class ApiLoginController
+readonly class LoginController
 {
     /** @throws ReflectionException */
     #[ApiSchema(static function (): array {
-        return ApiLoginSchema::schema();
+        return LoginSchema::schema();
     })]
     public function __invoke(): JsonResponse
     {
-        $Validator = ApiLoginRequest::validator(request()->all());
+        $Validator = LoginRequest::validator(request()->all());
 
         if ($Validator->fails()) {
             return api_response()->unprocessableEntity($Validator);
         }
 
-        $ApiLoginRequest = ApiLoginRequest::from(request()->all());
+        $ApiLoginRequest = LoginRequest::from(request()->all());
 
         $User = User::query()->where(Users::email->value, $ApiLoginRequest->email)->first();
 
@@ -32,8 +32,8 @@ readonly class ApiLoginController
         }
 
         return api_response()->ok(
-            ApiLoginResponse::from([
-                ApiLoginResponse::token => $User->createToken($ApiLoginRequest->device_name)->plainTextToken,
+            LoginResponse::from([
+                LoginResponse::token => $User->createToken($ApiLoginRequest->device_name)->plainTextToken,
             ]),
         );
     }

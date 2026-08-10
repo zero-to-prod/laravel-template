@@ -2,14 +2,30 @@
 
 namespace App\Sources\Db;
 
+use ReflectionClass;
 use ZeroToProd\DbModel\Column;
 use ZeroToProd\DbModel\HasColumnAttribute;
 use ZeroToProd\DbModel\PhpType;
+use ZeroToProd\DbModel\Table;
 use ZeroToProd\SchemaValidator\Property;
 
 trait HasColumn
 {
     use HasColumnAttribute;
+
+    /**
+     * The name of the table this enum mirrors, read off its #[Table]
+     * attribute. The enum is the source of truth for the columns, so it is the
+     * source of truth for the table name too, and nothing has to spell it.
+     */
+    public static function table(): string
+    {
+        $attributes = new ReflectionClass(static::class)->getAttributes(Table::class);
+
+        $name = $attributes === [] ? null : ($attributes[0]->newInstance()->attributes[Table::name] ?? null);
+
+        return is_string($name) ? $name : '';
+    }
 
     /** @return array<string, mixed> */
     public function schema(): array

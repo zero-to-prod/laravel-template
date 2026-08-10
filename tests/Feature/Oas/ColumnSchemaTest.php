@@ -3,6 +3,7 @@
 use App\Sources\Db\App\Migrations;
 use App\Sources\Db\App\PersonalAccessTokens;
 use App\Sources\Db\App\Users;
+use Tests\Fixtures\UntabledStub;
 use ZeroToProd\SchemaValidator\Property;
 
 test('a column becomes an openapi schema object', function (): void {
@@ -43,4 +44,13 @@ test('an absent column attribute reads as null rather than throwing', function (
 test('a column attribute is readable by name', function (): void {
     expect(Users::email->length())->toBe(255)
         ->and(Users::email->unique())->toBeTrue();
+});
+
+test('the enum names the table it mirrors', function (): void {
+    expect(Users::table())->toBe('users')
+        ->and(PersonalAccessTokens::table())->toBe('personal_access_tokens');
+});
+
+test('an enum declaring no table name reads as empty rather than throwing', function (): void {
+    expect(UntabledStub::table())->toBeEmpty();
 });

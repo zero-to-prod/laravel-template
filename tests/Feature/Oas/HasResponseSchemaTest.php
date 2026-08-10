@@ -1,14 +1,14 @@
 <?php
 
 use App\Modules\Api\Authenticated\AuthenticatedResponse;
-use App\Modules\Api\Login\ApiLoginResponse;
+use App\Modules\Api\Login\LoginResponse;
 use App\Modules\Api\Support\ApiResponse;
 use Tests\Fixtures\OasResponseStub;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 test('the envelope carries the model as data', function (): void {
-    expect(ApiLoginResponse::schema())->toBe([
+    expect(LoginResponse::schema())->toBe([
         Schema::type => Schema::object,
         Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::data, ApiResponse::type],
         Schema::properties => [
@@ -16,9 +16,9 @@ test('the envelope carries the model as data', function (): void {
             ApiResponse::message => [Property::type => Property::string],
             ApiResponse::data => [
                 Schema::type => Schema::object,
-                Schema::required => [ApiLoginResponse::token],
+                Schema::required => [LoginResponse::token],
                 Schema::properties => [
-                    ApiLoginResponse::token => [
+                    LoginResponse::token => [
                         Property::type => Property::string,
                         Property::description => 'API authentication token',
                     ],
@@ -26,7 +26,7 @@ test('the envelope carries the model as data', function (): void {
             ],
             ApiResponse::type => [
                 Property::type => Property::string,
-                Property::enum => [class_basename(ApiLoginResponse::class)],
+                Property::enum => [class_basename(LoginResponse::class)],
             ],
         ],
     ]);

@@ -12,7 +12,7 @@ use ZeroToProd\LaravelOpenapi\ApiSchema;
  * @phpstan-import-type PathItem from ApiSchema
  * @phpstan-import-type Components from ApiSchema
  */
-readonly class ApiLoginSchema implements DescribesOperation
+readonly class LoginSchema implements DescribesOperation
 {
     /**
      * @return array{paths?: array<string, PathItem>, components?: Components}
@@ -32,14 +32,14 @@ readonly class ApiLoginSchema implements DescribesOperation
                         'requestBody' => [
                             'required' => true,
                             'content' => [
-                                'application/json' => ['schema' => ApiLoginRequest::schema()],
+                                'application/json' => ['schema' => LoginRequest::schema()],
                             ],
                         ],
                         'responses' => [
                             '200' => [
                                 'description' => 'The API token.',
                                 'content' => [
-                                    'application/json' => ['schema' => ApiLoginResponse::schema()],
+                                    'application/json' => ['schema' => LoginResponse::schema()],
                                 ],
                             ],
                             '401' => [

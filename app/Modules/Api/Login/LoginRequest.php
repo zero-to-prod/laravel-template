@@ -9,7 +9,7 @@ use App\Sources\Db\App\PersonalAccessTokens;
 use App\Sources\Db\App\Users;
 use ZeroToProd\SchemaValidator\Property;
 
-readonly class ApiLoginRequest
+readonly class LoginRequest
 {
     use DataModel;
     use HasRequestSchema;

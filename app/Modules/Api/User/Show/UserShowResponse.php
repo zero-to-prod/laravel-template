@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Modules\Api\User;
+namespace App\Modules\Api\User\Show;
 
 use App\Helpers\DataModel;
 use App\Modules\Api\Support\HasResponseSchema;
 use App\Modules\Api\Support\Response;
 use App\Sources\Db\App\Users;
 
-readonly class ApiUserResponse
+readonly class UserShowResponse
 {
     use DataModel;
     use HasResponseSchema;
