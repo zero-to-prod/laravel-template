@@ -3,12 +3,14 @@
 namespace Tests\Fixtures;
 
 use App\Helpers\DataModel;
+use App\Modules\Api\Support\HasResponseSchema;
 use App\Modules\Api\Support\Response;
 use Zerotoprod\DataModel\Describe;
 
 readonly class OasResponseStub
 {
     use DataModel;
+    use HasResponseSchema;
 
     public const string name = 'name';
 

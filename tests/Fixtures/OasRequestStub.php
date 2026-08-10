@@ -3,10 +3,10 @@
 namespace Tests\Fixtures;
 
 use App\Helpers\DataModel;
-use App\Helpers\HasRequestSchema;
-use App\Helpers\Oas\Checks\Confirmed;
-use App\Helpers\Oas\Checks\Unique;
 use App\Helpers\Request;
+use App\Modules\Api\Support\Confirmed;
+use App\Modules\Api\Support\HasRequestSchema;
+use App\Modules\Api\Support\Unique;
 use App\Sources\Db\App\Users;
 use Zerotoprod\DataModel\Describe;
 use ZeroToProd\SchemaValidator\Property;

@@ -3,7 +3,6 @@
 namespace App\Modules\Api\Logout;
 
 use App\Models\User;
-use App\Modules\Api\Models\Logout;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,6 +22,6 @@ readonly class LogoutController
     {
         User::authenticated($Request)->currentAccessToken()->delete();
 
-        return api_response()->ok(Logout::from());
+        return api_response()->ok(LogoutResponse::from());
     }
 }

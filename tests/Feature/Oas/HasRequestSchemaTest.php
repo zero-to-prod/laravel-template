@@ -1,14 +1,14 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Api\Requests\ApiLoginRequest;
+use App\Modules\Api\Login\ApiLoginRequest;
 use Illuminate\Validation\ValidationException;
 use Tests\Fixtures\OasRequestStub;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 test('the request body schema is assembled from the property attributes', function (): void {
-    expect(ApiLoginRequest::rules())->toBe([
+    expect(ApiLoginRequest::schema())->toBe([
         Schema::type => Schema::object,
         Schema::required => [
             ApiLoginRequest::email,
@@ -92,7 +92,7 @@ test('validate throws with the messages attached', function (): void {
 })->throws(ValidationException::class);
 
 test('a closure description overrides the fragment, and a non array schema is dropped', function (): void {
-    expect(OasRequestStub::rules()[Schema::properties] ?? [])->toBe([
+    expect(OasRequestStub::schema()[Schema::properties] ?? [])->toBe([
         OasRequestStub::email => [Property::type => Property::string, Property::minLength => 1],
         OasRequestStub::password => [Property::type => Property::string],
         OasRequestStub::nickname => [
@@ -104,7 +104,7 @@ test('a closure description overrides the fragment, and a non array schema is dr
 });
 
 test('only properties flagged required are hoisted', function (): void {
-    expect(OasRequestStub::rules()[Schema::required] ?? [])
+    expect(OasRequestStub::schema()[Schema::required] ?? [])
         ->toBe([OasRequestStub::email, OasRequestStub::password]);
 });
 

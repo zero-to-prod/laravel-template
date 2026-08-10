@@ -1,15 +1,14 @@
 <?php
 
-use App\Modules\Api\Models\ApiTokenResponse;
-use App\Modules\Api\Models\Authorized;
+use App\Modules\Api\Authenticated\AuthenticatedResponse;
+use App\Modules\Api\Login\ApiLoginResponse;
 use App\Modules\Api\Support\ApiResponse;
-use App\Modules\Api\Support\ResponseSchema;
 use Tests\Fixtures\OasResponseStub;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 test('the envelope carries the model as data', function (): void {
-    expect(ResponseSchema::ok(ApiTokenResponse::class))->toBe([
+    expect(ApiLoginResponse::schema())->toBe([
         Schema::type => Schema::object,
         Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::data, ApiResponse::type],
         Schema::properties => [
@@ -17,9 +16,9 @@ test('the envelope carries the model as data', function (): void {
             ApiResponse::message => [Property::type => Property::string],
             ApiResponse::data => [
                 Schema::type => Schema::object,
-                Schema::required => [ApiTokenResponse::token],
+                Schema::required => [ApiLoginResponse::token],
                 Schema::properties => [
-                    ApiTokenResponse::token => [
+                    ApiLoginResponse::token => [
                         Property::type => Property::string,
                         Property::description => 'API authentication token',
                     ],
@@ -27,7 +26,7 @@ test('the envelope carries the model as data', function (): void {
             ],
             ApiResponse::type => [
                 Property::type => Property::string,
-                Property::enum => [class_basename(ApiTokenResponse::class)],
+                Property::enum => [class_basename(ApiLoginResponse::class)],
             ],
         ],
     ]);
@@ -36,7 +35,7 @@ test('the envelope carries the model as data', function (): void {
 test('a model with no properties contributes no data key', function (): void {
     // Api::respond() strips the empty array, so publishing `data` would
     // describe a key the response never carries.
-    expect(ResponseSchema::ok(Authorized::class))->toBe([
+    expect(AuthenticatedResponse::schema())->toBe([
         Schema::type => Schema::object,
         Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::type],
         Schema::properties => [
@@ -50,7 +49,7 @@ test('a model with no properties contributes no data key', function (): void {
 test('property types map to their openapi equivalents, nullables are optional, and type tracks the basename', function (): void {
     // The `type` enum has to stay whatever Api::resolveType() would publish,
     // which is the payload's class basename.
-    expect(ResponseSchema::ok(OasResponseStub::class))->toBe([
+    expect(OasResponseStub::schema())->toBe([
         Schema::type => Schema::object,
         Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::data, ApiResponse::type],
         Schema::properties => [

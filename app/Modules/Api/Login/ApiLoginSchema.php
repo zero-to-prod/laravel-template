@@ -2,10 +2,7 @@
 
 namespace App\Modules\Api\Login;
 
-use App\Modules\Api\Models\ApiTokenResponse;
-use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Modules\Api\Support\DescribesOperation;
-use App\Modules\Api\Support\ResponseSchema;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
 use ReflectionException;
@@ -35,14 +32,14 @@ readonly class ApiLoginSchema implements DescribesOperation
                         'requestBody' => [
                             'required' => true,
                             'content' => [
-                                'application/json' => ['schema' => ApiLoginRequest::rules()],
+                                'application/json' => ['schema' => ApiLoginRequest::schema()],
                             ],
                         ],
                         'responses' => [
                             '200' => [
                                 'description' => 'The API token.',
                                 'content' => [
-                                    'application/json' => ['schema' => ResponseSchema::ok(ApiTokenResponse::class)],
+                                    'application/json' => ['schema' => ApiLoginResponse::schema()],
                                 ],
                             ],
                             '401' => [

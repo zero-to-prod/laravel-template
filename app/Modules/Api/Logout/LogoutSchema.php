@@ -2,9 +2,7 @@
 
 namespace App\Modules\Api\Logout;
 
-use App\Modules\Api\Models\Logout;
 use App\Modules\Api\Support\DescribesOperation;
-use App\Modules\Api\Support\ResponseSchema;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
 use ReflectionException;
@@ -38,7 +36,7 @@ readonly class LogoutSchema implements DescribesOperation
                             '200' => [
                                 'description' => 'The token was revoked.',
                                 'content' => [
-                                    'application/json' => ['schema' => ResponseSchema::ok(Logout::class)],
+                                    'application/json' => ['schema' => LogoutResponse::schema()],
                                 ],
                             ],
                             '401' => [

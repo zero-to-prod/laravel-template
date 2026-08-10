@@ -3,8 +3,6 @@
 namespace App\Modules\Api\Login;
 
 use App\Models\User;
-use App\Modules\Api\Models\ApiTokenResponse;
-use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Modules\Api\Support\ErrorCode;
 use App\Sources\Db\App\Users;
 use Illuminate\Http\JsonResponse;
@@ -34,8 +32,8 @@ readonly class ApiLoginController
         }
 
         return api_response()->ok(
-            ApiTokenResponse::from([
-                ApiTokenResponse::token => $User->createToken($ApiLoginRequest->device_name)->plainTextToken,
+            ApiLoginResponse::from([
+                ApiLoginResponse::token => $User->createToken($ApiLoginRequest->device_name)->plainTextToken,
             ]),
         );
     }

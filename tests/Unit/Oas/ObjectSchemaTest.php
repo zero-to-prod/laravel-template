@@ -1,6 +1,6 @@
 <?php
 
-use App\Helpers\Oas\ObjectSchema;
+use App\Modules\Api\Support\ObjectSchema;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 

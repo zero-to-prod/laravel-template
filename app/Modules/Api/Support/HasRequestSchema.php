@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Modules\Api\Support;
 
-use App\Helpers\Oas\ObjectSchema;
-use App\Helpers\Oas\ValueCheck;
-use App\Helpers\Oas\Violation;
+use App\Helpers\Request;
 use Closure;
 use Illuminate\Validation\Validator;
 use ReflectionClass;
@@ -21,7 +19,7 @@ trait HasRequestSchema
      *
      * @throws ReflectionException
      */
-    public static function rules(): array
+    public static function schema(): array
     {
         $properties = [];
 
@@ -42,7 +40,7 @@ trait HasRequestSchema
      */
     public static function validator(array $data): Validator
     {
-        return SchemaValidator::make($data, self::rules())
+        return SchemaValidator::make($data, self::schema())
             ->after(static function (Validator $Validator) use ($data): void {
                 if ($Validator->errors()->isNotEmpty()) {
                     return;

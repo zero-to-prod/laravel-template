@@ -1,9 +1,6 @@
 <?php
 
-namespace App\Helpers\Oas\Checks;
-
-use App\Helpers\Oas\ValueCheck;
-use App\Helpers\Oas\Violation;
+namespace App\Modules\Api\Support;
 
 readonly class Confirmed implements ValueCheck
 {

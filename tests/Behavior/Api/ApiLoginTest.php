@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Api\Requests\ApiLoginRequest;
+use App\Modules\Api\Login\ApiLoginRequest;
 use App\Routes\ApiRoute;
 use App\Sources\Db\App\Users;
 

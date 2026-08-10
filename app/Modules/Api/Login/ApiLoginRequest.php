@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\Api\Requests;
+namespace App\Modules\Api\Login;
 
 use App\Helpers\DataModel;
-use App\Helpers\HasRequestSchema;
 use App\Helpers\Request;
+use App\Modules\Api\Support\HasRequestSchema;
 use App\Sources\Db\App\PersonalAccessTokens;
 use App\Sources\Db\App\Users;
 use ZeroToProd\SchemaValidator\Property;

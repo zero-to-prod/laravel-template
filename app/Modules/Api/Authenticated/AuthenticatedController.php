@@ -2,7 +2,6 @@
 
 namespace App\Modules\Api\Authenticated;
 
-use App\Modules\Api\Models\Authorized;
 use Illuminate\Http\JsonResponse;
 use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
@@ -19,6 +18,6 @@ readonly class AuthenticatedController
             return api_response()->unauthorized();
         }
 
-        return api_response()->ok(Authorized::from());
+        return api_response()->ok(AuthenticatedResponse::from());
     }
 }

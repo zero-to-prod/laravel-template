@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Helpers\Oas\Checks;
+namespace App\Modules\Api\Support;
 
-use App\Helpers\Oas\ValueCheck;
-use App\Helpers\Oas\Violation;
 use Illuminate\Support\Facades\DB;
 
 readonly class Unique implements ValueCheck

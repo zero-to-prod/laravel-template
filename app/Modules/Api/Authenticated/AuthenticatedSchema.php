@@ -2,9 +2,7 @@
 
 namespace App\Modules\Api\Authenticated;
 
-use App\Modules\Api\Models\Authorized;
 use App\Modules\Api\Support\DescribesOperation;
-use App\Modules\Api\Support\ResponseSchema;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
 use ReflectionException;
@@ -36,7 +34,7 @@ readonly class AuthenticatedSchema implements DescribesOperation
                             '200' => [
                                 'description' => 'The token is valid.',
                                 'content' => [
-                                    'application/json' => ['schema' => ResponseSchema::ok(Authorized::class)],
+                                    'application/json' => ['schema' => AuthenticatedResponse::schema()],
                                 ],
                             ],
                             '401' => [

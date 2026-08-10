@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers\Oas;
+namespace App\Modules\Api\Support;
 
 interface ValueCheck
 {

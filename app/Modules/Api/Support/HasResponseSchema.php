@@ -2,7 +2,6 @@
 
 namespace App\Modules\Api\Support;
 
-use App\Helpers\Oas\ObjectSchema;
 use Closure;
 use ReflectionClass;
 use ReflectionException;
@@ -13,15 +12,14 @@ use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 /**  @phpstan-import-type OpenApiSchema from ApiSchema */
-readonly class ResponseSchema
+trait HasResponseSchema
 {
     /**
-     * @param  class-string  $model
      * @return OpenApiSchema
      *
      * @throws ReflectionException
      */
-    public static function ok(string $model): array
+    public static function schema(): array
     {
         $properties = [
             ApiResponse::success => [
@@ -34,14 +32,14 @@ readonly class ResponseSchema
             ],
         ];
 
-        $data = self::data($model);
+        $data = self::data();
 
         if ($data !== []) {
             $properties[ApiResponse::data] = ['schema' => $data, 'required' => true];
         }
 
         $properties[ApiResponse::type] = [
-            'schema' => [Property::type => Property::string, Property::enum => [class_basename($model)]],
+            'schema' => [Property::type => Property::string, Property::enum => [class_basename(static::class)]],
             'required' => true,
         ];
 
@@ -49,16 +47,15 @@ readonly class ResponseSchema
     }
 
     /**
-     * @param  class-string  $model
      * @return array<string, mixed>
      *
      * @throws ReflectionException
      */
-    private static function data(string $model): array
+    private static function data(): array
     {
         $properties = [];
 
-        foreach (new ReflectionClass($model)->getProperties(ReflectionProperty::IS_PUBLIC) as $Property) {
+        foreach (new ReflectionClass(static::class)->getProperties(ReflectionProperty::IS_PUBLIC) as $Property) {
             $properties[$Property->getName()] = [
                 'schema' => self::property($Property),
                 'required' => ! ($Property->getType()?->allowsNull() ?? true),
