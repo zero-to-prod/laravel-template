@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Sources\Db\App;
 
-use App\Sources\Db\Support\Collation;
-use App\Sources\Db\Support\Column;
-use App\Sources\Db\Support\ColumnType;
-use App\Sources\Db\Support\HasColumnAttribute;
-use App\Sources\Db\Support\Table;
+use App\Sources\Db\HasColumn;
+use ZeroToProd\DbModel\Column;
+use ZeroToProd\DbModel\ColumnType;
+use ZeroToProd\DbModel\Table;
 
 /**
  * @method string type()
@@ -21,11 +22,11 @@ use App\Sources\Db\Support\Table;
     schema: App::class,
     attributes: [
         Table::name => 'migrations',
-        Table::collate => Collation::utf8mb4_unicode_ci->value,
+        Table::collate => 'utf8mb4_unicode_ci',
     ])]
 enum Migrations: string
 {
-    use HasColumnAttribute;
+    use HasColumn;
 
     #[Column([
         Column::name => self::id,

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "72e61fa95321aaae2ffe92f743eddc2f",
+    "content-hash": "8488c9453e58f2519e437911154579a3",
     "packages": [
         {
             "name": "brick/math",
@@ -6404,6 +6404,68 @@
                 }
             ],
             "time": "2025-11-20T14:48:11+00:00"
+        },
+        {
+            "name": "zero-to-prod/db-model",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zero-to-prod/db-model.git",
+                "reference": "ec5c6459ef444018444c36a9783ca7e9b769f794"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zero-to-prod/db-model/zipball/ec5c6459ef444018444c36a9783ca7e9b769f794",
+                "reference": "ec5c6459ef444018444c36a9783ca7e9b769f794",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^13.0",
+                "illuminate/database": "^13.0",
+                "illuminate/support": "^13.0",
+                "php": "^8.5"
+            },
+            "require-dev": {
+                "laravel/mcp": "^0.9",
+                "laravel/pint": "^1.30",
+                "orchestra/testbench": "^11.0",
+                "pestphp/pest": "^5.0",
+                "pestphp/pest-plugin-rector": "^5.0",
+                "phpstan/phpstan": "^2.2",
+                "rector/rector": "^2.5"
+            },
+            "suggest": {
+                "laravel/mcp": "Required by the MCP server that exposes this package's documentation to coding agents."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ZeroToProd\\DbModel\\DbModelServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ZeroToProd\\DbModel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "david_smith",
+                    "email": "dave0016@gmail.com"
+                }
+            ],
+            "description": "Generates PHP Artifacts to Represent Database Schemas",
+            "support": {
+                "issues": "https://github.com/zero-to-prod/db-model/issues",
+                "source": "https://github.com/zero-to-prod/db-model/tree/v0.1.0"
+            },
+            "time": "2026-08-10T14:54:51+00:00"
         },
         {
             "name": "zero-to-prod/factory",
