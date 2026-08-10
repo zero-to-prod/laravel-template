@@ -19,7 +19,7 @@ test('the request body schema is assembled from the property attributes', functi
             ApiLoginRequest::email => [
                 Property::type => Property::string,
                 Property::maxLength => 255,
-                Property::description => 'The users email',
+                Property::description => 'User email',
                 Property::format => Property::email,
             ],
             ApiLoginRequest::password => [

@@ -1,5 +1,6 @@
 <?php
 
+use App\Sources\Db\App\PersonalAccessTokens;
 use App\Sources\Db\App\Users;
 use App\Sources\Db\Support\ColumnType;
 
@@ -20,10 +21,16 @@ test('unique is not emitted, it is declared per request', function (): void {
     expect(Users::email->rules())->not->toContain('unique');
 });
 
+test('auto increment is not emitted as a rule', function (): void {
+    expect(PersonalAccessTokens::id->rules())->toBe(['required', 'integer']);
+});
+
 test('each column type declares a validation rule', function (): void {
     expect(ColumnType::varchar->rule())->toBe('string')
         ->and(ColumnType::mediumtext->rule())->toBe('string')
+        ->and(ColumnType::text->rule())->toBe('string')
         ->and(ColumnType::char->rule())->toBe('string')
         ->and(ColumnType::int->rule())->toBe('integer')
+        ->and(ColumnType::bigint->rule())->toBe('integer')
         ->and(ColumnType::timestamp->rule())->toBe('date');
 });

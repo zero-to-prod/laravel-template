@@ -5,7 +5,7 @@ namespace App\Modules\Api\Models;
 use App\Helpers\DataModel;
 use App\Modules\Api\Support\Response;
 
-readonly class ApiToken
+readonly class ApiTokenResponse
 {
     use DataModel;
 

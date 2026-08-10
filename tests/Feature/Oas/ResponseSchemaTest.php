@@ -1,6 +1,6 @@
 <?php
 
-use App\Modules\Api\Models\ApiToken;
+use App\Modules\Api\Models\ApiTokenResponse;
 use App\Modules\Api\Models\Authorized;
 use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\ResponseSchema;
@@ -9,7 +9,7 @@ use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 test('the envelope carries the model as data', function (): void {
-    expect(ResponseSchema::ok(ApiToken::class))->toBe([
+    expect(ResponseSchema::ok(ApiTokenResponse::class))->toBe([
         Schema::type => Schema::object,
         Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::data, ApiResponse::type],
         Schema::properties => [
@@ -17,15 +17,18 @@ test('the envelope carries the model as data', function (): void {
             ApiResponse::message => [Property::type => Property::string],
             ApiResponse::data => [
                 Schema::type => Schema::object,
-                Schema::required => [ApiToken::token],
+                Schema::required => [ApiTokenResponse::token],
                 Schema::properties => [
-                    ApiToken::token => [
+                    ApiTokenResponse::token => [
                         Property::type => Property::string,
                         Property::description => 'API authentication token',
                     ],
                 ],
             ],
-            ApiResponse::type => [Property::type => Property::string, Property::enum => ['ApiToken']],
+            ApiResponse::type => [
+                Property::type => Property::string,
+                Property::enum => [class_basename(ApiTokenResponse::class)],
+            ],
         ],
     ]);
 });

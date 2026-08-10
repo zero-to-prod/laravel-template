@@ -13,9 +13,15 @@ enum ColumnType: string
     #[OasType(Property::string)]
     #[RuleType('string')]
     case mediumtext = 'mediumtext';
+    #[OasType(Property::string)]
+    #[RuleType('string')]
+    case text = 'text';
     #[OasType(Property::integer)]
     #[RuleType('integer')]
     case int = 'int';
+    #[OasType(Property::integer)]
+    #[RuleType('integer')]
+    case bigint = 'bigint';
     #[OasType(Property::string, Property::date_time)]
     #[RuleType('date')]
     case timestamp = 'timestamp';

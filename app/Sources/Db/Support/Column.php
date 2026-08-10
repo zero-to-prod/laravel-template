@@ -21,6 +21,7 @@ class Column
 
     public bool $primary_key;
 
+    public const string auto_increment = 'auto_increment';
     public const string unique = 'unique';
     public const string comment = 'comment';
     public const string collate = 'collate';
