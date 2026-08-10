@@ -1,18 +1,27 @@
 <?php
 
-namespace App\Modules\Login;
+namespace App\Modules\Register;
 
 use App\Helpers\DataModel;
 use App\Helpers\IsRequest;
 use App\Helpers\Request;
 use App\Helpers\Rule;
 use App\Sources\Db\App\Users;
+use Illuminate\Validation\Rules\Password;
 use Zerotoprod\DataModel\Describe;
 
-readonly class LoginRequest
+readonly class RegisterRequest
 {
     use DataModel;
     use IsRequest;
+
+    public const string name = 'name';
+
+    #[Describe([Describe::cast => [self::class, 'sanitize']])]
+    #[Request([Request::rules => static function () {
+        return Users::name->rules();
+    }])]
+    public string $name;
 
     public const string email = 'email';
 
@@ -21,20 +30,24 @@ readonly class LoginRequest
         return [
             ...Users::email->rules(),
             Rule::email,
+            Rule::unique('users'),
         ];
     }])]
     public string $email;
 
-    /** @link $password */
     public const string password = 'password';
 
     #[Request([Request::rules => static function () {
-        return Users::password->rules();
+        return [
+            Rule::required,
+            Rule::confirmed,
+            Password::defaults(),
+        ];
     }])]
     public string $password;
 
-    public const string remember_token = 'remember_token';
+    public const string password_confirmation = 'password_confirmation';
 
-    #[Describe([Describe::default => false])]
-    public bool $remember_token;
+    #[Describe([Describe::default => ''])]
+    public string $password_confirmation;
 }

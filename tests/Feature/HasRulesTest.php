@@ -12,10 +12,10 @@ test('rules are collected from request metadata and skip properties without rule
     ]);
 });
 
-test('a pipe delimited rule string is normalised to a list', function (): void {
+test('rules are backed by the column definition and appended to per request', function (): void {
     expect(LoginRequest::from([LoginRequest::email => 'john@example.com', LoginRequest::password => 'password'])->rules())
         ->toBe([
-            LoginRequest::email => [Rule::required->value, Rule::string->value, Rule::email->value, Rule::max(255)],
+            LoginRequest::email => [Rule::required->value, Rule::string->value, Rule::max(255), Rule::email->value],
             LoginRequest::password => [Rule::required->value, Rule::string->value, Rule::max(255)],
         ]);
 });

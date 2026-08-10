@@ -13,22 +13,12 @@ use ZeroToProd\LaravelOpenapi\ApiSchema;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
-/**
- * The success envelope, derived from the model the endpoint responds with.
- *
- * Api::resolveType() publishes the payload's class basename as `type` and
- * Api::respond() drops an empty `data`, so both follow from the model rather
- * than being restated next to it.
- *
- * @phpstan-import-type OpenApiSchema from ApiSchema
- */
+/**  @phpstan-import-type OpenApiSchema from ApiSchema */
 readonly class ResponseSchema
 {
     /**
      * @param  class-string  $model
      * @return OpenApiSchema
-     *
-     * @throws ReflectionException
      */
     public static function ok(string $model): array
     {
@@ -58,9 +48,6 @@ readonly class ResponseSchema
     }
 
     /**
-     * A model with no properties serialises to an empty `data`, which
-     * Api::respond() strips, so it contributes nothing to the envelope.
-     *
      * @param  class-string  $model
      * @return array<string, mixed>
      *
@@ -100,7 +87,6 @@ readonly class ResponseSchema
         return $description === null ? $schema : [...$schema, Property::description => $description];
     }
 
-    /** The same #[Describe] field metadata the form layer reads. */
     private static function description(ReflectionProperty $ReflectionProperty): ?string
     {
         $attributes = $ReflectionProperty->getAttributes(Describe::class, ReflectionAttribute::IS_INSTANCEOF);

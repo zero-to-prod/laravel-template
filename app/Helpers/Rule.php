@@ -17,6 +17,7 @@ enum Rule: string
     case max = 'max';
     case unique = 'unique';
     case integer = 'integer';
+    case date = 'date';
 
     public static function max(int $length): string
     {

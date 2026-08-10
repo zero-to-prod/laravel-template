@@ -5,10 +5,9 @@ namespace App\Sources\Db\Support;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS_CONSTANT)]
-readonly class OasType
+readonly class RuleType
 {
     public function __construct(
-        public string $type,
-        public ?string $format = null,
+        public string $rule,
     ) {}
 }

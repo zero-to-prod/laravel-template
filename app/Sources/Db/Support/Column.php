@@ -5,7 +5,6 @@ namespace App\Sources\Db\Support;
 use App\Helpers\DataModel;
 use Attribute;
 
-// Declared on properties (Cache) and on enum cases, which are class constants (Users).
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_CLASS_CONSTANT)]
 class Column
 {

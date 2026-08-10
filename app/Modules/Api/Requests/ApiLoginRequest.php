@@ -2,12 +2,10 @@
 
 namespace App\Modules\Api\Requests;
 
-use App\DataModels\Fields\GenericEmail;
-use App\DataModels\Fields\Request;
 use App\Helpers\DataModel;
 use App\Helpers\HasRequestSchema;
+use App\Helpers\Request;
 use App\Sources\Db\App\Users;
-use Zerotoprod\DataModel\Describe;
 use ZeroToProd\SchemaValidator\Property;
 
 readonly class ApiLoginRequest
@@ -17,7 +15,6 @@ readonly class ApiLoginRequest
 
     public const string email = 'email';
 
-    #[Describe(GenericEmail::describe)]
     #[Request([
         Request::schema => static function (): array {
             return [

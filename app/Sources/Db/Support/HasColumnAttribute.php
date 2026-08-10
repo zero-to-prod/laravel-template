@@ -18,15 +18,7 @@ trait HasColumnAttribute
         return $this->arguments()[$attribute] ?? null;
     }
 
-    /**
-     * The column as an OpenAPI Schema Object.
-     *
-     * `unique` is deliberately not mapped: it is a validation concern, not a
-     * schema keyword, and whether it applies depends on the endpoint (register
-     * yes, login no). Declare it per-request via Request::checks.
-     *
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function schema(): array
     {
         $arguments = $this->arguments();
@@ -48,6 +40,26 @@ trait HasColumnAttribute
         }
 
         return $schema;
+    }
+
+    /** @return list<string> */
+    public function rules(): array
+    {
+        $arguments = $this->arguments();
+        $type = $arguments[Column::type] ?? null;
+        $rule = ColumnType::from(is_string($type) ? $type : '')->rule();
+        $length = $arguments[Column::length] ?? null;
+
+        $rules = [
+            ($arguments[Column::nullable] ?? false) === true ? 'nullable' : 'required',
+            $rule,
+        ];
+
+        if ($rule === 'string' && is_int($length)) {
+            $rules[] = 'max:'.$length;
+        }
+
+        return $rules;
     }
 
     /** @return array<string, mixed> */

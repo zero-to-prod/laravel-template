@@ -13,7 +13,7 @@ readonly class LoginController
     public function __invoke(): RedirectResponse
     {
         $LoginRequest = LoginRequest::from(request()->all());
-        $Validator = Validator::make($LoginRequest->toArray(), $LoginRequest->rules());
+        $Validator = Validator::make(...$LoginRequest->validator());
 
         if (Auth::attempt($Validator->validate(), $LoginRequest->remember_token)) {
             request()->session()->regenerate();

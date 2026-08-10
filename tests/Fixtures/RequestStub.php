@@ -3,7 +3,7 @@
 namespace Tests\Fixtures;
 
 use App\Helpers\DataModel;
-use App\Helpers\HasRules;
+use App\Helpers\IsRequest;
 use App\Helpers\Request;
 use App\Helpers\Rule;
 use Zerotoprod\DataModel\Describe;
@@ -11,7 +11,7 @@ use Zerotoprod\DataModel\Describe;
 readonly class RequestStub
 {
     use DataModel;
-    use HasRules;
+    use IsRequest;
 
     public const string website = 'website';
 

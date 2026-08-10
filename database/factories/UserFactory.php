@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\DataModels\User;
-use App\Models\User as ModelUser;
+use App\Models\User;
+use App\Sources\Db\App\Users;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/** @extends Factory<ModelUser> */
+/** @extends Factory<User> */
 class UserFactory extends Factory
 {
     protected static ?string $password;
@@ -17,16 +17,16 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            User::name => fake()->name(),
-            User::email => fake()->unique()->safeEmail(),
-            User::email_verified_at => now(),
-            User::password => static::$password ??= Hash::make('password'),
-            User::remember_token => Str::random(10),
+            Users::name->value => fake()->name(),
+            Users::email->value => fake()->unique()->safeEmail(),
+            Users::email_verified_at->value => now(),
+            Users::password->value => static::$password ??= Hash::make('password'),
+            Users::remember_token->value => Str::random(10),
         ];
     }
 
     public function unverified(): static
     {
-        return $this->state([User::email_verified_at => null]);
+        return $this->state([Users::email_verified_at->value => null]);
     }
 }

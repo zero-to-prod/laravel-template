@@ -2,11 +2,11 @@
 
 namespace Tests\Fixtures;
 
-use App\DataModels\Fields\Request;
 use App\Helpers\DataModel;
 use App\Helpers\HasRequestSchema;
 use App\Helpers\Oas\Checks\Confirmed;
 use App\Helpers\Oas\Checks\Unique;
+use App\Helpers\Request;
 use App\Sources\Db\App\Users;
 use Zerotoprod\DataModel\Describe;
 use ZeroToProd\SchemaValidator\Property;

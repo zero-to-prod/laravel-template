@@ -5,16 +5,6 @@ namespace App\Modules\Api\Support;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
-/**
- * OpenAPI components shared by every API endpoint.
- *
- * Referenced from each module's schema so the definitions survive as long as
- * any one endpoint does. `components` merge across attributes, so declaring
- * them everywhere is idempotent.
- *
- * Property keys come from ApiResponse, the model the envelope is built from,
- * so renaming a property there breaks the document at compile time.
- */
 readonly class SharedSchema
 {
     public const string bearer = 'bearer';

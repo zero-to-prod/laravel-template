@@ -26,14 +26,6 @@ use Rector\StaticTypeMapper\StaticTypeMapper;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-/**
- * Adds typed constants to readonly classes, even when they are not final.
- *
- * The built-in AddTypeToConstRector skips public/protected constants on non-final
- * classes because a subclass could override them with a different type. This rule
- * relaxes that restriction for readonly classes, which are value objects by convention
- * and not intended to be subclassed with different constant types.
- */
 final class AddTypeToConstOnReadonlyClassRector extends AbstractRector
 {
     public function __construct(

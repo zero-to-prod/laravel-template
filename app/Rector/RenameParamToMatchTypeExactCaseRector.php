@@ -77,7 +77,6 @@ final class RenameParamToMatchTypeExactCaseRector extends AbstractRector
                 continue;
             }
 
-            // Skip promoted properties — renaming would change the property name
             if ($param->flags !== 0) {
                 continue;
             }
@@ -94,7 +93,6 @@ final class RenameParamToMatchTypeExactCaseRector extends AbstractRector
                 continue;
             }
 
-            // Skip if another param already uses the expected name
             if ($this->hasConflictingParam($node, $expectedName, $param)) {
                 continue;
             }
@@ -116,7 +114,6 @@ final class RenameParamToMatchTypeExactCaseRector extends AbstractRector
         }
 
         if ($type instanceof Identifier) {
-            // Built-in types (int, string, bool, etc.) — skip
             return null;
         }
 

@@ -2,11 +2,11 @@
 
 namespace App\Modules\Api\Login;
 
-use App\DataModels\User;
-use App\Models\User as UserModel;
+use App\Models\User;
 use App\Modules\Api\Models\ApiToken;
 use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Modules\Api\Support\ErrorCode;
+use App\Sources\Db\App\Users;
 use Illuminate\Http\JsonResponse;
 use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
@@ -27,7 +27,7 @@ readonly class ApiLoginController
 
         $ApiLoginRequest = ApiLoginRequest::from(request()->all());
 
-        $User = UserModel::query()->where(User::email, $ApiLoginRequest->email)->first();
+        $User = User::query()->where(Users::email->value, $ApiLoginRequest->email)->first();
 
         if (! $User || ! $User->matchesPassword($ApiLoginRequest->password)) {
             return api_response()->unauthorized(ErrorCode::invalid_credentials);

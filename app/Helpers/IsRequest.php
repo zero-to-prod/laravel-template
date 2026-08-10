@@ -4,13 +4,15 @@ namespace App\Helpers;
 
 use BackedEnum;
 use Closure;
+use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Illuminate\Contracts\Validation\ValidationRule;
 use ReflectionClass;
 use ReflectionException;
 
-trait HasRules
+trait IsRequest
 {
     /**
-     * @return array{array<string, mixed>, array<string, list<string>>, array<string, string>, array<string, string>}
+     * @return array{array<string, mixed>, array<string, list<string|ValidationRule|RuleContract>>, array<string, string>, array<string, string>}
      *
      * @throws ReflectionException
      */
@@ -20,7 +22,7 @@ trait HasRules
     }
 
     /**
-     * @return array<string, list<string>>
+     * @return array<string, list<string|ValidationRule|RuleContract>>
      *
      * @throws ReflectionException
      */
@@ -81,13 +83,7 @@ trait HasRules
         return $attributes;
     }
 
-    /**
-     * A callable is resolved so rules can be shared by a field class, and a
-     * pipe delimited string is normalised to a list so a caller can append to
-     * what a property declares.
-     *
-     * @return list<string>
-     */
+    /** @return list<string|ValidationRule|RuleContract> */
     private static function resolveRules(mixed $rules): array
     {
         if ($rules instanceof Closure || (is_array($rules) && is_callable($rules))) {
@@ -103,7 +99,7 @@ trait HasRules
         foreach (is_array($rules) ? $rules : [] as $rule) {
             if ($rule instanceof BackedEnum) {
                 $resolved[] = (string) $rule->value;
-            } elseif (is_string($rule)) {
+            } elseif (is_string($rule) || $rule instanceof ValidationRule || $rule instanceof RuleContract) {
                 $resolved[] = $rule;
             }
         }
@@ -111,11 +107,7 @@ trait HasRules
         return $resolved;
     }
 
-    /**
-     * @return iterable<string, Request>
-     *
-     * @throws ReflectionException
-     */
+    /** @return iterable<string, Request> */
     private static function requests(): iterable
     {
         foreach (new ReflectionClass(static::class)->getProperties() as $property) {

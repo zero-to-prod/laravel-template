@@ -2,10 +2,7 @@
 
 namespace App\Modules\Register;
 
-use App\DataModels\Fields\GenericString;
-use App\DataModels\User;
-use App\Helpers\Rule;
-use App\Models\User as ModelUser;
+use App\Models\User;
 use App\Routes\Web;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
 use ReflectionException;
 use Throwable;
 
@@ -24,47 +20,37 @@ readonly class RegisterController
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function __invoke(RegisterConfig $RegisterConfig): RedirectResponse
+    public function __invoke(): RedirectResponse
     {
-        $User = User::from(request()->all());
-        $key = $RegisterConfig->rateLimitKey($User->email ?? '');
+        $RegisterRequest = RegisterRequest::from(request()->all());
+        $key = 'register:'.($RegisterRequest->email ?? '');
 
-        $tooManyAttempts = RateLimiter::tooManyAttempts(
-            $key,
-            $RegisterConfig->rateLimitMaxAttempts()
-        );
-
-        if ($tooManyAttempts) {
+        if (RateLimiter::tooManyAttempts($key, 5)) {
             return back()->withErrors([
-                User::email => $RegisterConfig->tooManyAttemptsMessage(),
+                RegisterRequest::email => 'Too many registration attempts. Please try again later.',
             ]);
         }
 
         RateLimiter::hit($key);
 
-        $rules = $User->rules();
-        $rules[User::name] = [Rule::required->value, Rule::string->value, Rule::max(GenericString::length)];
-        $rules[User::email] = [...$rules[User::email], Rule::unique('users')];
-        $rules[User::password] = [Rule::required->value, Rule::confirmed->value, Password::defaults()];
-
-        $Validator = Validator::make($User->toArray(), $rules);
+        $Validator = Validator::make(...$RegisterRequest->validator());
 
         if ($Validator->fails()) {
             return back()
                 ->withErrors($Validator)
-                ->withInput($User->toArray());
+                ->withInput($RegisterRequest->toArray());
         }
 
-        DB::transaction(static function () use ($User) {
-            $ModelUser = ModelUser::query()->create([
-                User::name => $User->name,
-                User::email => $User->email,
-                User::password => Hash::make($User->password),
+        DB::transaction(static function () use ($RegisterRequest) {
+            $User = User::query()->create([
+                RegisterRequest::name => $RegisterRequest->name,
+                RegisterRequest::email => $RegisterRequest->email,
+                RegisterRequest::password => Hash::make($RegisterRequest->password),
             ]);
 
-            Auth::login($ModelUser);
+            Auth::login($User);
 
-            event(new Registered($ModelUser));
+            event(new Registered($User));
         });
 
         return redirect()->intended(Web::home->value);

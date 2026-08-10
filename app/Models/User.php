@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Sources\Db\App\Users;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -37,23 +38,23 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /** @var list<string> */
     protected $fillable = [
-        \App\DataModels\User::name,
-        \App\DataModels\User::email,
-        \App\DataModels\User::password,
+        Users::name->value,
+        Users::email->value,
+        Users::password->value,
     ];
 
     /** @var list<string> */
     protected $hidden = [
-        \App\DataModels\User::password,
-        \App\DataModels\User::remember_token,
+        Users::password->value,
+        Users::remember_token->value,
     ];
 
     /** @return array<string, string> */
     protected function casts(): array
     {
         return [
-            \App\DataModels\User::email_verified_at => 'datetime',
-            \App\DataModels\User::password => 'hashed',
+            Users::email_verified_at->value => 'datetime',
+            Users::password->value => 'hashed',
         ];
     }
 

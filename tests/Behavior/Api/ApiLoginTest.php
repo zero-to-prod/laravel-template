@@ -1,15 +1,15 @@
 <?php
 
-use App\DataModels\User;
-use App\Models\User as ModelUser;
+use App\Models\User;
 use App\Modules\Api\Requests\ApiLoginRequest;
 use App\Routes\ApiRoute;
+use App\Sources\Db\App\Users;
 
 test('login with valid credentials', function (): void {
-    $User = ModelUser::factory([User::password => User::password])->createOne();
+    $User = User::factory([Users::password->value => Users::password->value])->createOne();
     $payload = ApiLoginRequest::from([
         ApiLoginRequest::email => $User->email,
-        ApiLoginRequest::password => User::password,
+        ApiLoginRequest::password => Users::password->value,
         ApiLoginRequest::device_name => 'test-device',
     ]);
 
@@ -51,7 +51,7 @@ test('validation fails with invalid password', function (): void {
 });
 
 test('validation fails with missing device name', function (): void {
-    $User = ModelUser::factory()->createOne();
+    $User = User::factory()->createOne();
     $payload = [
         ApiLoginRequest::email => $User->email,
         ApiLoginRequest::password => 'password',
@@ -63,7 +63,7 @@ test('validation fails with missing device name', function (): void {
 });
 
 test('login fails with invalid credentials', function (): void {
-    $User = ModelUser::factory()->createOne();
+    $User = User::factory()->createOne();
     $payload = [
         ApiLoginRequest::email => $User->email,
         ApiLoginRequest::password => 'wrong-password',
@@ -104,13 +104,13 @@ test('validation fails with missing required fields', function (): void {
 });
 
 test('input is sanitized during login', function (): void {
-    ModelUser::factory()->createOne([
-        User::email => 'test@example.com',
+    User::factory()->createOne([
+        Users::email->value => 'test@example.com',
     ]);
 
     $payload = [
         ApiLoginRequest::email => ' TEST@EXAMPLE.COM ',
-        ApiLoginRequest::password => User::password,
+        ApiLoginRequest::password => Users::password->value,
         ApiLoginRequest::device_name => 'test-device',
     ];
 
@@ -120,12 +120,12 @@ test('input is sanitized during login', function (): void {
 });
 
 test('token is created with correct device name', function (): void {
-    $User = ModelUser::factory([User::password => User::password])->createOne();
+    $User = User::factory([Users::password->value => Users::password->value])->createOne();
     $deviceName = 'test-device-name';
 
     $payload = [
         ApiLoginRequest::email => $User->email,
-        ApiLoginRequest::password => User::password,
+        ApiLoginRequest::password => Users::password->value,
         ApiLoginRequest::device_name => $deviceName,
     ];
 
