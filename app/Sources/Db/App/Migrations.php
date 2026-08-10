@@ -20,36 +20,34 @@ use App\Sources\Db\Support\Table;
 #[Table(
     schema: App::class,
     attributes: [
-        Table::name => 'cache',
+        Table::name => 'migrations',
         Table::collate => Collation::utf8mb4_unicode_ci->value,
     ])]
-enum Cache: string
+enum Migrations: string
 {
     use HasColumnAttribute;
 
     #[Column([
-        Column::name => self::key,
-        Column::comment => 'The cache key',
+        Column::name => self::id,
+        Column::type => ColumnType::int->value,
+        Column::nullable => false,
+        Column::primary_key => true,
+        Column::auto_increment => true,
+    ])]
+    case id = 'id';
+
+    #[Column([
+        Column::name => self::migration,
         Column::type => ColumnType::varchar->value,
         Column::length => 255,
         Column::nullable => false,
-        Column::primary_key => true,
     ])]
-    case key = 'key';
+    case migration = 'migration';
 
     #[Column([
-        Column::name => self::value,
-        Column::comment => 'The serialized cached value',
-        Column::type => ColumnType::mediumtext->value,
-        Column::nullable => false,
-    ])]
-    case value = 'value';
-
-    #[Column([
-        Column::name => self::expiration,
-        Column::comment => 'The unix timestamp the entry expires at',
+        Column::name => self::batch,
         Column::type => ColumnType::int->value,
         Column::nullable => false,
     ])]
-    case expiration = 'expiration';
+    case batch = 'batch';
 }

@@ -19,10 +19,8 @@ class CheckCommand extends Command
         $SourceSchema = SourceSchema::make(is_string($schema) ? $schema : '');
         $differences = new SchemaDiff(DatabaseSchema::read(), $SourceSchema->tables())->differences();
 
-        foreach ($differences as $difference) {
-            $this->components->twoColumnDetail($difference);
-        }
-
+        // writeln() takes the whole list, so an empty one prints nothing.
+        $this->output->writeln($differences);
         $this->components->info(count($differences).' difference(s) found. The database is the source of truth: run [db-model:generate] to rebuild the PHP table enums.');
 
         return $differences === [] ? self::SUCCESS : self::FAILURE;

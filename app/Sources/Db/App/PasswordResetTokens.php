@@ -20,36 +20,37 @@ use App\Sources\Db\Support\Table;
 #[Table(
     schema: App::class,
     attributes: [
-        Table::name => 'cache',
+        Table::name => 'password_reset_tokens',
         Table::collate => Collation::utf8mb4_unicode_ci->value,
     ])]
-enum Cache: string
+enum PasswordResetTokens: string
 {
     use HasColumnAttribute;
 
     #[Column([
-        Column::name => self::key,
-        Column::comment => 'The cache key',
+        Column::name => self::email,
+        Column::comment => 'The email the reset token was issued to',
         Column::type => ColumnType::varchar->value,
         Column::length => 255,
         Column::nullable => false,
         Column::primary_key => true,
     ])]
-    case key = 'key';
+    case email = 'email';
 
     #[Column([
-        Column::name => self::value,
-        Column::comment => 'The serialized cached value',
-        Column::type => ColumnType::mediumtext->value,
+        Column::name => self::token,
+        Column::comment => 'The hashed password reset token',
+        Column::type => ColumnType::varchar->value,
+        Column::length => 255,
         Column::nullable => false,
     ])]
-    case value = 'value';
+    case token = 'token';
 
     #[Column([
-        Column::name => self::expiration,
-        Column::comment => 'The unix timestamp the entry expires at',
-        Column::type => ColumnType::int->value,
-        Column::nullable => false,
+        Column::name => self::created_at,
+        Column::comment => 'When the reset token was issued',
+        Column::type => ColumnType::timestamp->value,
+        Column::nullable => true,
     ])]
-    case expiration = 'expiration';
+    case created_at = 'created_at';
 }

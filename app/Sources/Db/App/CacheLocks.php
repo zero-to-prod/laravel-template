@@ -20,16 +20,16 @@ use App\Sources\Db\Support\Table;
 #[Table(
     schema: App::class,
     attributes: [
-        Table::name => 'cache',
+        Table::name => 'cache_locks',
         Table::collate => Collation::utf8mb4_unicode_ci->value,
     ])]
-enum Cache: string
+enum CacheLocks: string
 {
     use HasColumnAttribute;
 
     #[Column([
         Column::name => self::key,
-        Column::comment => 'The cache key',
+        Column::comment => 'The name of the lock',
         Column::type => ColumnType::varchar->value,
         Column::length => 255,
         Column::nullable => false,
@@ -38,16 +38,17 @@ enum Cache: string
     case key = 'key';
 
     #[Column([
-        Column::name => self::value,
-        Column::comment => 'The serialized cached value',
-        Column::type => ColumnType::mediumtext->value,
+        Column::name => self::owner,
+        Column::comment => 'The identifier of the process holding the lock',
+        Column::type => ColumnType::varchar->value,
+        Column::length => 255,
         Column::nullable => false,
     ])]
-    case value = 'value';
+    case owner = 'owner';
 
     #[Column([
         Column::name => self::expiration,
-        Column::comment => 'The unix timestamp the entry expires at',
+        Column::comment => 'The unix timestamp the lock expires at',
         Column::type => ColumnType::int->value,
         Column::nullable => false,
     ])]

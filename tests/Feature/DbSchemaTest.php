@@ -51,6 +51,7 @@ test('the cache table declares a column per case', function (): void {
     expect(columns(Cache::class))->toBe([
         Cache::key->value => [
             Column::name => Cache::key,
+            Column::comment => 'The cache key',
             Column::type => 'varchar',
             Column::length => 255,
             Column::nullable => false,
@@ -58,11 +59,13 @@ test('the cache table declares a column per case', function (): void {
         ],
         Cache::value->value => [
             Column::name => Cache::value,
+            Column::comment => 'The serialized cached value',
             Column::type => 'mediumtext',
             Column::nullable => false,
         ],
         Cache::expiration->value => [
             Column::name => Cache::expiration,
+            Column::comment => 'The unix timestamp the entry expires at',
             Column::type => 'int',
             Column::nullable => false,
         ],
@@ -83,6 +86,7 @@ test('the users table declares a column per case', function (): void {
     expect(columns(Users::class))->toBe([
         Users::id->value => [
             Column::name => Users::id,
+            Column::comment => 'The unique identifier of the user',
             Column::type => 'char',
             Column::length => 26,
             Column::nullable => false,
@@ -90,6 +94,7 @@ test('the users table declares a column per case', function (): void {
         ],
         Users::name->value => [
             Column::name => Users::name,
+            Column::comment => 'The users name',
             Column::type => 'varchar',
             Column::length => 255,
             Column::nullable => false,
@@ -104,28 +109,33 @@ test('the users table declares a column per case', function (): void {
         ],
         Users::email_verified_at->value => [
             Column::name => Users::email_verified_at,
+            Column::comment => 'When the users email was verified',
             Column::type => 'timestamp',
             Column::nullable => true,
         ],
         Users::password->value => [
             Column::name => Users::password,
+            Column::comment => 'The users hashed password',
             Column::type => 'varchar',
             Column::length => 255,
             Column::nullable => false,
         ],
         Users::remember_token->value => [
             Column::name => Users::remember_token,
+            Column::comment => 'The token that keeps the user signed in between sessions',
             Column::type => 'varchar',
             Column::length => 100,
             Column::nullable => true,
         ],
         Users::created_at->value => [
             Column::name => Users::created_at,
+            Column::comment => 'When the user was created',
             Column::type => 'timestamp',
             Column::nullable => true,
         ],
         Users::updated_at->value => [
             Column::name => Users::updated_at,
+            Column::comment => 'When the user was last updated',
             Column::type => 'timestamp',
             Column::nullable => true,
         ],
@@ -158,6 +168,7 @@ test('the personal access tokens table declares a column per case', function ():
     expect(columns(PersonalAccessTokens::class))->toBe([
         PersonalAccessTokens::id->value => [
             Column::name => PersonalAccessTokens::id,
+            Column::comment => 'The unique identifier of the token',
             Column::type => 'bigint',
             Column::nullable => false,
             Column::primary_key => true,
@@ -165,24 +176,28 @@ test('the personal access tokens table declares a column per case', function ():
         ],
         PersonalAccessTokens::tokenable_type->value => [
             Column::name => PersonalAccessTokens::tokenable_type,
+            Column::comment => 'The class of the model the token belongs to',
             Column::type => 'varchar',
             Column::length => 255,
             Column::nullable => false,
         ],
         PersonalAccessTokens::tokenable_id->value => [
             Column::name => PersonalAccessTokens::tokenable_id,
+            Column::comment => 'The identifier of the model the token belongs to',
             Column::type => 'varchar',
             Column::length => 255,
             Column::nullable => false,
         ],
         PersonalAccessTokens::name->value => [
             Column::name => PersonalAccessTokens::name,
+            Column::comment => 'The name the token was issued under',
             Column::type => 'varchar',
             Column::length => 255,
             Column::nullable => false,
         ],
         PersonalAccessTokens::token->value => [
             Column::name => PersonalAccessTokens::token,
+            Column::comment => 'The hashed token',
             Column::type => 'varchar',
             Column::length => 64,
             Column::nullable => false,
@@ -190,26 +205,31 @@ test('the personal access tokens table declares a column per case', function ():
         ],
         PersonalAccessTokens::abilities->value => [
             Column::name => PersonalAccessTokens::abilities,
+            Column::comment => 'The abilities granted to the token',
             Column::type => 'text',
             Column::nullable => true,
         ],
         PersonalAccessTokens::last_used_at->value => [
             Column::name => PersonalAccessTokens::last_used_at,
+            Column::comment => 'When the token was last used',
             Column::type => 'timestamp',
             Column::nullable => true,
         ],
         PersonalAccessTokens::expires_at->value => [
             Column::name => PersonalAccessTokens::expires_at,
+            Column::comment => 'When the token expires',
             Column::type => 'timestamp',
             Column::nullable => true,
         ],
         PersonalAccessTokens::created_at->value => [
             Column::name => PersonalAccessTokens::created_at,
+            Column::comment => 'When the token was created',
             Column::type => 'timestamp',
             Column::nullable => true,
         ],
         PersonalAccessTokens::updated_at->value => [
             Column::name => PersonalAccessTokens::updated_at,
+            Column::comment => 'When the token was last updated',
             Column::type => 'timestamp',
             Column::nullable => true,
         ],

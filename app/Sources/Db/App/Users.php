@@ -9,15 +9,13 @@ use App\Sources\Db\Support\HasColumnAttribute;
 use App\Sources\Db\Support\Table;
 
 /**
- * Column attributes are read by name through HasColumnAttribute::__call(),
- * which returns null for any key the column does not declare.
- *
  * @method string type()
  * @method string|null comment()
  * @method int|null length()
  * @method bool|null nullable()
  * @method bool|null unique()
  * @method bool|null primary_key()
+ * @method bool|null auto_increment()
  */
 #[Table(
     schema: App::class,
@@ -31,6 +29,7 @@ enum Users: string
 
     #[Column([
         Column::name => self::id,
+        Column::comment => 'The unique identifier of the user',
         Column::type => ColumnType::char->value,
         Column::length => 26,
         Column::nullable => false,
@@ -40,6 +39,7 @@ enum Users: string
 
     #[Column([
         Column::name => self::name,
+        Column::comment => 'The users name',
         Column::type => ColumnType::varchar->value,
         Column::length => 255,
         Column::nullable => false,
@@ -58,6 +58,7 @@ enum Users: string
 
     #[Column([
         Column::name => self::email_verified_at,
+        Column::comment => 'When the users email was verified',
         Column::type => ColumnType::timestamp->value,
         Column::nullable => true,
     ])]
@@ -65,6 +66,7 @@ enum Users: string
 
     #[Column([
         Column::name => self::password,
+        Column::comment => 'The users hashed password',
         Column::type => ColumnType::varchar->value,
         Column::length => 255,
         Column::nullable => false,
@@ -73,6 +75,7 @@ enum Users: string
 
     #[Column([
         Column::name => self::remember_token,
+        Column::comment => 'The token that keeps the user signed in between sessions',
         Column::type => ColumnType::varchar->value,
         Column::length => 100,
         Column::nullable => true,
@@ -81,6 +84,7 @@ enum Users: string
 
     #[Column([
         Column::name => self::created_at,
+        Column::comment => 'When the user was created',
         Column::type => ColumnType::timestamp->value,
         Column::nullable => true,
     ])]
@@ -88,6 +92,7 @@ enum Users: string
 
     #[Column([
         Column::name => self::updated_at,
+        Column::comment => 'When the user was last updated',
         Column::type => ColumnType::timestamp->value,
         Column::nullable => true,
     ])]

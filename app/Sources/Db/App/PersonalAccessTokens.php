@@ -9,9 +9,6 @@ use App\Sources\Db\Support\HasColumnAttribute;
 use App\Sources\Db\Support\Table;
 
 /**
- * Column attributes are read by name through HasColumnAttribute::__call(),
- * which returns null for any key the column does not declare.
- *
  * @method string type()
  * @method string|null comment()
  * @method int|null length()
@@ -38,6 +35,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::id,
+        Column::comment => 'The unique identifier of the token',
         Column::type => ColumnType::bigint->value,
         Column::nullable => false,
         Column::primary_key => true,
@@ -47,6 +45,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::tokenable_type,
+        Column::comment => 'The class of the model the token belongs to',
         Column::type => ColumnType::varchar->value,
         Column::length => 255,
         Column::nullable => false,
@@ -55,6 +54,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::tokenable_id,
+        Column::comment => 'The identifier of the model the token belongs to',
         Column::type => ColumnType::varchar->value,
         Column::length => 255,
         Column::nullable => false,
@@ -63,6 +63,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::name,
+        Column::comment => 'The name the token was issued under',
         Column::type => ColumnType::varchar->value,
         Column::length => 255,
         Column::nullable => false,
@@ -71,6 +72,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::token,
+        Column::comment => 'The hashed token',
         Column::type => ColumnType::varchar->value,
         Column::length => 64,
         Column::nullable => false,
@@ -80,6 +82,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::abilities,
+        Column::comment => 'The abilities granted to the token',
         Column::type => ColumnType::text->value,
         Column::nullable => true,
     ])]
@@ -87,6 +90,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::last_used_at,
+        Column::comment => 'When the token was last used',
         Column::type => ColumnType::timestamp->value,
         Column::nullable => true,
     ])]
@@ -94,6 +98,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::expires_at,
+        Column::comment => 'When the token expires',
         Column::type => ColumnType::timestamp->value,
         Column::nullable => true,
     ])]
@@ -101,6 +106,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::created_at,
+        Column::comment => 'When the token was created',
         Column::type => ColumnType::timestamp->value,
         Column::nullable => true,
     ])]
@@ -108,6 +114,7 @@ enum PersonalAccessTokens: string
 
     #[Column([
         Column::name => self::updated_at,
+        Column::comment => 'When the token was last updated',
         Column::type => ColumnType::timestamp->value,
         Column::nullable => true,
     ])]

@@ -24,15 +24,18 @@ test('the database schema reads a table column by column', function (): void {
         ->and($Users->columns['id']->toArray())->toBe([
             Column::type => ColumnType::char->value,
             Column::length => 26,
+            Column::comment => 'The unique identifier of the user',
             Column::primary_key => true,
         ])
         ->and($Users->columns['email']->toArray())->toBe([
             Column::type => ColumnType::varchar->value,
             Column::length => 255,
+            Column::comment => 'The users email',
             Column::unique => true,
         ])
         ->and($Users->columns['email_verified_at']->toArray())->toBe([
             Column::type => ColumnType::timestamp->value,
+            Column::comment => 'When the users email was verified',
             Column::nullable => true,
         ]);
 });
@@ -45,6 +48,7 @@ test('the database schema keeps only the indexes a column cannot carry', functio
     ])
         ->and($tables['personal_access_tokens']->columns['id']->toArray())->toBe([
             Column::type => ColumnType::bigint->value,
+            Column::comment => 'The unique identifier of the token',
             Column::primary_key => true,
             Column::auto_increment => true,
         ])
@@ -67,11 +71,11 @@ test('the source schema resolves its enum, namespace and directory', function ()
 test('the source schema reads every declared table and skips the schema enum', function (): void {
     $tables = SourceSchema::make('App')->tables();
 
-    expect(array_keys($tables))->toBe(['cache', 'personal_access_tokens', 'users'])
+    expect(array_keys($tables))->toBe(array_keys(DatabaseSchema::read()))
         ->and($tables['personal_access_tokens']->indexes)->toBe([
             'personal_access_tokens_tokenable_id_tokenable_type_index' => ['tokenable_id', 'tokenable_type'],
         ])
-        ->and($tables['users']->columns['email']->comment)->toBe('The users email');
+        ->and($tables['users']->columns['email']->unique)->toBeTrue();
 });
 
 test('the source schema rejects a directory without a schema enum', function (): void {
@@ -121,9 +125,9 @@ test('the renderer rejects a column type it cannot name', function (): void {
         ->toThrow(RuntimeException::class, 'Unsupported column type [geometry]');
 });
 
-test('db-model:check fails while a table is missing from php', function (): void {
-    expect(Artisan::call('db-model:check'))->toBe(Command::FAILURE)
-        ->and(Artisan::output())->toContain('Table [sessions] is not declared in PHP');
+test('db-model:check passes while the committed enums mirror the database', function (): void {
+    expect(Artisan::call('db-model:check'))->toBe(Command::SUCCESS)
+        ->and(Artisan::output())->toContain('0 difference(s) found');
 });
 
 test('db-model:generate creates, leaves and rewrites the table enums', function (): void {
@@ -147,7 +151,13 @@ test('db-model:generate creates, leaves and rewrites the table enums', function 
 });
 
 test('db-model:generate writes nothing on a dry run', function (): void {
-    expect(Artisan::call('db-model:generate', ['--dry-run' => true]))->toBe(Command::SUCCESS)
+    $path = storage_path('framework/testing/db-model-dry-run');
+
+    File::deleteDirectory($path);
+
+    expect(Artisan::call('db-model:generate', ['--path' => $path, '--dry-run' => true]))->toBe(Command::SUCCESS)
         ->and(Artisan::output())->toContain('Nothing was written.')
-        ->and(File::exists(app_path('Sources/Db/App/Sessions.php')))->toBeFalse();
+        ->and(File::files($path))->toBeEmpty();
+
+    File::deleteDirectory($path);
 });
