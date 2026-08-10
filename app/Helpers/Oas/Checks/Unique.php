@@ -8,11 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 readonly class Unique implements ValueCheck
 {
-    public function __construct(
-        private string $table,
-        private string $column,
-        private ?string $message = null,
-    ) {}
+    public function __construct(private string $table, private string $column, private ?string $message = null) {}
 
     /** @param  array<string, mixed>  $data */
     public function violation(mixed $value, string $path, array $data): ?Violation

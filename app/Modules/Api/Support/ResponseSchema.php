@@ -3,12 +3,11 @@
 namespace App\Modules\Api\Support;
 
 use App\Helpers\Oas\ObjectSchema;
-use ReflectionAttribute;
+use Closure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
-use Zerotoprod\DataModel\Describe;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
@@ -19,6 +18,8 @@ readonly class ResponseSchema
     /**
      * @param  class-string  $model
      * @return OpenApiSchema
+     *
+     * @throws ReflectionException
      */
     public static function ok(string $model): array
     {
@@ -89,20 +90,15 @@ readonly class ResponseSchema
 
     private static function description(ReflectionProperty $ReflectionProperty): ?string
     {
-        $attributes = $ReflectionProperty->getAttributes(Describe::class, ReflectionAttribute::IS_INSTANCEOF);
+        $attributes = $ReflectionProperty->getAttributes(Response::class);
 
         if ($attributes === []) {
             return null;
         }
 
-        $field = $attributes[0]->newInstance()->extra[Field::field] ?? null;
+        $description = $attributes[0]->newInstance()->attributes[Response::description] ?? null;
+        $description = $description instanceof Closure ? $description() : $description;
 
-        if (! is_array($field)) {
-            return null;
-        }
-
-        $description = Field::from($field)->description;
-
-        return $description === '' ? null : $description;
+        return is_string($description) && $description !== '' ? $description : null;
     }
 }

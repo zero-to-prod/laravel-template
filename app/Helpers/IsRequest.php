@@ -41,11 +41,7 @@ trait IsRequest
         return $rules;
     }
 
-    /**
-     * @return array<string, string>
-     *
-     * @throws ReflectionException
-     */
+    /** @return array<string, string> */
     public function messages(): array
     {
         $messages = [];
@@ -63,11 +59,7 @@ trait IsRequest
         return $messages;
     }
 
-    /**
-     * @return array<string, string>
-     *
-     * @throws ReflectionException
-     */
+    /** @return array<string, string> */
     public function attributes(): array
     {
         $attributes = [];

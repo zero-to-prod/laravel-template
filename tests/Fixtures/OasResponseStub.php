@@ -3,30 +3,21 @@
 namespace Tests\Fixtures;
 
 use App\Helpers\DataModel;
-use App\Modules\Api\Support\Field;
+use App\Modules\Api\Support\Response;
 use Zerotoprod\DataModel\Describe;
 
-/**
- * Exercises every PHP type ResponseSchema maps, plus a property whose
- * description is resolved from a callable rather than a literal.
- */
 readonly class OasResponseStub
 {
     use DataModel;
 
     public const string name = 'name';
 
-    #[Describe([
-        Field::field => [
-            Field::description => [self::class, 'nameDescription'],
-        ],
+    #[Response([
+        Response::description => static function (): string {
+            return 'The display name';
+        },
     ])]
     public string $name;
-
-    public static function nameDescription(): string
-    {
-        return 'The display name';
-    }
 
     public const string count = 'count';
 
@@ -45,7 +36,7 @@ readonly class OasResponseStub
 
     public const string nickname = 'nickname';
 
-    /** Described, but without field metadata, so it contributes no description. */
+    /** Described, but carries no Response attribute, so it contributes no description. */
     #[Describe([Describe::nullable => true])]
     public ?string $nickname;
 }
