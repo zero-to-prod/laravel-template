@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Api\Authenticated\AuthenticatedResponse;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\ApiRoute;
 use Laravel\Sanctum\Sanctum;
@@ -16,8 +17,8 @@ test('authenticated user can access endpoint', function (): void {
     $response->assertOk()
         ->assertJson([
             ApiResponse::success => true,
-            ApiResponse::message => 'Authorized',
-            ApiResponse::type => 'Authorized',
+            ApiResponse::message => class_basename(AuthenticatedResponse::class),
+            ApiResponse::type => class_basename(AuthenticatedResponse::class),
         ]);
 });
 

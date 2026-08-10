@@ -13,4 +13,5 @@ enum ApiRoute: string
     case authenticated = self::prefix.'/authenticated';
     case login = self::prefix.'/login';
     case logout = self::prefix.'/logout';
+    case user = self::prefix.'/user';
 }

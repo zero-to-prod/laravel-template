@@ -41,7 +41,10 @@ test('a model with no properties contributes no data key', function (): void {
         Schema::properties => [
             ApiResponse::success => [Property::type => Property::boolean, Property::enum => [true]],
             ApiResponse::message => [Property::type => Property::string],
-            ApiResponse::type => [Property::type => Property::string, Property::enum => ['Authorized']],
+            ApiResponse::type => [
+                Property::type => Property::string,
+                Property::enum => [class_basename(AuthenticatedResponse::class)],
+            ],
         ],
     ]);
 });
@@ -64,7 +67,9 @@ test('property types map to their openapi equivalents, nullables are optional, a
                     'ratio' => [Property::type => Property::number],
                     'active' => [Property::type => Property::boolean],
                     'tags' => [Property::type => Schema::array],
-                    'nickname' => [Property::type => Property::string],
+                    // Not required, but the model sends it as null rather than
+                    // omitting it, so the schema has to accept null.
+                    'nickname' => [Property::type => Property::string, Property::nullable => true],
                 ],
             ],
             ApiResponse::type => [

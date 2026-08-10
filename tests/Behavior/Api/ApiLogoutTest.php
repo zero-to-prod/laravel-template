@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Api\Logout\LogoutResponse;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\ApiRoute;
 use Laravel\Sanctum\Sanctum;
@@ -16,8 +17,8 @@ test('authenticated user can logout', function (): void {
     $response->assertOk()
         ->assertJson([
             ApiResponse::success => true,
-            ApiResponse::message => 'Logout',
-            ApiResponse::type => 'Logout',
+            ApiResponse::message => class_basename(LogoutResponse::class),
+            ApiResponse::type => class_basename(LogoutResponse::class),
         ]);
 
     $this->assertDatabaseMissing('personal_access_tokens', [

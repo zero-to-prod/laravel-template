@@ -5,7 +5,6 @@ namespace App\Modules\Api\Login;
 use App\Helpers\DataModel;
 use App\Modules\Api\Support\HasResponseSchema;
 use App\Modules\Api\Support\Response;
-use App\Sources\Db\App\PersonalAccessTokens;
 
 readonly class ApiLoginResponse
 {
@@ -14,8 +13,8 @@ readonly class ApiLoginResponse
 
     public const string token = 'token';
 
-    #[Response([Response::description => static function () {
-        return PersonalAccessTokens::token->comment();
-    }])]
+    // Not PersonalAccessTokens::token->comment(): that column stores the hash,
+    // while the response carries the plain text token, which is never stored.
+    #[Response([Response::description => 'API authentication token'])]
     public string $token;
 }

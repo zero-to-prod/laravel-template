@@ -82,7 +82,15 @@ trait HasResponseSchema
 
         $description = self::description($ReflectionProperty);
 
-        return $description === null ? $schema : [...$schema, Property::description => $description];
+        if ($description !== null) {
+            $schema[Property::description] = $description;
+        }
+
+        if ($Type?->allowsNull() ?? true) {
+            $schema[Property::nullable] = true;
+        }
+
+        return $schema;
     }
 
     private static function description(ReflectionProperty $ReflectionProperty): ?string
