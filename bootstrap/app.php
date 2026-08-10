@@ -4,6 +4,8 @@ use App\Helpers\HttpHeader;
 use App\Http\Middleware\EnsureEmailIsVerifiedMiddleware;
 use App\Routes\MiddlewareTag;
 use App\Routes\Web;
+use App\Sources\Db\Support\CheckCommand;
+use App\Sources\Db\Support\GenerateCommand;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -28,6 +30,10 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        CheckCommand::class,
+        GenerateCommand::class,
+    ])
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(static fn () => Web::login->value);
         $middleware->alias([

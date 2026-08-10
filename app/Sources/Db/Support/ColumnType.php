@@ -16,6 +16,12 @@ enum ColumnType: string
     #[OasType(Property::string)]
     #[RuleType('string')]
     case text = 'text';
+    #[OasType(Property::string)]
+    #[RuleType('string')]
+    case longtext = 'longtext';
+    #[OasType(Property::integer)]
+    #[RuleType('integer')]
+    case tinyint = 'tinyint';
     #[OasType(Property::integer)]
     #[RuleType('integer')]
     case int = 'int';
