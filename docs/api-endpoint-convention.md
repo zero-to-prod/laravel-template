@@ -82,8 +82,16 @@ public ?string $email_verified_at;
 - `Response::description` alone when no column does (see
   `ApiLoginResponse::$token`: the column describes the stored hash, the response
   carries the plain text token).
-- **The PHP type decides nullability, not the column.** `?string` → left out of
-  `required`, emitted as `nullable: true`.
+- **The PHP type decides nullability, not the column.** `?string` → emitted as
+  `nullable: true`. Every declared field is `required` either way: nullable
+  means the *value* may be null, never that the *key* may be missing. As
+  Laravel rules that is `present` plus `nullable`.
+- **A model with any nullable property needs `#[Describe([Describe::nullable =>
+  true])]` on the class.** `from()` reaches a property through `isset()`, which
+  cannot tell an absent key from a null one and initializes neither, so without
+  it the field is dropped from the body instead of published as null.
+  `ResponseNullabilityTest` fails when it is missing — it is the one rule here
+  that no amount of schema validation can catch on its own.
 - No properties at all → no `data` key in the schema, because `Api::respond()`
   strips the empty array.
 - The envelope's `type` is `class_basename()` of this class. Renaming the class

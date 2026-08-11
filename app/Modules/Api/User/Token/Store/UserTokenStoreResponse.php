@@ -10,12 +10,7 @@ use Zerotoprod\DataModel\Describe;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
-/**
- * The created token, plus the one thing no other endpoint can return.
- *
- * `#[Describe(['nullable'])]` for the same reason it appears on
- * `UserTokenShowResponse`: without it a null field is absent rather than null.
- */
+#[Describe([Describe::nullable => true])]
 readonly class UserTokenStoreResponse
 {
     use DataModel;
@@ -37,9 +32,6 @@ readonly class UserTokenStoreResponse
 
     public const string token = 'token';
 
-    // Not PersonalAccessTokens::token->comment(): that column stores the
-    // digest, while this carries the plain text, which is never stored and is
-    // never returned again.
     #[Response([Response::description => 'The plain text token. Shown once, at creation, and not recoverable afterwards.'])]
     public string $token;
 
@@ -53,7 +45,6 @@ readonly class UserTokenStoreResponse
             Property::description => PersonalAccessTokens::abilities->comment(),
         ];
     }])]
-    #[Describe(['nullable'])]
     public ?array $abilities;
 
     public const string expires_at = 'expires_at';
@@ -61,7 +52,6 @@ readonly class UserTokenStoreResponse
     #[Response([Response::schema => static function () {
         return PersonalAccessTokens::expires_at->schema();
     }])]
-    #[Describe(['nullable'])]
     public ?string $expires_at;
 
     public const string created_at = 'created_at';
@@ -69,6 +59,5 @@ readonly class UserTokenStoreResponse
     #[Response([Response::schema => static function () {
         return PersonalAccessTokens::created_at->schema();
     }])]
-    #[Describe(['nullable'])]
     public ?string $created_at;
 }

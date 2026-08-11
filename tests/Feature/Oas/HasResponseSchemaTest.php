@@ -49,7 +49,7 @@ test('a model with no properties contributes no data key', function (): void {
     ]);
 });
 
-test('property types map to their openapi equivalents, nullables are optional, and type tracks the basename', function (): void {
+test('property types map to their openapi equivalents, nullables are required and nullable, and type tracks the basename', function (): void {
     // The `type` enum has to stay whatever Api::resolveType() would publish,
     // which is the payload's class basename.
     expect(OasResponseStub::schema())->toBe([
@@ -60,7 +60,9 @@ test('property types map to their openapi equivalents, nullables are optional, a
             ApiResponse::message => [Property::type => Property::string],
             ApiResponse::data => [
                 Schema::type => Schema::object,
-                Schema::required => ['name', 'count', 'ratio', 'active', 'tags', 'label', 'empty_schema'],
+                // Every field, nullable ones included: the php type decides
+                // whether null is allowed, never whether the key is sent.
+                Schema::required => ['name', 'count', 'ratio', 'active', 'tags', 'verified_at', 'label', 'empty_schema', 'nickname'],
                 Schema::properties => [
                     'name' => [Property::type => Property::string, Property::description => 'The display name'],
                     'count' => [Property::type => Property::integer],
@@ -80,8 +82,8 @@ test('property types map to their openapi equivalents, nullables are optional, a
                         Property::description => 'The overriding description',
                     ],
                     'empty_schema' => [Property::type => Property::string],
-                    // Not required, but the model sends it as null rather than
-                    // omitting it, so the schema has to accept null.
+                    // Required like the rest, and nullable, because the model
+                    // sends it as null rather than omitting it.
                     'nickname' => [Property::type => Property::string, Property::nullable => true],
                 ],
             ],

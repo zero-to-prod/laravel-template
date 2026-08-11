@@ -6,7 +6,9 @@ use App\Helpers\DataModel;
 use App\Modules\Api\Support\HasResponseSchema;
 use App\Modules\Api\Support\Response;
 use App\Sources\Db\App\Users;
+use Zerotoprod\DataModel\Describe;
 
+#[Describe([Describe::nullable => true])]
 readonly class UserShowResponse
 {
     use DataModel;

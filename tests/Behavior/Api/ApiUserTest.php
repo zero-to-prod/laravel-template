@@ -44,7 +44,11 @@ test('an unverified email is published as null', function (): void {
 
     $this->assertMatchesSchema(
         $this->withToken($User->createToken('test-device')->plainTextToken)->getJson(ApiRoute::user->value)
-    )->assertOk()->assertJsonPath('data.email_verified_at', null);
+    )->assertOk()
+        // Present and null, not absent. `assertJsonPath` reads a missing key as
+        // null too, so the structure assertion is the half that means anything.
+        ->assertJsonStructure([ApiResponse::data => [UserShowResponse::email_verified_at]])
+        ->assertJsonPath('data.email_verified_at', null);
 });
 
 test('unauthenticated user cannot retrieve user details', function (): void {
