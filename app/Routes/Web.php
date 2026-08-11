@@ -9,6 +9,7 @@ enum Web: string
     use RendersRoute;
 
     case home = '/';
+    case llms = '/llms.txt';
     case login = '/login';
     case logout = '/logout';
     case register = '/register';
