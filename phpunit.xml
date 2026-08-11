@@ -23,6 +23,8 @@
             <directory suffix=".blade.php">app</directory>
             <!-- Build-time Rector rules: executed by `rector process`, never by the application. -->
             <directory>app/Rector</directory>
+            <!-- Development tooling: served over stdio by `mcp:start`, never by the application. -->
+            <directory>app/Mcp</directory>
         </exclude>
     </source>
     <php>

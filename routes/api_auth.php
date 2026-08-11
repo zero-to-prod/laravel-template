@@ -1,5 +1,9 @@
 <?php
 
+use App\Modules\Api\Cache\Destroy\CacheDestroyController;
+use App\Modules\Api\Cache\Index\CacheIndexController;
+use App\Modules\Api\Cache\Show\CacheShowController;
+use App\Modules\Api\Cache\Store\CacheStoreController;
 use App\Modules\Api\Logout\LogoutController;
 use App\Modules\Api\User\Show\UserShowController;
 use App\Modules\Api\User\Token\Destroy\UserTokenDestroyController;
@@ -21,3 +25,7 @@ Route::get(ApiRoute::user_tokens->value, UserTokenIndexController::class);
 Route::post(ApiRoute::user_tokens->value, UserTokenStoreController::class);
 Route::get(ApiRoute::user_token->value, UserTokenShowController::class);
 Route::delete(ApiRoute::user_token->value, UserTokenDestroyController::class);
+Route::get(ApiRoute::cache_key->value, CacheShowController::class);
+Route::get(ApiRoute::cache->value, CacheIndexController::class);
+Route::post(ApiRoute::cache->value, CacheStoreController::class);
+Route::delete(ApiRoute::cache_key->value, CacheDestroyController::class);

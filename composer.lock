@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b39a537a16db9a0e96ce814e482422b",
+    "content-hash": "ca1e3878297b32a31bb869a0c42f9cb1",
     "packages": [
         {
             "name": "brick/math",
@@ -13009,16 +13009,16 @@
         },
         {
             "name": "zero-to-prod/laravel-rector",
-            "version": "v0.2.0",
+            "version": "v0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zero-to-prod/laravel-rector.git",
-                "reference": "17a9bf34d7eb4be5adf3f8b3969472f524e50d12"
+                "reference": "5182c554e27669d1be829d4181c6323126407375"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zero-to-prod/laravel-rector/zipball/17a9bf34d7eb4be5adf3f8b3969472f524e50d12",
-                "reference": "17a9bf34d7eb4be5adf3f8b3969472f524e50d12",
+                "url": "https://api.github.com/repos/zero-to-prod/laravel-rector/zipball/5182c554e27669d1be829d4181c6323126407375",
+                "reference": "5182c554e27669d1be829d4181c6323126407375",
                 "shasum": ""
             },
             "require": {
@@ -13066,9 +13066,9 @@
             "description": "Opinionated Rector Rules for Laravel",
             "support": {
                 "issues": "https://github.com/zero-to-prod/laravel-rector/issues",
-                "source": "https://github.com/zero-to-prod/laravel-rector/tree/v0.2.0"
+                "source": "https://github.com/zero-to-prod/laravel-rector/tree/v0.2.2"
             },
-            "time": "2026-08-11T17:59:48+00:00"
+            "time": "2026-08-11T19:55:47+00:00"
         }
     ],
     "aliases": [],

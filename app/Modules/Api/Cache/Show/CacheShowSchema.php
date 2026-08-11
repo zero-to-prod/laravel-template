@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\Api\User\Token\Index;
+namespace App\Modules\Api\Cache\Show;
 
+use App\Modules\Api\Cache\KeyParameter;
 use App\Modules\Api\Support\DescribesOperation;
-use App\Modules\Api\Support\PaginationParameters;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
 use ReflectionException;
@@ -13,7 +13,7 @@ use ZeroToProd\LaravelOpenapi\ApiSchema;
  * @phpstan-import-type PathItem from ApiSchema
  * @phpstan-import-type Components from ApiSchema
  */
-readonly class UserTokenIndexSchema implements DescribesOperation
+readonly class CacheShowSchema implements DescribesOperation
 {
     /**
      * @return array{paths?: array<string, PathItem>, components?: Components}
@@ -25,18 +25,18 @@ readonly class UserTokenIndexSchema implements DescribesOperation
         return [
             'components' => SharedSchema::components,
             'paths' => [
-                ApiRoute::user_tokens->value => [
+                ApiRoute::cache_key->value => [
                     'get' => [
-                        'operationId' => 'listUserTokens',
-                        'summary' => 'List the personal access tokens of the authenticated user.',
-                        'tags' => ['Tokens'],
+                        'operationId' => 'showCacheEntry',
+                        'summary' => 'Retrieve one cache entry.',
+                        'tags' => ['Cache'],
                         'security' => [[SharedSchema::bearer => []]],
-                        'parameters' => [...PaginationParameters::schema()],
+                        'parameters' => [KeyParameter::schema()],
                         'responses' => [
                             '200' => [
-                                'description' => 'The tokens, oldest first.',
+                                'description' => 'The cache entry.',
                                 'content' => [
-                                    'application/json' => ['schema' => UserTokenIndexResponse::schema()],
+                                    'application/json' => ['schema' => CacheShowResponse::schema()],
                                 ],
                             ],
                             '401' => [
@@ -44,6 +44,14 @@ readonly class UserTokenIndexSchema implements DescribesOperation
                                 'content' => [
                                     'application/json' => [
                                         'schema' => ['$ref' => SharedSchema::middleware_error],
+                                    ],
+                                ],
+                            ],
+                            '404' => [
+                                'description' => 'There is no cache entry with that key.',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => ['$ref' => SharedSchema::api_error],
                                     ],
                                 ],
                             ],

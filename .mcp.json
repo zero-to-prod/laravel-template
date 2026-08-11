@@ -15,6 +15,10 @@
     "laravel-rector": {
       "command": "php",
       "args": ["artisan", "mcp:start", "laravel-rector"]
+    },
+    "laravel-template": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "laravel-template"]
     }
   }
 }

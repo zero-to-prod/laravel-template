@@ -11,6 +11,8 @@ enum ApiRoute: string
     public const string prefix = '/api';
 
     case authenticated = self::prefix.'/authenticated';
+    case cache = self::prefix.'/cache';
+    case cache_key = self::prefix.'/cache/{key}';
     case login = self::prefix.'/login';
     case logout = self::prefix.'/logout';
     case readme = self::prefix.'/readme';

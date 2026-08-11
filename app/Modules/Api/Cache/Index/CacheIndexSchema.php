@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Api\User\Token\Index;
+namespace App\Modules\Api\Cache\Index;
 
 use App\Modules\Api\Support\DescribesOperation;
 use App\Modules\Api\Support\PaginationParameters;
@@ -13,7 +13,7 @@ use ZeroToProd\LaravelOpenapi\ApiSchema;
  * @phpstan-import-type PathItem from ApiSchema
  * @phpstan-import-type Components from ApiSchema
  */
-readonly class UserTokenIndexSchema implements DescribesOperation
+readonly class CacheIndexSchema implements DescribesOperation
 {
     /**
      * @return array{paths?: array<string, PathItem>, components?: Components}
@@ -25,18 +25,18 @@ readonly class UserTokenIndexSchema implements DescribesOperation
         return [
             'components' => SharedSchema::components,
             'paths' => [
-                ApiRoute::user_tokens->value => [
+                ApiRoute::cache->value => [
                     'get' => [
-                        'operationId' => 'listUserTokens',
-                        'summary' => 'List the personal access tokens of the authenticated user.',
-                        'tags' => ['Tokens'],
+                        'operationId' => 'listCacheEntries',
+                        'summary' => 'List the cache entries.',
+                        'tags' => ['Cache'],
                         'security' => [[SharedSchema::bearer => []]],
                         'parameters' => [...PaginationParameters::schema()],
                         'responses' => [
                             '200' => [
-                                'description' => 'The tokens, oldest first.',
+                                'description' => 'The cache entries.',
                                 'content' => [
-                                    'application/json' => ['schema' => UserTokenIndexResponse::schema()],
+                                    'application/json' => ['schema' => CacheIndexResponse::schema()],
                                 ],
                             ],
                             '401' => [

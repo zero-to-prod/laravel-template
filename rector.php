@@ -7,6 +7,8 @@ use Rector\Config\RectorConfig;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromIterableMethodCallRector;
 use ZeroToProd\LaravelRector\Rector\AddTypeToConstOnReadonlyClassRector;
+use ZeroToProd\LaravelRector\Rector\EnforceControllerSuffixRector;
+use ZeroToProd\LaravelRector\Rector\EnforceInvokableControllerRector;
 use ZeroToProd\LaravelRector\Rector\EnforceInvokableControllerRouteRector;
 use ZeroToProd\LaravelRector\Rector\ForbidTodoAnnotationRector;
 use ZeroToProd\LaravelRector\Rector\RenameParamToMatchTypeExactCaseRector;
@@ -21,6 +23,8 @@ return RectorConfig::configure()
         RenameVariableToMatchNewTypeRector::class,
         AddClosureParamTypeFromIterableMethodCallRector::class,
         AddTypeToConstOnReadonlyClassRector::class,
+        EnforceControllerSuffixRector::class,
+        EnforceInvokableControllerRector::class,
         EnforceInvokableControllerRouteRector::class,
         RenameParamToMatchTypeExactCaseRector::class,
         ForbidTodoAnnotationRector::class,

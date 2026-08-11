@@ -19,7 +19,7 @@
     "barryvdh/laravel-ide-helper": "^3.5",
     "devizzent/cebe-php-openapi": "^1.1",
     "fakerphp/faker": "^1.23",
-    "laravel/mcp": "^0.9.1",
+    "laravel/mcp": "^0.9.3",
     "laravel/pail": "^1.2.2",
     "laravel/pint": "^1.13",
     "laravel/sail": "^1.41",
