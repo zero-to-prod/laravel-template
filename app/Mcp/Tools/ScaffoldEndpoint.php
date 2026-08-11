@@ -19,7 +19,7 @@ class ScaffoldEndpoint extends Tool
 {
     protected string $name = 'scaffold-endpoint';
     protected string $description = <<<'MARKDOWN'
-        Writes the artifacts of one API endpoint module, as docs/api-endpoint-convention.md specifies them:
+        Writes the artifacts of one API endpoint module:
         the route case, the request DTO, the response DTO, the schema, the controller and the test.
 
         What the convention derives is written finished. What needs a decision — the behaviour of the

@@ -24,7 +24,6 @@ conventions that document does not state.
 
 ## Docs
 
-- [API endpoint convention](https://github.com/zero-to-prod/laravel-template/blob/main/docs/api-endpoint-convention.md): How an endpoint is built here — the six artifacts per module, and the rules the gates enforce.
 - [README](https://github.com/zero-to-prod/laravel-template/blob/main/README.md): What the template is and how to run it.
 
 ## Optional

@@ -3,7 +3,7 @@
 namespace App\Mcp\Endpoint;
 
 /**
- * Renders the artifacts docs/api-endpoint-convention.md describes.
+ * Renders the artifacts.
  *
  * What the convention derives is rendered finished. What it says needs a
  * decision — the behaviour of the action, the values a test asserts, the state

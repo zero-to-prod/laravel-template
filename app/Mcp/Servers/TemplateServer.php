@@ -14,8 +14,7 @@ class TemplateServer extends Server
         This application's own tools. The zero-to-prod servers document the packages;
         this one writes code against the conventions this application keeps.
 
-        - `scaffold-endpoint` — the artifacts of one API endpoint module, as
-          docs/api-endpoint-convention.md specifies them.
+        - `scaffold-endpoint` — the artifacts of one API endpoint module
         MARKDOWN;
 
     /**

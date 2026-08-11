@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Helpers\DataModel;
 use Pest\Rector\Set\PestSetList;
 use Rector\Config\RectorConfig;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromIterableMethodCallRector;
+use ZeroToProd\LaravelRector\Rector\AddReadonlyToClassWithTraitRector;
 use ZeroToProd\LaravelRector\Rector\AddTypeToConstOnReadonlyClassRector;
 use ZeroToProd\LaravelRector\Rector\EnforceControllerSuffixRector;
 use ZeroToProd\LaravelRector\Rector\EnforceInvokableControllerRector;
@@ -28,6 +30,11 @@ return RectorConfig::configure()
         EnforceInvokableControllerRouteRector::class,
         RenameParamToMatchTypeExactCaseRector::class,
         ForbidTodoAnnotationRector::class,
+    ])
+    ->withConfiguredRule(AddReadonlyToClassWithTraitRector::class, [
+        'traits' => [
+            DataModel::class,
+        ],
     ])
     ->withSets([
         PestSetList::CODING_STYLE,
