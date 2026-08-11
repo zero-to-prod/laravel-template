@@ -33,7 +33,8 @@
     "phpunit/phpunit": "^13.2.6",
     "rector/rector": "^2.5",
     "roave/security-advisories": "dev-latest",
-    "symfony/psr-http-message-bridge": "^8.1"
+    "symfony/psr-http-message-bridge": "^8.1",
+    "zero-to-prod/laravel-rector": "^0.2"
   },
   "autoload": {
     "psr-4": {

@@ -2,35 +2,38 @@
 
 ## Commands
 
-All commands run inside the Sail container via `./vendor/bin/sail` (aliased below as `sail`).
+These commands run inside the Sail container via `./vendor/bin/sail` (aliased as `sail`).
 
 ```bash
 sail up -d
 sail down
 sail composer dev # start development server
+sail composer fix # automated refactoring
 sail composer check # validation
-sail composer fix # automated fixes
+sail pest --filter=UpdateUserName # the tests you are writing
+sail composer openapi-validate # the document, seconds, no suite
 ```
 
-### While you work
+## End of Turn Instructions
 
-`composer check` runs pint, rector, phpstan, two openapi commands and the whole
-suite in series, so it is the wrong tool for an inner loop — a rector nit on a
-test file costs a full run to find. Use the narrow commands until the work is
-done:
+1. `sail composer fix`: automated refactoring and formatting
+2. `sail composer check`: validation
 
-```bash
-sail pest --filter=UpdateUserName    # the tests you are writing
-sail composer openapi-validate       # the document, seconds, no suite
-sail composer fix                    # apply what rector and pint would demand
-```
+## MCP Servers
 
-Then `sail composer check` once, at the end of each turn. Running `fix` before
-`check` is what keeps the gate from failing on a rewrite it was going to apply
-anyway.
+[.mcp.json](./.mcp.json)
 
 ## API endpoints
 
-Building or changing one: follow `docs/api-endpoint-convention.md` — the
-6-artifact module shape (route case → request DTO → response DTO → schema →
-controller → test). Read it instead of copying an existing module.
+Building or changing one: follow `docs/api-endpoint-convention.md` — the 6-artifact module shape (route case → request DTO → response DTO → schema → controller → test). Read it instead of copying an existing module.
+
+## Conventions
+
+### First-Class Concepts
+
+- Controllers
+  - Naming convention: <Concept>Controller
+  - Use `readonly` invokable classes
+- Responses
+  - Naming convention: <Concept>Response
+  - Readonly DTO using [DataModel](app/Helpers/DataModel.php)

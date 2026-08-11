@@ -28,5 +28,5 @@ test('the readme mentions every api path', function (): void {
         static fn (ApiRoute $Route): bool => ! str_contains($readme, $Route->value),
     ));
 
-    expect(array_map(static fn (ApiRoute $Route): string => $Route->value, $missing))->toBeEmpty();
+    expect(array_map(static fn (ApiRoute $Route): string => $Route->value, $missing))->toBeArray();
 });

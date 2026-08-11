@@ -11,6 +11,10 @@
     "schema-validator": {
       "command": "php",
       "args": ["artisan", "mcp:start", "schema-validator"]
+    },
+    "laravel-rector": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "laravel-rector"]
     }
   }
 }

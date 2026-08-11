@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Rector\AddTypeToConstOnReadonlyClassRector;
-use App\Rector\EnforceInvokableControllerRouteRector;
-use App\Rector\RenameParamToMatchTypeExactCaseRector;
 use Pest\Rector\Set\PestSetList;
 use Rector\Config\RectorConfig;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
 use Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromIterableMethodCallRector;
+use ZeroToProd\LaravelRector\Rector\AddTypeToConstOnReadonlyClassRector;
+use ZeroToProd\LaravelRector\Rector\EnforceInvokableControllerRouteRector;
+use ZeroToProd\LaravelRector\Rector\ForbidTodoAnnotationRector;
+use ZeroToProd\LaravelRector\Rector\RenameParamToMatchTypeExactCaseRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -18,10 +19,12 @@ return RectorConfig::configure()
     ])
     ->withRules([
         RenameVariableToMatchNewTypeRector::class,
-        RenameParamToMatchTypeExactCaseRector::class,
         AddClosureParamTypeFromIterableMethodCallRector::class,
         AddTypeToConstOnReadonlyClassRector::class,
         EnforceInvokableControllerRouteRector::class,
-    ])->withSets([
+        RenameParamToMatchTypeExactCaseRector::class,
+        ForbidTodoAnnotationRector::class,
+    ])
+    ->withSets([
         PestSetList::CODING_STYLE,
     ]);
