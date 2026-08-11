@@ -106,7 +106,7 @@ public ?string $email_verified_at;
 - `operationId`, `summary`, `tags`, and `security => [[SharedSchema::bearer => []]]` when authenticated.
 - Declare **every** status the method can return. One omitted is a test failure the first time it is reached.
 - 200 → `<Name>Response::schema()`. Errors → `$ref: SharedSchema::api_error`, or `api_validation_error` for 422.
-- Behind `auth:sanctum` the 401 is the middleware's bare `{message}`, not the envelope. `$ref: SharedSchema::middleware_error`, described by `SharedSchema::middleware_error_description`. (Why it is not the envelope: [`agent-development-friction.md`](agent-development-friction.md) #5.)
+- Behind `auth:sanctum` the 401 is the middleware's bare `{message}`, not the envelope. `$ref: SharedSchema::middleware_error`, described by `SharedSchema::middleware_error_description`. (Why it is not the envelope: the middleware aborts before any controller runs, so nothing wraps it — see [`SharedSchema`](../app/Modules/Api/Support/SharedSchema.php).)
 
 ## 5. Controller
 
@@ -139,7 +139,7 @@ $this->assertMatchesSchema($this->withToken($token)->getJson(ApiRoute::user->val
 ```
 
 - `assertMatchesSchema()` resolves the operation from the request, so never name the path, method or status.
-- It runs **both** validators over the body (see [`prompts/cross-validator-parity.md`](prompts/cross-validator-parity.md)). Keep the ordinary value assertions: it proves shape, not correctness.
+- It runs **both** validators over the body — league, and the Laravel rules requests are validated by — because the same `format`, `maxLength` or `nullable` can mean one thing on the way out and another on the way in (see [`assertMatchesSchema()`](../tests/TestCase.php)). Keep the ordinary value assertions: it proves shape, not correctness.
 - A declared `security` requirement needs `->withToken('any-value')`, or the 401 can never be exercised either. `Sanctum::actingAs()` sets no header.
 - Derive expected `type`/`message` from the DTO (`class_basename(ApiUserResponse::class)`), never a literal.
 - For serialized dates, expect `$Model->toArray()[...]` — `Model::serializeDate()` output, not `toIso8601String()`.

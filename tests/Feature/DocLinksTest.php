@@ -27,7 +27,10 @@ test('every relative markdown link resolves to a file that exists', function ():
 
 /**
  * The markdown this repo owns: the docs, and the instruction files at the root.
- * `vendor` and `node_modules` are somebody else's to keep honest.
+ * `vendor` and `node_modules` are somebody else's to keep honest, and so is
+ * `docs/repos` — mirrored upstream docs, gitignored, written against link
+ * rewriters this repo does not run. Including them would make the gate fail or
+ * pass on whether a contributor happens to have synced a mirror.
  *
  * @return list<string>
  */
@@ -37,7 +40,14 @@ function markdownFiles(string $base): array
 
     $Directory = new RecursiveDirectoryIterator($base.'/docs', FilesystemIterator::SKIP_DOTS);
 
-    foreach (new RecursiveIteratorIterator($Directory) as $File) {
+    $Iterator = new RecursiveIteratorIterator(
+        new RecursiveCallbackFilterIterator(
+            $Directory,
+            static fn (SplFileInfo $File): bool => $File->getFilename() !== 'repos',
+        )
+    );
+
+    foreach ($Iterator as $File) {
         if ($File instanceof SplFileInfo && $File->getExtension() === 'md') {
             $files[] = $File->getPathname();
         }
