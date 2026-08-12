@@ -10,6 +10,9 @@ enum Web: string
 
     case home = '/';
     case llms = '/llms.txt';
+    case contact = '/contact';
+    case privacyPolicy = '/privacy-policy';
+    case termsOfService = '/terms-of-service';
     case login = '/login';
     case logout = '/logout';
     case register = '/register';

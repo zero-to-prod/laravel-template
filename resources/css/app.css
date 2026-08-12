@@ -7,7 +7,6 @@
 @source "../**/*.vue";
 
 
-/* Only the two themes declared below: no built-in palette is emitted. */
 @plugin "daisyui" {
     themes: false;
 }

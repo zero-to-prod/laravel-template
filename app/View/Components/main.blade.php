@@ -10,7 +10,10 @@
 @if($leftNav)
   <x-left-nav/>
 @endif
-<div @class(['mt-16', 'lg:pl-56' => $leftNav])>{{$slot}}</div>
+<div @class(['mt-16', 'lg:pl-56' => $leftNav])>
+  <div class="min-h-[calc(100vh-4rem)]">{{$slot}}</div>
+  <x-footer/>
+</div>
 @vite('resources/js/app.js')
 </body>
 </html>
