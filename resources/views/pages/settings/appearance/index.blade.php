@@ -5,7 +5,11 @@ use App\Modules\Settings\Appearance\AppearanceRequest;
 use App\Routes\Web;
 use App\View\DataModels\SettingsCard;
 use App\View\DataModels\Svg;
+use Laravel\Head\Facades\Head;
 
+Head::title('Appearance')
+    ->description('Choose how this app looks to you.')
+    ->hiddenFromRobots();
 ?>
 @php
     $selected = old(AppearanceRequest::theme, auth()->user()?->theme?->value);

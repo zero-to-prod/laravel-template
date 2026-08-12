@@ -1,5 +1,7 @@
 @php
-    use App\Modules\Register\RegisterForm;use App\Routes\Web;use App\View\DataModels\AuthCard;
+    use App\Modules\Register\RegisterForm;use App\Routes\Web;use App\View\DataModels\AuthCard;use Laravel\Head\Facades\Head;
+
+    Head::title('Register')->description('Create your account.');
 @endphp
 
 <x-auth-card :authCard="[AuthCard::title => 'Register']">

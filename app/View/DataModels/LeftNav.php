@@ -15,7 +15,6 @@ readonly class LeftNav
     {
         return [
             ['label' => 'Home', 'icon' => 'home', 'route' => Web::home],
-            ['label' => 'Dashboard', 'icon' => 'desktop', 'route' => Web::dashboard],
         ];
     }
 

@@ -3,10 +3,15 @@
 use App\Routes\Web;
 use App\View\DataModels\AuthCard;
 use Illuminate\View\View;
+use Laravel\Head\Facades\Head;
 
 use function Laravel\Folio\{name, render};
 
 name('verification.notice');
+
+Head::title('Verify Your Email')
+    ->description('Confirm your email address to activate your account.')
+    ->hiddenFromRobots();
 
 render(function (View $view) {
     if (auth()->user()->hasVerifiedEmail()) {

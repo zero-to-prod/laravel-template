@@ -3,8 +3,13 @@
 use App\Modules\Login\LoginForm;
 use App\Routes\Web;
 use Illuminate\View\View;
+use Laravel\Head\Facades\Head;
 
 use function Laravel\Folio\render;
+
+Head::title('Login')
+    ->description('Sign in to your account.')
+    ->hiddenFromRobots();
 
 render(function (View $view) {
     if (auth()->check()) {

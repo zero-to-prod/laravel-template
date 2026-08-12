@@ -31,6 +31,14 @@ enum Theme: string
         };
     }
 
+    public function color(): string
+    {
+        return match ($this) {
+            self::light, self::auto => '#fafcfe',
+            self::dark => '#1b2025',
+        };
+    }
+
     public function icon(): string
     {
         return match ($this) {

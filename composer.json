@@ -4,6 +4,7 @@
     "php": "^8.5",
     "laravel/folio": "^1.1",
     "laravel/framework": "^13.17",
+    "laravel/head": "^0.1.0",
     "laravel/sanctum": "^4.0",
     "laravel/tinker": "^3.0",
     "zero-to-prod/data-model": "^81.10",

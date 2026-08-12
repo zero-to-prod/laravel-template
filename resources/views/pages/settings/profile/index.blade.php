@@ -4,7 +4,11 @@ use App\Modules\Settings\Profile\ProfileForm;
 use App\Routes\Web;
 use App\View\DataModels\SettingsCard;
 use App\View\DataModels\TextInput;
+use Laravel\Head\Facades\Head;
 
+Head::title('Profile')
+    ->description('The name other people see on your account.')
+    ->hiddenFromRobots();
 ?>
 <x-settings-card :settingsCard="[SettingsCard::title => 'Profile']">
     <x-status-toast/>

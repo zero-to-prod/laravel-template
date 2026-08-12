@@ -3,7 +3,11 @@
 use App\Modules\Settings\Authentication\PasswordForm;
 use App\Routes\Web;
 use App\View\DataModels\SettingsCard;
+use Laravel\Head\Facades\Head;
 
+Head::title('Authentication')
+    ->description('Confirm your current password to choose a new one.')
+    ->hiddenFromRobots();
 ?>
 <x-settings-card :settingsCard="[SettingsCard::title => 'Authentication']">
     <x-status-toast/>
