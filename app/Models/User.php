@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Theme;
 use App\Sources\Db\App\Users;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\AuthenticationException;
@@ -21,6 +22,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property Theme $theme
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -40,6 +42,12 @@ class User extends Authenticatable implements MustVerifyEmail
         Users::name->value,
         Users::email->value,
         Users::password->value,
+        Users::theme->value,
+    ];
+
+    /** @var array<string, string> */
+    protected $attributes = [
+        Users::theme->value => Theme::auto->value,
     ];
 
     /** @var list<string> */
@@ -54,6 +62,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             Users::email_verified_at->value => 'datetime',
             Users::password->value => 'hashed',
+            Users::theme->value => Theme::class,
         ];
     }
 

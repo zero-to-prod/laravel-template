@@ -13,6 +13,7 @@ enum Rule: string
     case json = 'json';
     case ulid = 'ulid';
     case confirmed = 'confirmed';
+    case current_password = 'current_password';
     case alpha_dash = 'alpha_dash';
     case max = 'max';
     case unique = 'unique';

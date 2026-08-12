@@ -75,6 +75,15 @@ enum Users: string
     case password = 'password';
 
     #[Column([
+        Column::name => self::theme,
+        Column::comment => 'The color theme the user prefers',
+        Column::type => ColumnType::varchar->value,
+        Column::length => 16,
+        Column::nullable => false,
+    ])]
+    case theme = 'theme';
+
+    #[Column([
         Column::name => self::remember_token,
         Column::comment => 'The token that keeps the user signed in between sessions',
         Column::type => ColumnType::varchar->value,

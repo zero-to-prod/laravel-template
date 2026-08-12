@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\Theme;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,6 +16,7 @@ return new class extends Migration
             $Blueprint->timestamp('email_verified_at')->nullable()->comment('When the users email was verified');
             $Blueprint->string('password')->comment('The users hashed password');
             $Blueprint->string('remember_token', 100)->nullable()->comment('The token that keeps the user signed in between sessions');
+            $Blueprint->string('theme', 16)->default(Theme::auto->value)->comment('The color theme the user prefers');
             $Blueprint->timestamp('created_at')->nullable()->comment('When the user was created');
             $Blueprint->timestamp('updated_at')->nullable()->comment('When the user was last updated');
         });
