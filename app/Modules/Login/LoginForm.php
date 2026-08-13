@@ -16,6 +16,7 @@ readonly class LoginForm
 
     #[TextInput([
         TextInput::legend => 'Email',
+        TextInput::type => 'email',
         TextInput::icon => 'email',
         TextInput::placeholder => 'Email',
         TextInput::title => 'User email address',

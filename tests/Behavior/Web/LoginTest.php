@@ -108,6 +108,17 @@ test('user stays logged in with remember me', function (): void {
     $this->assertAuthenticatedAs($User);
 });
 
+test('validation errors are displayed on the form', function (): void {
+    $this->from(Web::login->value)
+        ->followingRedirects()
+        ->post(
+            Web::login->value,
+            LoginFormFactory::factory()->set([LoginForm::email => ''])->context()
+        )
+        ->assertOk()
+        ->assertSee('The email field is required.');
+});
+
 test('old input is preserved on validation failure', function (): void {
     $LoginForm = LoginFormFactory::factory()->make();
 
@@ -178,7 +189,7 @@ test('user cannot login when already authenticated', function (): void {
     )->assertRedirect(Web::home->value);
 });
 
-test('validation errors are displayed on the form', function (): void {
+test('failed authentication is displayed on the form', function (): void {
     $User = User::factory()->createOne();
     $LoginForm = LoginFormFactory::factory()
         ->set([LoginForm::email => $User->email])

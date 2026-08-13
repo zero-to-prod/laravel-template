@@ -2,6 +2,7 @@
 
 use App\Modules\Login\LoginForm;
 use App\Routes\Web;
+use App\View\DataModels\AuthCard;
 use Illuminate\View\View;
 use Laravel\Head\Facades\Head;
 
@@ -19,20 +20,14 @@ render(function (View $view) {
     return $view;
 });
 ?>
-<x-main>
-    <div class="card card-compact sm:m-auto sm:mt-24 sm:max-w-sm">
-        <div class="card-body">
-            <h1 class="card-title">Login</h1>
-            <form class="space-y-2" method="POST" action="{{Web::login->value}}">
-                @csrf
-                <x-text-input :textInput="LoginForm::textInput(LoginForm::email)"/>
-                <x-text-input :textInput="LoginForm::textInput(LoginForm::password)"/>
-                <div>
-                    <button class="mt-6 w-full btn btn-primary">Login</button>
-                </div>
-            </form>
-            <div class="divider">or</div>
-            <a href="{{Web::register->value}}" class="link link-primary text-center p-3">Register</a>
-        </div>
-    </div>
-</x-main>
+<x-auth-card :authCard="[AuthCard::title => 'Login']">
+    <form class="space-y-4" method="POST" action="{{Web::login->value}}">
+        @csrf
+        <x-text-input :textInput="LoginForm::textInput(LoginForm::email)"/>
+        <x-text-input :textInput="LoginForm::textInput(LoginForm::password)"/>
+        <button class="btn btn-primary mt-4 w-full">Login</button>
+    </form>
+    <x-slot:footer>
+        <a href="{{Web::register->value}}" class="link link-primary text-center p-3">Register</a>
+    </x-slot:footer>
+</x-auth-card>
