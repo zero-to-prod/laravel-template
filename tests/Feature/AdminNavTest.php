@@ -11,6 +11,10 @@ test('the first entry is the links page', function (): void {
         ->and($items[0]->route)->toBe(Admin::links);
 });
 
+test('the users page is listed', function (): void {
+    expect(collect(AdminNav::items())->pluck('route')->all())->toContain(Admin::users);
+});
+
 test('every entry names an icon that exists', function (): void {
     foreach (AdminNav::items() as $NavItem) {
         expect(ViewDirectory::svg->has($NavItem->icon))->toBeTrue();

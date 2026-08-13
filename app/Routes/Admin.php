@@ -21,4 +21,5 @@ enum Admin: string
 
     case index = self::prefix;
     case links = self::prefix.'/links';
+    case users = self::prefix.'/users';
 }
