@@ -1,5 +1,6 @@
 <?php
 
+use App\Sources\Db\App\Jobs;
 use App\Sources\Db\App\Migrations;
 use App\Sources\Db\App\PersonalAccessTokens;
 use App\Sources\Db\App\Users;
@@ -28,10 +29,10 @@ test('unique is not published as a schema keyword', function (): void {
 });
 
 test('auto increment is not published as a schema keyword', function (): void {
-    expect(PersonalAccessTokens::id->schema())->toBe([
+    expect(Jobs::id->schema())->toBe([
         Property::type => Property::integer,
-        Property::description => 'The unique identifier of the token',
-    ])->and(PersonalAccessTokens::id->auto_increment())->toBeTrue();
+        Property::description => 'The unique identifier of the queued job',
+    ])->and(Jobs::id->auto_increment())->toBeTrue();
 });
 
 // The migrations table is created by the framework rather than by a migration

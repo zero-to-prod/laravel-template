@@ -24,10 +24,19 @@ return new class extends Migration
     {
         $guard = (string) config('auth.defaults.guard');
 
-        DB::table('roles')->updateOrInsert(
-            ['name' => Role::admin->value, 'guard_name' => $guard],
-            ['updated_at' => now(), 'created_at' => now()],
-        );
+        // The name and the guard are the natural key, so the id is read back
+        // rather than written: re-running must not reissue the role.
+        $roleId = DB::table('roles')
+            ->where('name', Role::admin->value)
+            ->where('guard_name', $guard)
+            ->value('id') ?? (string) Str::ulid();
+
+        DB::table('roles')->updateOrInsert(['id' => $roleId], [
+            'name' => Role::admin->value,
+            'guard_name' => $guard,
+            'updated_at' => now(),
+            'created_at' => now(),
+        ]);
 
         $email = config('admin.email');
         $password = config('admin.password');
@@ -50,7 +59,7 @@ return new class extends Migration
         ]);
 
         DB::table('model_has_roles')->updateOrInsert([
-            'role_id' => DB::table('roles')->where('name', Role::admin->value)->where('guard_name', $guard)->value('id'),
+            'role_id' => $roleId,
             'model_id' => $id,
             'model_type' => new User()->getMorphClass(),
         ]);

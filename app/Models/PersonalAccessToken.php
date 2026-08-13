@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
 
 /**
- * @property int $id
+ * @property string $id
  * @property string $tokenable_type
  * @property string $tokenable_id
  * @property string $name
@@ -17,4 +18,7 @@ use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-class PersonalAccessToken extends SanctumPersonalAccessToken {}
+class PersonalAccessToken extends SanctumPersonalAccessToken
+{
+    use HasUlids;
+}

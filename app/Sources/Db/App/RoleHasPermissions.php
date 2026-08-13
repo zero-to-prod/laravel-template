@@ -36,7 +36,8 @@ enum RoleHasPermissions: string
     #[Column([
         Column::name => self::permission_id,
         Column::comment => 'The permission that is granted',
-        Column::type => ColumnType::bigint->value,
+        Column::type => ColumnType::char->value,
+        Column::length => 26,
         Column::nullable => false,
         Column::primary_key => true,
     ])]
@@ -45,7 +46,8 @@ enum RoleHasPermissions: string
     #[Column([
         Column::name => self::role_id,
         Column::comment => 'The role the permission is granted to',
-        Column::type => ColumnType::bigint->value,
+        Column::type => ColumnType::char->value,
+        Column::length => 26,
         Column::nullable => false,
         Column::primary_key => true,
     ])]

@@ -9,15 +9,16 @@ use Illuminate\Support\Facades\Schema;
  * from config: the table and column names it is pointed at are the ones the
  * table enums in app/Sources/Db/App mirror, so they are fixed here.
  *
- * `model_id` is a ULID because that is what `users.id` is. Teams are off, so no
- * team key is written.
+ * Every key here is a ULID, including the ones the package would otherwise
+ * number for itself, so the models it is pointed at have to generate their own.
+ * Teams are off, so no team key is written.
  */
 return new class extends Migration
 {
     public function up(): void
     {
         Schema::create('permissions', static function (Blueprint $Blueprint) {
-            $Blueprint->id()->comment('The unique identifier of the permission');
+            $Blueprint->ulid('id')->primary()->comment('The unique identifier of the permission');
             $Blueprint->string('name')->comment('The name the permission is granted by');
             $Blueprint->string('guard_name')->comment('The authentication guard the permission applies to');
             $Blueprint->timestamp('created_at')->nullable()->comment('When the permission was created');
@@ -27,7 +28,7 @@ return new class extends Migration
         });
 
         Schema::create('roles', static function (Blueprint $Blueprint) {
-            $Blueprint->id()->comment('The unique identifier of the role');
+            $Blueprint->ulid('id')->primary()->comment('The unique identifier of the role');
             $Blueprint->string('name')->comment('The name the role is granted by');
             $Blueprint->string('guard_name')->comment('The authentication guard the role applies to');
             $Blueprint->timestamp('created_at')->nullable()->comment('When the role was created');
@@ -37,7 +38,7 @@ return new class extends Migration
         });
 
         Schema::create('model_has_permissions', static function (Blueprint $Blueprint) {
-            $Blueprint->unsignedBigInteger('permission_id')->comment('The permission that is granted');
+            $Blueprint->ulid('permission_id')->comment('The permission that is granted');
             $Blueprint->string('model_type')->comment('The class of the model the permission is granted to');
             $Blueprint->char('model_id', 26)->comment('The identifier of the model the permission is granted to');
 
@@ -50,7 +51,7 @@ return new class extends Migration
         });
 
         Schema::create('model_has_roles', static function (Blueprint $Blueprint) {
-            $Blueprint->unsignedBigInteger('role_id')->comment('The role that is granted');
+            $Blueprint->ulid('role_id')->comment('The role that is granted');
             $Blueprint->string('model_type')->comment('The class of the model the role is granted to');
             $Blueprint->char('model_id', 26)->comment('The identifier of the model the role is granted to');
 
@@ -63,8 +64,8 @@ return new class extends Migration
         });
 
         Schema::create('role_has_permissions', static function (Blueprint $Blueprint) {
-            $Blueprint->unsignedBigInteger('permission_id')->comment('The permission that is granted');
-            $Blueprint->unsignedBigInteger('role_id')->comment('The role the permission is granted to');
+            $Blueprint->ulid('permission_id')->comment('The permission that is granted');
+            $Blueprint->ulid('role_id')->comment('The role the permission is granted to');
 
             $Blueprint->foreign('permission_id')->references('id')->on('permissions')->cascadeOnDelete();
             $Blueprint->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete();

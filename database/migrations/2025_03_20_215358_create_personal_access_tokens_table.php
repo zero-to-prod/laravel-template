@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('personal_access_tokens', static function (Blueprint $Blueprint) {
-            $Blueprint->id()->comment('The unique identifier of the token');
+            $Blueprint->ulid('id')->primary()->comment('The unique identifier of the token');
             $Blueprint->string('tokenable_type')->comment('The class of the model the token belongs to');
             $Blueprint->string('tokenable_id', 255)->comment('The identifier of the model the token belongs to');
             $Blueprint->index(['tokenable_id', 'tokenable_type']);

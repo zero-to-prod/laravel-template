@@ -21,7 +21,7 @@ readonly class UserTokenShowResponse
     #[Response([Response::schema => static function () {
         return PersonalAccessTokens::id->schema();
     }])]
-    public int $id;
+    public string $id;
 
     public const string name = 'name';
 

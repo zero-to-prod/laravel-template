@@ -37,10 +37,10 @@ enum Permissions: string
     #[Column([
         Column::name => self::id,
         Column::comment => 'The unique identifier of the permission',
-        Column::type => ColumnType::bigint->value,
+        Column::type => ColumnType::char->value,
+        Column::length => 26,
         Column::nullable => false,
         Column::primary_key => true,
-        Column::auto_increment => true,
     ])]
     case id = 'id';
 

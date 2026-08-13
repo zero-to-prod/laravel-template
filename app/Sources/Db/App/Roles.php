@@ -37,10 +37,10 @@ enum Roles: string
     #[Column([
         Column::name => self::id,
         Column::comment => 'The unique identifier of the role',
-        Column::type => ColumnType::bigint->value,
+        Column::type => ColumnType::char->value,
+        Column::length => 26,
         Column::nullable => false,
         Column::primary_key => true,
-        Column::auto_increment => true,
     ])]
     case id = 'id';
 
