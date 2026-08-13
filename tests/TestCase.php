@@ -7,7 +7,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Testing\TestResponse;
-use JsonException;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tests\Support\OasDocument;
@@ -46,8 +45,6 @@ abstract class TestCase extends BaseTestCase
      *
      * @param  TestResponse<TResponse>  $TestResponse
      * @return TestResponse<TResponse>
-     *
-     * @throws JsonException
      */
     protected function assertMatchesSchema(TestResponse $TestResponse): TestResponse
     {

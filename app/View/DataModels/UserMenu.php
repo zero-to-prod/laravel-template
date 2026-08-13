@@ -19,12 +19,12 @@ class UserMenu
 
     public string $email = '';
 
-    /** @return list<array{label: string, icon: string, route: Auth|Web}> */
+    /** @return list<NavItem> */
     public static function items(): array
     {
         return [
-            ['label' => 'Settings', 'icon' => 'gear', 'route' => Auth::settingsProfile],
-            ['label' => 'Logout', 'icon' => 'logout', 'route' => Web::logout],
+            NavItem::from([NavItem::label => 'Settings', NavItem::icon => 'gear', NavItem::route => Auth::settingsProfile]),
+            NavItem::from([NavItem::label => 'Logout', NavItem::icon => 'logout', NavItem::route => Web::logout]),
         ];
     }
 

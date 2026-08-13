@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CacheEntry;
 use App\Models\User;
 use App\Modules\Api\Cache\Index\CacheIndexResponse;
 use App\Modules\Api\Cache\Show\CacheShowResponse;
@@ -8,19 +9,18 @@ use App\Modules\Api\Support\PaginationParameters;
 use App\Modules\Api\Support\PaginationResponse;
 use App\Routes\ApiRoute;
 use App\Sources\Db\App\Cache;
-use Illuminate\Support\Facades\DB;
 
 // The endpoints read the whole table, so each test owns it. Rollback cannot be
 // relied on for the first test of a process: TestCase::setUp() runs
 // migrate:fresh inside the open transaction, and the DDL commits it.
 beforeEach(function (): void {
-    DB::table(Cache::table())->delete();
+    CacheEntry::query()->delete();
 });
 
 test('authenticated user can list the cache entries', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(Cache::table())->insert([
+    CacheEntry::query()->insert([
         [Cache::key->value => 'beta', Cache::value->value => 'second', Cache::expiration->value => 200],
         [Cache::key->value => 'alpha', Cache::value->value => 'first', Cache::expiration->value => 100],
     ]);
@@ -69,7 +69,7 @@ test('an empty cache lists no entries', function (): void {
 test('the entries are paged', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(Cache::table())->insert([
+    CacheEntry::query()->insert([
         [Cache::key->value => 'alpha', Cache::value->value => 'a', Cache::expiration->value => 100],
         [Cache::key->value => 'beta', Cache::value->value => 'b', Cache::expiration->value => 200],
         [Cache::key->value => 'gamma', Cache::value->value => 'c', Cache::expiration->value => 300],
@@ -92,7 +92,7 @@ test('the entries are paged', function (): void {
 test('a page past the last one is empty', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(Cache::table())->insert([
+    CacheEntry::query()->insert([
         Cache::key->value => 'alpha',
         Cache::value->value => 'a',
         Cache::expiration->value => 100,

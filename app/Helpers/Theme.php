@@ -2,6 +2,18 @@
 
 namespace App\Helpers;
 
+/**
+ * The appearance a user can choose and keep, and everything each choice implies.
+ *
+ * The case that defers to the device renders no theme attribute at all: leaving it
+ * off is what hands the decision to the operating system, so that case must never
+ * be given a name the stylesheet has not registered — and an unregistered name
+ * renders an unstyled page. Presentation is answered by exhaustive matching, so a
+ * new case fails loudly until every question is answered for it: its label, its
+ * description, the icon it shows, and the browser-chrome color that has to stay
+ * paired with the background the stylesheet paints. Values are stored, so one has
+ * to fit the column. The choices are enumerated when rendered, so the form follows.
+ */
 enum Theme: string
 {
     case light = 'light';

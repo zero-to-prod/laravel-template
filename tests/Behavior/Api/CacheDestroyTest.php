@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CacheEntry;
 use App\Models\User;
 use App\Modules\Api\Cache\Destroy\CacheDestroyResponse;
 use App\Modules\Api\Cache\KeyParameter;
@@ -7,18 +8,17 @@ use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\ErrorCode;
 use App\Routes\ApiRoute;
 use App\Sources\Db\App\Cache;
-use Illuminate\Support\Facades\DB;
 
 // See CacheIndexTest: the first test of a process keeps its writes, so the
 // table is cleared rather than assumed empty.
 beforeEach(function (): void {
-    DB::table(Cache::table())->delete();
+    CacheEntry::query()->delete();
 });
 
 test('authenticated user can delete a cache entry', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(Cache::table())->insert([
+    CacheEntry::query()->insert([
         Cache::key->value => 'greeting',
         Cache::value->value => 'hello',
         Cache::expiration->value => 1750000000,
@@ -40,7 +40,7 @@ test('authenticated user can delete a cache entry', function (): void {
 test('deleting one entry leaves the others', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(Cache::table())->insert([
+    CacheEntry::query()->insert([
         [Cache::key->value => 'kept', Cache::value->value => 'a', Cache::expiration->value => 100],
         [Cache::key->value => 'dropped', Cache::value->value => 'b', Cache::expiration->value => 200],
     ]);

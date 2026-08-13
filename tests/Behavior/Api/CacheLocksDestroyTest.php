@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CacheLock;
 use App\Models\User;
 use App\Modules\Api\CacheLocks\Destroy\CacheLocksDestroyResponse;
 use App\Modules\Api\CacheLocks\KeyParameter;
@@ -7,18 +8,17 @@ use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\ErrorCode;
 use App\Routes\ApiRoute;
 use App\Sources\Db\App\CacheLocks;
-use Illuminate\Support\Facades\DB;
 
 // See CacheLocksIndexTest: the first test of a process keeps its writes, so the
 // table is cleared rather than assumed empty.
 beforeEach(function (): void {
-    DB::table(CacheLocks::table())->delete();
+    CacheLock::query()->delete();
 });
 
 test('authenticated user can delete a cache lock', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(CacheLocks::table())->insert([
+    CacheLock::query()->insert([
         CacheLocks::key->value => 'deploy',
         CacheLocks::owner->value => 'worker-1',
         CacheLocks::expiration->value => 1750000000,
@@ -40,7 +40,7 @@ test('authenticated user can delete a cache lock', function (): void {
 test('deleting one lock leaves the others', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(CacheLocks::table())->insert([
+    CacheLock::query()->insert([
         [CacheLocks::key->value => 'kept', CacheLocks::owner->value => 'a', CacheLocks::expiration->value => 100],
         [CacheLocks::key->value => 'dropped', CacheLocks::owner->value => 'b', CacheLocks::expiration->value => 200],
     ]);

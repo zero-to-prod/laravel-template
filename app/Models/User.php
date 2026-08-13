@@ -15,6 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property string $id
@@ -34,6 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+    use HasRoles;
     use HasUlids;
     use Notifiable;
 
@@ -66,13 +68,12 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    /** @throws AuthenticationException */
     public static function authenticated(Request $Request): self
     {
         $User = $Request->user();
 
         if (! $User instanceof self) {
-            throw new AuthenticationException;
+            throw new AuthenticationException('Unauthenticated');
         }
 
         return $User;

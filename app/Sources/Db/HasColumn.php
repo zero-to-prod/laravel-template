@@ -13,11 +13,6 @@ trait HasColumn
 {
     use HasColumnAttribute;
 
-    /**
-     * The name of the table this enum mirrors, read off its #[Table]
-     * attribute. The enum is the source of truth for the columns, so it is the
-     * source of truth for the table name too, and nothing has to spell it.
-     */
     public static function table(): string
     {
         $attributes = new ReflectionClass(static::class)->getAttributes(Table::class);

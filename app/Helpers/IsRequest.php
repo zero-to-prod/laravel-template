@@ -4,19 +4,19 @@ namespace App\Helpers;
 
 use BackedEnum;
 use Closure;
-use Illuminate\Contracts\Validation\Rule as RuleContract;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use ReflectionClass;
 
 trait IsRequest
 {
-    /** @return array{array<string, mixed>, array<string, list<string|ValidationRule|RuleContract>>, array<string, string>, array<string, string>} */
+    /** @return array{array<string, mixed>, array<string, list<string|ValidationRule|Rule>>, array<string, string>, array<string, string>} */
     public function validator(): array
     {
         return [$this->toArray(), $this->rules(), $this->messages(), $this->attributes()];
     }
 
-    /** @return array<string, list<string|ValidationRule|RuleContract>> */
+    /** @return array<string, list<string|ValidationRule|Rule>> */
     public function rules(): array
     {
         $rules = [];
@@ -66,7 +66,7 @@ trait IsRequest
         return $attributes;
     }
 
-    /** @return list<string|ValidationRule|RuleContract> */
+    /** @return list<string|ValidationRule|Rule> */
     private static function resolveRules(mixed $rules): array
     {
         if ($rules instanceof Closure || (is_array($rules) && is_callable($rules))) {
@@ -82,7 +82,7 @@ trait IsRequest
         foreach (is_array($rules) ? $rules : [] as $rule) {
             if ($rule instanceof BackedEnum) {
                 $resolved[] = (string) $rule->value;
-            } elseif (is_string($rule) || $rule instanceof ValidationRule || $rule instanceof RuleContract) {
+            } elseif (is_string($rule) || $rule instanceof ValidationRule || $rule instanceof Rule) {
                 $resolved[] = $rule;
             }
         }

@@ -16,12 +16,7 @@ readonly class CacheIndexResponse
 
     public const string entries = 'entries';
 
-    /**
-     * The items are the object the show endpoint publishes, read off that
-     * class rather than restated, so the two can never drift.
-     *
-     * @var list<array<string, mixed>>
-     */
+    /** @var list<array<string, mixed>> */
     #[Response([Response::schema => static function (): array {
         return [
             Schema::type => Schema::array,

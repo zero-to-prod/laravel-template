@@ -5,12 +5,6 @@ namespace App\Modules\Api\Support;
 use App\Helpers\DataModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-/**
- * The pagination object an index publishes beside its items.
- *
- * It uses HasResponseSchema for `data()` alone: the object is nested inside
- * another response's data key, so it never envelopes anything itself.
- */
 readonly class PaginationResponse
 {
     use DataModel;
@@ -36,9 +30,7 @@ readonly class PaginationResponse
     #[Response([Response::description => 'The highest page that carries anything. 1 when there is nothing at all.'])]
     public int $last_page;
 
-    /**
-     * @param  LengthAwarePaginator<int, mixed>  $LengthAwarePaginator
-     */
+    /** @param  LengthAwarePaginator<int, mixed>  $LengthAwarePaginator */
     public static function of(LengthAwarePaginator $LengthAwarePaginator): self
     {
         return self::from([

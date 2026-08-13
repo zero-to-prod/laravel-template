@@ -1,17 +1,17 @@
 <?php
 
+use App\Models\CacheLock;
 use App\Models\User;
 use App\Modules\Api\CacheLocks\Store\CacheLocksStoreRequest;
 use App\Modules\Api\CacheLocks\Store\CacheLocksStoreResponse;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\ApiRoute;
 use App\Sources\Db\App\CacheLocks;
-use Illuminate\Support\Facades\DB;
 
 // See CacheLocksIndexTest: the first test of a process keeps its writes, so the
 // table is cleared rather than assumed empty.
 beforeEach(function (): void {
-    DB::table(CacheLocks::table())->delete();
+    CacheLock::query()->delete();
 });
 
 test('authenticated user can write a cache lock', function (): void {
@@ -45,7 +45,7 @@ test('authenticated user can write a cache lock', function (): void {
 test('writing a key that is already locked replaces it', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(CacheLocks::table())->insert([
+    CacheLock::query()->insert([
         CacheLocks::key->value => 'deploy',
         CacheLocks::owner->value => 'worker-1',
         CacheLocks::expiration->value => 100,
@@ -59,7 +59,7 @@ test('writing a key that is already locked replaces it', function (): void {
         ])
         ->assertStatus(201);
 
-    expect(DB::table(CacheLocks::table())->where(CacheLocks::key->value, 'deploy')->count())->toBe(1);
+    expect(CacheLock::query()->where(CacheLocks::key->value, 'deploy')->count())->toBe(1);
 
     $this->assertDatabaseHas(CacheLocks::table(), [
         CacheLocks::key->value => 'deploy',
@@ -83,7 +83,7 @@ test('a blank key is rejected', function (): void {
     )->assertStatus(422)
         ->assertJsonValidationErrors(CacheLocksStoreRequest::key);
 
-    expect(DB::table(CacheLocks::table())->count())->toBe(0);
+    expect(CacheLock::query()->count())->toBe(0);
 });
 
 test('a key longer than the column is rejected', function (): void {

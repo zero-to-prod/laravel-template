@@ -6,12 +6,10 @@ use App\Models\User;
 use App\Modules\Api\Support\ErrorCode;
 use App\Sources\Db\App\Users;
 use Illuminate\Http\JsonResponse;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class LoginController
 {
-    /** @throws ReflectionException */
     #[ApiSchema(static function (): array {
         return LoginSchema::schema();
     })]

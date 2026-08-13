@@ -112,7 +112,8 @@ Index operations add `PaginationParameters::schema()`.
 ### 7. Routing
 
 Paths are cases on [ApiRoute](app/Routes/ApiRoute.php) /
-[Web](app/Routes/Web.php) / [Auth](app/Routes/Auth.php); route files bind
+[Web](app/Routes/Web.php) / [Auth](app/Routes/Auth.php) /
+[Admin](app/Routes/Admin.php); route files bind
 `ApiRoute::x->value` to an invokable controller and nothing else.
 [api.php](routes/api.php) (public), [api_auth.php](routes/api_auth.php)
 (`auth:sanctum`), [web.php](routes/web.php), [web_auth.php](routes/web_auth.php).
@@ -121,6 +122,36 @@ the route file it is bound in: `web.php` and the public Folio pages are `Web`,
 `web_auth.php` and the auth globs are `Auth`. `Web` cases are listed in
 [/sitemap.xml](app/Modules/Sitemap/SitemapController.php) unless marked
 [ExcludeFromSitemap](app/Routes/ExcludeFromSitemap.php); `Auth` cases never are.
+
+### 7a. Roles
+
+spatie/laravel-permission, one role: [Role](app/Helpers/Role.php)`::admin`, the
+source of truth for the name. `Role::admin->middleware()` builds the
+`role:admin` string from [MiddlewareTag](app/Routes/MiddlewareTag.php)`::role`,
+and is what the `admin`/`admin/*` Folio globs are guarded with. Every
+[Admin](app/Routes/Admin.php) case is prefixed `/admin` and never reaches the
+sitemap. A registered user holds no role: `admin` is granted only by
+[the migration](database/migrations/2026_08_13_125200_create_admin_role.php) that
+creates the role, to the `ADMIN_EMAIL`/`ADMIN_PASSWORD` account
+([config/admin.php](config/admin.php)) — with either unset it creates the role
+alone. The five permission tables are mirrored by table enums like every other
+table. The admin pages carry their own rail, `x-admin-nav`, backed by
+[AdminNav](app/View/DataModels/AdminNav.php)`::items()` — each entry a
+[NavItem](app/View/DataModels/NavItem.php) over a route case; `LeftNav` stands
+down wherever `AdminNav::visible()` holds. /admin/links
+lists the cases tagged [AdminLink](app/Routes/AdminLink.php), whose optional
+`$order` sorts them across every index; untagged-order cases follow, in
+declaration order. `AdminLink::routes()` returns `name`/`url` pairs rather than
+cases, so a tagged case cannot carry a path parameter.
+
+Which enums it reads is a separate question, answered by
+[RouteIndex](app/Routes/RouteIndex.php) — the registry of this application's route
+indexes, one case per enum, backed by its `::class` — and the query
+[AppConfig](app/AppConfig.php)`::routeIndexes()`, which is `RouteIndex::cases()`
+in the order they are declared. A case is the whole of registering an index, so
+the registry is a declaration the compiler reads: no directory scan, no classmap,
+no class loaded to answer, nothing to rebuild. An enum absent from it is not one
+of this application's routes, wherever it lives.
 
 ### 8. Tests
 
@@ -136,6 +167,33 @@ no test reaches fails `openapi:coverage`.
 `mcp__project__scaffold-endpoint` writes all six artifacts (four files + route
 case + test), leaving `@todo` where a decision is owed; `composer check` fails
 until they are gone.
+
+## Comments — evergreen only
+
+A comment in `app/` or `tests/` states a rule, not a mechanism. Evergreen means a
+rename, a move, or a reshuffle cannot falsify it, so **name no code**: no class,
+method, property, case or constant names, no attribute syntax, no `{@see}`, no
+paths, no url or middleware literals, no `$parameter`, no backticked identifiers.
+Refer to things by their role — "the registry", "the sibling registry", "a case",
+"the query that answers it", "the component for them", "the migration that creates
+it". `@param`/`@return`/`@var`/`@method` are code, not prose: leave them alone.
+
+Say what is load-bearing and what breaks when it is not honoured — especially what
+breaks *silently*. Never restate what the signature already says.
+
+Shape: a one-line statement of what the thing is, a blank line, then one paragraph
+of invariant and consequence. Present tense, declarative, ~4–8 lines.
+
+Who gets one: **attribute classes** and **enum classes** — registries and
+vocabularies whose whole point is off-site. Also anything whose reason is invisible
+where it stands. Not the module artifacts; §1–§9 are their comment.
+
+The generated column enums get none — regeneration overwrites the file whole. Prose
+about them lives in the hand-written trait; a column's own description belongs in a
+database column comment, which regenerates into the schema.
+
+Check yourself with a fixed-string sweep for `::`, `{@`, `#[`, `x-`, `.php`, `$` and
+backticks over comment lines. This file is the exception: it links code on purpose.
 
 ## Blade
 
@@ -158,9 +216,11 @@ literals.
 1. **Class** — [app/View/Components](app/View/Components), PHP class and blade
    **co-located** (`Main.php` + `main.blade.php`); resolved because
    `AppServiceProvider::register()` calls
-   `View::addLocation(app/View/Components)`, so `render()` returns `view('main')`
-   — flat name, no `components.` prefix. Only for render-time state (auth,
-   theme): `x-main` (layout) and `x-topnav`.
+   `View::addLocation(app/View/Components)`, so the name is flat, no
+   `components.` prefix. Only for render-time state (auth, theme): `x-main`
+   (layout) is the one. It renders through
+   [ViewName](app/View/ViewName.php)`::main->render($data)` and passes a single
+   props array, like every anonymous component.
 2. **Anonymous** — [resources/views/components](resources/views/components),
    markup only. The default; prefer it.
 
@@ -187,6 +247,10 @@ DataModel, then read as typed properties:
   `$TextInput->fieldset()`, `->svg()` return the child's props array, so a parent
   never restates a child's keys.
 - Named slots (`<x-slot:note>`) for optional markup; `{{ $slot }}` last.
+- A menu entry is a [NavItem](app/View/DataModels/NavItem.php) —
+  `label`/`icon`/`route`, with `url()`, `active()` and `svg()`. Every rail,
+  dropdown and settings list returns `list<NavItem>`, so a blade never reads
+  `$item['route']` or restates the icon classes.
 
 ### Form fields
 
@@ -201,7 +265,13 @@ spreads it, and overrides `TextInput::value` with `old(...)`. Errors render via
 
 `resources/views/svg/<name>.blade.php`, a bare `<svg>` with
 `class="{{$classname}}"`. Never `@include` one directly — go through
-`<x-svg :svg="[Svg::name => '...']"/>`, which includes `svg.<name>`.
+`<x-svg :svg="[Svg::name => '...']"/>`, which includes
+`ViewDirectory::svg->qualify($name)`. A view asked for by name is a case on
+[ViewName](app/View/ViewName.php) (`render()`, `exists()`); a directory of
+interchangeable views is a case on
+[ViewDirectory](app/View/ViewDirectory.php) (`qualify()`, `has()`), whose case
+is the prefix because the view is only known at render time. Never a string
+literal.
 
 ### Testing
 

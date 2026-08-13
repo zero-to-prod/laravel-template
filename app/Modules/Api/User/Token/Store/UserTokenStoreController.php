@@ -3,19 +3,13 @@
 namespace App\Modules\Api\User\Token\Store;
 
 use App\Models\User;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class UserTokenStoreController
 {
-    /**
-     * @throws ReflectionException
-     * @throws AuthenticationException
-     */
     #[ApiSchema(static function (): array {
         return UserTokenStoreSchema::schema();
     })]

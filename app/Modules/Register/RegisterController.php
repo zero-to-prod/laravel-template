@@ -7,19 +7,12 @@ use App\Routes\Web;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
-use ReflectionException;
-use Throwable;
 
 readonly class RegisterController
 {
-    /**
-     * @throws ReflectionException
-     * @throws Throwable
-     */
     public function __invoke(): RedirectResponse
     {
         $RegisterRequest = RegisterRequest::from(request()->all());
@@ -41,7 +34,10 @@ readonly class RegisterController
                 ->withInput($RegisterRequest->toArray());
         }
 
-        DB::transaction(static function () use ($RegisterRequest) {
+        // The transaction belongs to the connection the model is on, not to a
+        // facade: the row and the events that follow it either all land or none
+        // do.
+        User::query()->getConnection()->transaction(static function () use ($RegisterRequest): void {
             $User = User::query()->create([
                 RegisterRequest::name => $RegisterRequest->name,
                 RegisterRequest::email => $RegisterRequest->email,

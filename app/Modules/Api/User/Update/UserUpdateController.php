@@ -4,18 +4,12 @@ namespace App\Modules\Api\User\Update;
 
 use App\Models\User;
 use App\Sources\Db\App\Users;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class UserUpdateController
 {
-    /**
-     * @throws ReflectionException
-     * @throws AuthenticationException
-     */
     #[ApiSchema(static function (): array {
         return UserUpdateSchema::schema();
     })]

@@ -13,8 +13,6 @@ readonly class ReadmeResponse
 
     public const string content = 'content';
 
-    // No column backs this: the readme is authored markdown served from resources,
-    // so the description is all the schema can say about it.
     #[Response([Response::description => 'The API readme, as markdown.'])]
     public string $content;
 }

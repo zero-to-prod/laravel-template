@@ -4,7 +4,6 @@ namespace App\Modules\Api\Support;
 
 use Closure;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
 use ReflectionType;
@@ -15,11 +14,7 @@ use ZeroToProd\SchemaValidator\Schema;
 /**  @phpstan-import-type OpenApiSchema from ApiSchema */
 trait HasResponseSchema
 {
-    /**
-     * @return OpenApiSchema
-     *
-     * @throws ReflectionException
-     */
+    /** @return OpenApiSchema */
     public static function schema(): array
     {
         $properties = [
@@ -47,11 +42,7 @@ trait HasResponseSchema
         return ObjectSchema::make($properties);
     }
 
-    /**
-     * @return array<string, mixed>
-     *
-     * @throws ReflectionException
-     */
+    /** @return array<string, mixed> */
     public static function data(): array
     {
         $properties = [];

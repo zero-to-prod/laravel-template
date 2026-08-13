@@ -13,13 +13,13 @@ class SettingsCard
 
     public ?string $title = null;
 
-    /** @return list<array{label: string, icon: string, route: Auth}> */
+    /** @return list<NavItem> */
     public static function sections(): array
     {
         return [
-            ['label' => 'Profile', 'icon' => 'user', 'route' => Auth::settingsProfile],
-            ['label' => 'Authentication', 'icon' => 'key', 'route' => Auth::settingsAuthentication],
-            ['label' => 'Appearance', 'icon' => 'swatch', 'route' => Auth::settingsAppearance],
+            NavItem::from([NavItem::label => 'Profile', NavItem::icon => 'user', NavItem::route => Auth::settingsProfile]),
+            NavItem::from([NavItem::label => 'Authentication', NavItem::icon => 'key', NavItem::route => Auth::settingsAuthentication]),
+            NavItem::from([NavItem::label => 'Appearance', NavItem::icon => 'swatch', NavItem::route => Auth::settingsAppearance]),
         ];
     }
 

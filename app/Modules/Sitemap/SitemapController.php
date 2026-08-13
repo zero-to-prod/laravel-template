@@ -4,6 +4,7 @@ namespace App\Modules\Sitemap;
 
 use App\Routes\Web;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 readonly class SitemapController
 {
@@ -22,7 +23,7 @@ readonly class SitemapController
                 '</urlset>',
                 '',
             ]),
-            Response::HTTP_OK,
+            ResponseAlias::HTTP_OK,
             ['Content-Type' => 'application/xml; charset=utf-8'],
         );
     }

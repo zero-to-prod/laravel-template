@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CacheLock;
 use App\Models\User;
 use App\Modules\Api\CacheLocks\Index\CacheLocksIndexResponse;
 use App\Modules\Api\CacheLocks\Show\CacheLocksShowResponse;
@@ -8,19 +9,18 @@ use App\Modules\Api\Support\PaginationParameters;
 use App\Modules\Api\Support\PaginationResponse;
 use App\Routes\ApiRoute;
 use App\Sources\Db\App\CacheLocks;
-use Illuminate\Support\Facades\DB;
 
 // The endpoints read the whole table, so each test owns it. Rollback cannot be
 // relied on for the first test of a process: TestCase::setUp() runs
 // migrate:fresh inside the open transaction, and the DDL commits it.
 beforeEach(function (): void {
-    DB::table(CacheLocks::table())->delete();
+    CacheLock::query()->delete();
 });
 
 test('authenticated user can list the cache locks', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(CacheLocks::table())->insert([
+    CacheLock::query()->insert([
         [CacheLocks::key->value => 'beta', CacheLocks::owner->value => 'worker-2', CacheLocks::expiration->value => 200],
         [CacheLocks::key->value => 'alpha', CacheLocks::owner->value => 'worker-1', CacheLocks::expiration->value => 100],
     ]);
@@ -69,7 +69,7 @@ test('an empty table lists no locks', function (): void {
 test('the locks are paged', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(CacheLocks::table())->insert([
+    CacheLock::query()->insert([
         [CacheLocks::key->value => 'alpha', CacheLocks::owner->value => 'a', CacheLocks::expiration->value => 100],
         [CacheLocks::key->value => 'beta', CacheLocks::owner->value => 'b', CacheLocks::expiration->value => 200],
         [CacheLocks::key->value => 'gamma', CacheLocks::owner->value => 'c', CacheLocks::expiration->value => 300],
@@ -92,7 +92,7 @@ test('the locks are paged', function (): void {
 test('a page past the last one is empty', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(CacheLocks::table())->insert([
+    CacheLock::query()->insert([
         CacheLocks::key->value => 'alpha',
         CacheLocks::owner->value => 'a',
         CacheLocks::expiration->value => 100,

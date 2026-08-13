@@ -4,13 +4,6 @@ namespace App\Mcp\Endpoint;
 
 use Illuminate\Support\Str;
 
-/**
- * One templated segment of the path.
- *
- * The class describing it is shared by every operation keyed on that path, so
- * it is written beside the modules rather than inside one of them, and one
- * that is already there is referenced rather than rewritten.
- */
 readonly class EndpointParameter
 {
     private function __construct(
@@ -19,9 +12,7 @@ readonly class EndpointParameter
         public ?string $class,
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $parameter
-     */
+    /** @param  array<string, mixed>  $parameter */
     public static function from(array $parameter): self
     {
         $name = $parameter['name'] ?? null;

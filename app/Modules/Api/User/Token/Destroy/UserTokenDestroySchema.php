@@ -6,7 +6,6 @@ use App\Modules\Api\Support\DescribesOperation;
 use App\Modules\Api\Support\SharedSchema;
 use App\Modules\Api\User\Token\TokenParameter;
 use App\Routes\ApiRoute;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 /**
@@ -15,11 +14,7 @@ use ZeroToProd\LaravelOpenapi\ApiSchema;
  */
 readonly class UserTokenDestroySchema implements DescribesOperation
 {
-    /**
-     * @return array{paths?: array<string, PathItem>, components?: Components}
-     *
-     * @throws ReflectionException
-     */
+    /** @return array{paths?: array<string, PathItem>, components?: Components} */
     public static function schema(): array
     {
         return [

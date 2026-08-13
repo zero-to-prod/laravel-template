@@ -1,7 +1,6 @@
 @props(['settingsCard' => []])
 @php
     use App\View\DataModels\SettingsCard;
-    use App\View\DataModels\Svg;
     $SettingsCard = SettingsCard::from($settingsCard);
 @endphp
 <x-main>
@@ -9,13 +8,11 @@
         <h1 class="text-2xl font-semibold">Settings</h1>
         <div class="mt-6 flex flex-col gap-6 sm:flex-row">
             <ul class="menu w-full p-2 rounded-box bg-base-200 sm:w-56 sm:shrink-0">
-                @foreach(SettingsCard::sections() as $section)
+                @foreach(SettingsCard::sections() as $NavItem)
                     <li>
-                        <a href="{{ $section['route']->value }}"
-                           @class(['menu-active' => $section['route']->isExact(request())])
-                        >
-                            <x-svg :svg="[Svg::name => $section['icon'], Svg::classname => 'h-4 w-4 opacity-70']"/>
-                            {{ $section['label'] }}
+                        <a href="{{ $NavItem->url() }}" @class(['menu-active' => $NavItem->active()])>
+                            <x-svg :svg="$NavItem->svg()"/>
+                            {{ $NavItem->label }}
                         </a>
                     </li>
                 @endforeach

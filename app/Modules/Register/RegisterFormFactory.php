@@ -2,7 +2,6 @@
 
 namespace App\Modules\Register;
 
-use ReflectionException;
 use Zerotoprod\Factory\Factory;
 
 class RegisterFormFactory
@@ -20,7 +19,6 @@ class RegisterFormFactory
         ];
     }
 
-    /** @throws ReflectionException */
     public function make(): RegisterForm
     {
         return RegisterForm::from($this->context());

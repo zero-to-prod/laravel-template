@@ -2,23 +2,25 @@
 
 namespace App\Mcp\Endpoint;
 
-/**
- * Renders the artifacts.
- *
- * What the convention derives is rendered finished. What it says needs a
- * decision — the behaviour of the action, the values a test asserts, the state
- * an error status is reached from — is rendered as the annotation
- * ForbidTodoAnnotationRector reports, so it fails the build until it is gone.
- */
+use App\Helpers\Request;
+use App\Modules\Api\Support\ApiResponse;
+use App\Modules\Api\Support\DescribesOperation;
+use App\Modules\Api\Support\PaginationParameters;
+use App\Modules\Api\Support\PaginationResponse;
+use App\Modules\Api\Support\Response;
+use App\Modules\Api\Support\SharedSchema;
+use App\Routes\ApiRoute;
+use Illuminate\Http\JsonResponse;
+use Zerotoprod\DataModel\Describe;
+use ZeroToProd\LaravelOpenapi\ApiSchema;
+use ZeroToProd\SchemaValidator\Property;
+use ZeroToProd\SchemaValidator\Schema;
+
 readonly class EndpointRenderer
 {
     public function __construct(private EndpointBlueprint $Blueprint) {}
 
-    /**
-     * Every file this scaffolding creates, as a repo relative path.
-     *
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function files(): array
     {
         $files = [];
@@ -35,12 +37,7 @@ readonly class EndpointRenderer
         return $files;
     }
 
-    /**
-     * The parameter classes this scaffolding would write. A parameter handed
-     * a class of its own is referenced, never written.
-     *
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function parameters(): array
     {
         $files = [];
@@ -106,7 +103,7 @@ readonly class EndpointRenderer
 
     public function request(): string
     {
-        $imports = ['App\Helpers\DataModel', 'App\Helpers\Request', 'App\Modules\Api\Support\HasRequestSchema'];
+        $imports = ['App\Helpers\DataModel', Request::class, 'App\Modules\Api\Support\HasRequestSchema'];
 
         foreach ($this->tablesOf($this->Blueprint->requestFields) as $table) {
             $imports[] = 'App\Sources\Db\App\\'.$table;
@@ -114,15 +111,15 @@ readonly class EndpointRenderer
 
         foreach ($this->Blueprint->requestFields as $Field) {
             if ($Field->nullable) {
-                $imports[] = 'Zerotoprod\DataModel\Describe';
+                $imports[] = Describe::class;
             }
 
             if ($Field->table === null || $Field->description !== null || $Field->nullable) {
-                $imports[] = 'ZeroToProd\SchemaValidator\Property';
+                $imports[] = Property::class;
             }
 
             if ($Field->table === null && $Field->type === 'array') {
-                $imports[] = 'ZeroToProd\SchemaValidator\Schema';
+                $imports[] = Schema::class;
             }
         }
 
@@ -144,7 +141,7 @@ readonly class EndpointRenderer
         $imports = ['App\Helpers\DataModel', 'App\Modules\Api\Support\HasResponseSchema'];
 
         if ($this->Blueprint->responseFields !== [] || $this->Blueprint->paginated) {
-            $imports[] = 'App\Modules\Api\Support\Response';
+            $imports[] = Response::class;
         }
 
         foreach ($this->tablesOf($this->Blueprint->responseFields) as $table) {
@@ -154,12 +151,12 @@ readonly class EndpointRenderer
         foreach ($this->Blueprint->responseFields as $Field) {
             if ($Field->itemsOf !== null) {
                 $imports[] = $Field->itemsOf;
-                $imports[] = 'ZeroToProd\SchemaValidator\Schema';
+                $imports[] = Schema::class;
             }
         }
 
         if ($this->Blueprint->hasNullableResponse()) {
-            $imports[] = 'Zerotoprod\DataModel\Describe';
+            $imports[] = Describe::class;
         }
 
         $fields = [];
@@ -169,13 +166,10 @@ readonly class EndpointRenderer
         }
 
         if ($this->Blueprint->paginated) {
-            $imports[] = 'App\Modules\Api\Support\PaginationResponse';
+            $imports[] = PaginationResponse::class;
             $fields[] = $this->paginationField();
         }
 
-        // from() reaches a property through isset(), which cannot tell an
-        // absent key from a null one, so a nullable field is dropped from the
-        // body rather than published as null without this.
         $describe = $this->Blueprint->hasNullableResponse() ? "#[Describe([Describe::nullable => true])]\n" : '';
 
         return $this->file($imports, sprintf(
@@ -189,11 +183,11 @@ readonly class EndpointRenderer
     public function schema(): string
     {
         $imports = [
-            'App\Modules\Api\Support\DescribesOperation',
-            'App\Modules\Api\Support\SharedSchema',
-            'App\Routes\ApiRoute',
+            DescribesOperation::class,
+            SharedSchema::class,
+            ApiRoute::class,
             'ReflectionException',
-            'ZeroToProd\LaravelOpenapi\ApiSchema',
+            ApiSchema::class,
         ];
 
         foreach ($this->Blueprint->pathParameters as $EndpointParameter) {
@@ -201,7 +195,7 @@ readonly class EndpointRenderer
         }
 
         if ($this->Blueprint->paginated) {
-            $imports[] = 'App\Modules\Api\Support\PaginationParameters';
+            $imports[] = PaginationParameters::class;
         }
 
         $operation = sprintf(
@@ -247,8 +241,6 @@ readonly class EndpointRenderer
         ];
 
         if ($this->Blueprint->declaresUnauthorized()) {
-            // Behind auth:sanctum the middleware aborts before any controller
-            // runs, so nothing wraps its bare message in the envelope.
             $declared[401] = $this->Blueprint->authenticated
                 ? $this->errorResponse(401, 'SharedSchema::middleware_error_description', 'SharedSchema::middleware_error')
                 : $this->errorResponse(401, "'The token was missing, expired or unrecognised.'", 'SharedSchema::api_error');
@@ -274,11 +266,7 @@ readonly class EndpointRenderer
                  */
                 readonly class %s implements DescribesOperation
                 {
-                    /**
-                     * @return array{paths?: array<string, PathItem>, components?: Components}
-                     *
-                     * @throws ReflectionException
-                     */
+                    /** @return array{paths?: array<string, PathItem>, components?: Components} */
                     public static function schema(): array
                     {
                         return [
@@ -306,9 +294,7 @@ readonly class EndpointRenderer
 
     public function controller(): string
     {
-        $imports = ['Illuminate\Http\JsonResponse', 'ReflectionException', 'ZeroToProd\LaravelOpenapi\ApiSchema'];
-        // A paginated index reads per_page off the query string, so it needs
-        // the request even when nothing else about it does.
+        $imports = [JsonResponse::class, 'ReflectionException', ApiSchema::class];
         $takesRequest = $this->Blueprint->hasBody() || $this->Blueprint->declaresUnauthorized() || $this->Blueprint->paginated;
 
         if ($takesRequest) {
@@ -364,7 +350,7 @@ readonly class EndpointRenderer
     public function test(): string
     {
         $namespace = $this->Blueprint->namespace();
-        $imports = ['App\Modules\Api\Support\ApiResponse', $namespace.'\\'.$this->Blueprint->responseClass(), 'App\Routes\ApiRoute'];
+        $imports = [ApiResponse::class, $namespace.'\\'.$this->Blueprint->responseClass(), ApiRoute::class];
 
         if ($this->Blueprint->hasBody()) {
             $imports[] = $namespace.'\\'.$this->Blueprint->requestClass();
@@ -420,8 +406,6 @@ readonly class EndpointRenderer
         $Field = $this->Blueprint->blankableField();
 
         if ($Field === null) {
-            // Every other 422 needs a body the document rejects, which cannot
-            // go through assertMatchesSchema: the request is validated first.
             return sprintf(
                 "test('an invalid request body is rejected', function (): void {\n%s    // @todo No required non-nullable string field, so no invalid body the document still admits.\n    // Reach the 422 with a body the document rejects, and drop assertMatchesSchema from this test.\n%s\n    \$this->assertMatchesSchema(\$Response)->assertStatus(422);\n});\n",
                 $this->arrange(),
@@ -451,10 +435,6 @@ readonly class EndpointRenderer
         );
     }
 
-    /**
-     * The user a test acts as. A declared security requirement needs a real
-     * header, because Sanctum::actingAs() sets none.
-     */
     private function arrange(): string
     {
         if (! $this->Blueprint->declaresUnauthorized()) {
@@ -464,9 +444,7 @@ readonly class EndpointRenderer
         return "    \$User = User::factory()->createOne();\n    \$token = \$User->createToken('test-device')->plainTextToken;\n\n";
     }
 
-    /**
-     * @param  array<string, string>  $overrides  field name => literal
-     */
+    /** @param  array<string, string>  $overrides  field name => literal */
     private function call(?string $token, array $overrides = []): string
     {
         $caller = $token === null ? '$this' : sprintf('$this->withToken(%s)', $token);
@@ -492,20 +470,18 @@ readonly class EndpointRenderer
         return sprintf("    \$Response = %s->%sJson(%s, [\n%s    ]);\n", $caller, $this->Blueprint->method, $route, $payload);
     }
 
-    /**
-     * A templated path is rendered through url(), so the path itself is never
-     * written anywhere but the ApiRoute case.
-     */
     private function route(): string
     {
         if ($this->Blueprint->pathParameters === []) {
             return sprintf('ApiRoute::%s->value', $this->Blueprint->routeCase);
         }
 
-        return sprintf('ApiRoute::%s->url([%s])', $this->Blueprint->routeCase, implode(', ', array_map(
+        return array_map(
             static fn (EndpointParameter $EndpointParameter): string => $EndpointParameter->className()."::name => 'example'",
             $this->Blueprint->pathParameters,
-        )));
+        )
+                |> (static fn ($x) => implode(', ', $x))
+                |> (fn ($x) => sprintf('ApiRoute::%s->url([%s])', $this->Blueprint->routeCase, $x));
     }
 
     private function testName(): string
@@ -604,9 +580,7 @@ readonly class EndpointRenderer
         );
     }
 
-    /**
-     * An array property carries no value type, which phpstan needs at level 9.
-     */
+    /** An array property carries no value type, which phpstan needs at level 9. */
     private function arrayDocblock(EndpointField $EndpointField): string
     {
         if ($EndpointField->type !== 'array') {
@@ -654,17 +628,13 @@ readonly class EndpointRenderer
         return $tables;
     }
 
-    /**
-     * @param  list<string>  $imports
-     */
+    /** @param  list<string>  $imports */
     private function file(array $imports, string $body): string
     {
         return sprintf("<?php\n\nnamespace %s;\n\n%s\n%s", $this->Blueprint->namespace(), $this->imports($imports), $body);
     }
 
-    /**
-     * @param  list<string>  $imports
-     */
+    /** @param  list<string>  $imports */
     private function imports(array $imports): string
     {
         $unique = array_values(array_unique($imports));

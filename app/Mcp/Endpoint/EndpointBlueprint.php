@@ -4,12 +4,7 @@ namespace App\Mcp\Endpoint;
 
 use App\Routes\ApiRoute;
 
-/**
- * The validated scaffolding request, with everything the convention derives
- * from it already worked out.
- *
- * @phpstan-type ErrorStatus array{status: int, description: string}
- */
+/** @phpstan-type ErrorStatus array{status: int, description: string} */
 readonly class EndpointBlueprint
 {
     /**
@@ -39,9 +34,7 @@ readonly class EndpointBlueprint
         public array $errorStatuses,
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $input
-     */
+    /** @param  array<string, mixed>  $input */
     public static function from(array $input): self
     {
         $module = trim(self::text($input, 'module') ?? '', '/');
@@ -105,10 +98,6 @@ readonly class EndpointBlueprint
         return 'tests/Behavior/Api/'.$this->prefix.'Test.php';
     }
 
-    /**
-     * A parameter class is shared by the operations keyed on the path, so it
-     * sits beside the modules rather than inside one of them.
-     */
     public function parameterNamespace(): string
     {
         return rtrim('App\\Modules\\Api\\'.str_replace('/', '\\', $this->parentModule()), '\\');
@@ -124,22 +113,14 @@ readonly class EndpointBlueprint
         return $EndpointParameter->class ?? $this->parameterNamespace().'\\'.$EndpointParameter->className();
     }
 
-    /**
-     * The names the path templates, which is what the parameters must cover.
-     *
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function templatedSegments(): array
     {
-        preg_match_all('/\{([^}]+)\}/', $this->path, $matches);
+        preg_match_all('/\{([^}]+)}/', $this->path, $matches);
 
         return $matches[1];
     }
 
-    /**
-     * Public routes and sanctum routes are registered in separate files, both
-     * grouped in bootstrap/app.php.
-     */
     public function routesFile(): string
     {
         return $this->authenticated ? 'routes/api_auth.php' : 'routes/api.php';
@@ -150,59 +131,30 @@ readonly class EndpointBlueprint
         return $this->requestFields !== [];
     }
 
-    /**
-     * A response DTO with any nullable property needs the class level
-     * Describe, or from() drops the field instead of publishing it as null.
-     */
     public function hasNullableResponse(): bool
     {
-        foreach ($this->responseFields as $Field) {
-            if ($Field->nullable) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->responseFields, fn ($Field) => $Field->nullable);
     }
 
-    /**
-     * The 401 the middleware produces is a bare message, while the one a
-     * controller returns is the standard envelope.
-     */
     public function declaresUnauthorized(): bool
     {
         return $this->authenticated || $this->security;
     }
 
-    /**
-     * The path as an ApiRoute case line, which is the only place a literal
-     * path is written.
-     */
     public function routeCaseLine(): string
     {
-        return sprintf("    case %s = self::prefix.'%s';", $this->routeCase, substr($this->path, strlen(ApiRoute::prefix)));
+        return ApiRoute::prefix
+                |> strlen(...)
+                |> (fn ($x) => substr($this->path, $x))
+                |> (fn ($x) => sprintf("    case %s = self::prefix.'%s';", $this->routeCase, $x));
     }
 
-    /**
-     * The first field a blank value makes the 422 reachable through, if the
-     * body has one.
-     */
     public function blankableField(): ?EndpointField
     {
-        foreach ($this->requestFields as $Field) {
-            if ($Field->reachesValidationError()) {
-                return $Field;
-            }
-        }
-
-        return null;
+        return array_find($this->requestFields, fn ($Field) => $Field->reachesValidationError());
     }
 
-    /**
-     * The column enums the generated DTOs read, as short class names.
-     *
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function tables(): array
     {
         $tables = [];
@@ -225,9 +177,12 @@ readonly class EndpointBlueprint
 
     private static function caseFor(string $path): string
     {
-        $segments = trim(substr($path, strlen(ApiRoute::prefix)), '/');
+        $segments = ApiRoute::prefix
+                |> strlen(...)
+                |> (static fn ($x) => substr($path, $x))
+                |> (static fn ($x) => trim($x, '/'));
 
-        return str_replace(['/', '-'], '_', str_replace(['{', '}'], '', $segments));
+        return str_replace(['{', '}', '/', '-'], ['', '', '_', '_'], $segments);
     }
 
     /**
@@ -328,9 +283,7 @@ readonly class EndpointBlueprint
         return $built;
     }
 
-    /**
-     * @param  array<string, mixed>  $input
-     */
+    /** @param  array<string, mixed>  $input */
     private static function text(array $input, string $key): ?string
     {
         $value = $input[$key] ?? null;

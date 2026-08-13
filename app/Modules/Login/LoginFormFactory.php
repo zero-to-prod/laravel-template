@@ -2,7 +2,6 @@
 
 namespace App\Modules\Login;
 
-use ReflectionException;
 use Zerotoprod\Factory\Factory;
 
 class LoginFormFactory
@@ -19,7 +18,6 @@ class LoginFormFactory
         ];
     }
 
-    /** @throws ReflectionException */
     public function make(): LoginForm
     {
         return LoginForm::from($this->context());

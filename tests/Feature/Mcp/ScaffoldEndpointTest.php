@@ -3,9 +3,7 @@
 use App\Mcp\Servers\TemplateServer;
 use App\Mcp\Tools\ScaffoldEndpoint;
 
-/**
- * @return array<string, mixed>
- */
+/** @return array<string, mixed> */
 function scaffoldArguments(): array
 {
     return [

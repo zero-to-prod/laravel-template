@@ -10,16 +10,18 @@ readonly class LeftNav
 {
     use DataModel;
 
-    /** @return list<array{label: string, icon: string, route: Web}> */
+    /** @return list<NavItem> */
     public static function items(): array
     {
         return [
-            ['label' => 'Home', 'icon' => 'home', 'route' => Web::home],
+            NavItem::from([NavItem::label => 'Home', NavItem::icon => 'home', NavItem::route => Web::home]),
         ];
     }
 
     public static function visible(): bool
     {
-        return request()->user() !== null && ! Auth::settings->isActive(request());
+        return request()->user() !== null
+            && ! Auth::settings->isActive(request())
+            && ! AdminNav::visible();
     }
 }

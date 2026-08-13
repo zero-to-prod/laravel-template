@@ -13,8 +13,6 @@ readonly class LoginResponse
 
     public const string token = 'token';
 
-    // Not PersonalAccessTokens::token->comment(): that column stores the hash,
-    // while the response carries the plain text token, which is never stored.
     #[Response([Response::description => 'API authentication token'])]
     public string $token;
 }

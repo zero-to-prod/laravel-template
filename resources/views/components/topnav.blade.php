@@ -1,13 +1,15 @@
+@props(['topnav'])
 @php
     use App\Routes\Web;
-    use App\View\DataModels\LeftNav;
     use App\View\DataModels\Svg;
+    use App\View\DataModels\Topnav;
     use App\View\DataModels\UserMenu;
+    $Topnav = Topnav::from($topnav);
 @endphp
 <div class="fixed top-0 z-20 shadow-md navbar bg-base-100">
     <div class="navbar-start">
         <div class="navbar-start">
-            @if($leftNav)
+            @if($Topnav->nav())
                 <div class="dropdown lg:hidden">
                     <div tabindex="0" role="button" class="btn btn-ghost" title="Open navigation">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -15,13 +17,11 @@
                         </svg>
                     </div>
                     <ul tabindex="0" class="mt-3 w-52 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box z-[1]">
-                        @foreach(LeftNav::items() as $item)
+                        @foreach($Topnav->items() as $NavItem)
                             <li>
-                                <a href="{{$item['route']->value}}"
-                                        @class(['menu-active' => $item['route']->isExact(request())])
-                                >
-                                    <x-svg :svg="[Svg::name => $item['icon'], Svg::classname => 'h-4 w-4 opacity-70']"/>
-                                    {{$item['label']}}
+                                <a href="{{$NavItem->url()}}" @class(['menu-active' => $NavItem->active()])>
+                                    <x-svg :svg="$NavItem->svg()"/>
+                                    {{$NavItem->label}}
                                 </a>
                             </li>
                         @endforeach

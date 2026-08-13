@@ -7,7 +7,7 @@ use App\View\DataModels\LeftNav;
 
 test('the rail links to home', function (): void {
     expect(LeftNav::items())->toHaveCount(1)
-        ->and(LeftNav::items()[0]['route'])->toBe(Web::home);
+        ->and(LeftNav::items()[0]->route)->toBe(Web::home);
 });
 
 test('the rail is shown to an authenticated user', function (): void {

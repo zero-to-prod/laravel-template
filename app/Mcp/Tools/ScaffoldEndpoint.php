@@ -34,9 +34,7 @@ class ScaffoldEndpoint extends Tool
         beside the modules rather than inside one of them, and one already there is referenced as it is.
         MARKDOWN;
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     #[Override]
     public function schema(JsonSchema $schema): array
     {
@@ -174,9 +172,7 @@ class ScaffoldEndpoint extends Tool
         );
     }
 
-    /**
-     * @return array<string, list<string>>
-     */
+    /** @return array<string, list<string>> */
     private function rules(): array
     {
         return [
@@ -264,9 +260,7 @@ class ScaffoldEndpoint extends Tool
         );
     }
 
-    /**
-     * @param  list<string>  $items
-     */
+    /** @param  list<string>  $items */
     private function listed(array $items): string
     {
         return implode('', array_map(static fn (string $item): string => '  - '.$item."\n", $items));

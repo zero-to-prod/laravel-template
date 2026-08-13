@@ -17,9 +17,7 @@ class TemplateServer extends Server
         - `scaffold-endpoint` — the artifacts of one API endpoint module
         MARKDOWN;
 
-    /**
-     * @var array<int, class-string<Tool>>
-     */
+    /** @var array<int, class-string<Tool>> */
     protected array $tools = [
         ScaffoldEndpoint::class,
     ];

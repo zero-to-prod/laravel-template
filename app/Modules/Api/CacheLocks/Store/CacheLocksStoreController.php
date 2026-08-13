@@ -2,18 +2,14 @@
 
 namespace App\Modules\Api\CacheLocks\Store;
 
+use App\Models\CacheLock;
 use App\Sources\Db\App\CacheLocks;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class CacheLocksStoreController
 {
-    /**
-     * @throws ReflectionException
-     */
     #[ApiSchema(static function (): array {
         return CacheLocksStoreSchema::schema();
     })]
@@ -27,7 +23,7 @@ readonly class CacheLocksStoreController
 
         $CacheLocksStoreRequest = CacheLocksStoreRequest::from($Request->all());
 
-        DB::table(CacheLocks::table())->updateOrInsert(
+        CacheLock::query()->updateOrCreate(
             [CacheLocks::key->value => $CacheLocksStoreRequest->key],
             [
                 CacheLocks::owner->value => $CacheLocksStoreRequest->owner,

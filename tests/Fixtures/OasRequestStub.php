@@ -4,6 +4,7 @@ namespace Tests\Fixtures;
 
 use App\Helpers\DataModel;
 use App\Helpers\Request;
+use App\Models\User;
 use App\Modules\Api\Support\Confirmed;
 use App\Modules\Api\Support\HasRequestSchema;
 use App\Modules\Api\Support\Unique;
@@ -12,8 +13,9 @@ use Zerotoprod\DataModel\Describe;
 use ZeroToProd\SchemaValidator\Property;
 
 /**
- * Exercises every shape #[Request] accepts: a closure schema, a literal schema,
- * a closure description, a non-array schema, and ValueChecks.
+ * Exercises every shape a declared request property accepts: a deferred schema, a
+ * literal one, a deferred description, something that is not a schema at all, and
+ * the checks that run after it.
  */
 readonly class OasRequestStub
 {
@@ -27,7 +29,7 @@ readonly class OasRequestStub
             return [Property::type => Property::string, Property::minLength => 1];
         },
         Request::required => true,
-        Request::checks => [new Unique('users', 'email')],
+        Request::checks => [new Unique(User::class, Users::email->value)],
     ])]
     public string $email;
 

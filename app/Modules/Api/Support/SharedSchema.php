@@ -11,14 +11,7 @@ readonly class SharedSchema
     public const string api_error = '#/components/schemas/ApiError';
     public const string api_validation_error = '#/components/schemas/ApiValidationError';
     public const string middleware_error = '#/components/schemas/MiddlewareError';
-
-    /**
-     * The description a 401 declared with `middleware_error` carries. The
-     * status comes from auth:sanctum rather than from a controller, so it is
-     * the one error the envelope does not describe.
-     */
     public const string middleware_error_description = 'The token was missing, expired or unrecognised. Produced by the auth:sanctum middleware, so it does not use the standard error envelope.';
-
     public const array components = [
         'securitySchemes' => [
             self::bearer => ['type' => 'http', 'scheme' => 'bearer'],

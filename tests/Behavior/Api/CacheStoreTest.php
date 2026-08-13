@@ -1,17 +1,17 @@
 <?php
 
+use App\Models\CacheEntry;
 use App\Models\User;
 use App\Modules\Api\Cache\Store\CacheStoreRequest;
 use App\Modules\Api\Cache\Store\CacheStoreResponse;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\ApiRoute;
 use App\Sources\Db\App\Cache;
-use Illuminate\Support\Facades\DB;
 
 // See CacheIndexTest: the first test of a process keeps its writes, so the
 // table is cleared rather than assumed empty.
 beforeEach(function (): void {
-    DB::table(Cache::table())->delete();
+    CacheEntry::query()->delete();
 });
 
 test('authenticated user can write a cache entry', function (): void {
@@ -45,7 +45,7 @@ test('authenticated user can write a cache entry', function (): void {
 test('writing a key that is already cached replaces it', function (): void {
     $User = User::factory()->createOne();
 
-    DB::table(Cache::table())->insert([
+    CacheEntry::query()->insert([
         Cache::key->value => 'greeting',
         Cache::value->value => 'hello',
         Cache::expiration->value => 100,
@@ -59,7 +59,7 @@ test('writing a key that is already cached replaces it', function (): void {
         ])
         ->assertStatus(201);
 
-    expect(DB::table(Cache::table())->where(Cache::key->value, 'greeting')->count())->toBe(1);
+    expect(CacheEntry::query()->where(Cache::key->value, 'greeting')->count())->toBe(1);
 
     $this->assertDatabaseHas(Cache::table(), [
         Cache::key->value => 'greeting',
@@ -83,7 +83,7 @@ test('a blank key is rejected', function (): void {
     )->assertStatus(422)
         ->assertJsonValidationErrors(CacheStoreRequest::key);
 
-    expect(DB::table(Cache::table())->count())->toBe(0);
+    expect(CacheEntry::query()->count())->toBe(0);
 });
 
 test('a key longer than the column is rejected', function (): void {

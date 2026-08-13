@@ -6,7 +6,6 @@ use App\Modules\Api\Support\DescribesOperation;
 use App\Modules\Api\Support\PaginationParameters;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 /**
@@ -15,11 +14,7 @@ use ZeroToProd\LaravelOpenapi\ApiSchema;
  */
 readonly class CacheLocksIndexSchema implements DescribesOperation
 {
-    /**
-     * @return array{paths?: array<string, PathItem>, components?: Components}
-     *
-     * @throws ReflectionException
-     */
+    /** @return array{paths?: array<string, PathItem>, components?: Components} */
     public static function schema(): array
     {
         return [

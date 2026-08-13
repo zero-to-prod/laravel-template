@@ -16,11 +16,7 @@ readonly class UserTokenStoreRequest
     use DataModel;
     use HasRequestSchema;
 
-    /**
-     * The abilities Sanctum grants when the caller names none.
-     *
-     * @var list<string>
-     */
+    /** @var list<string> */
     public const array all_abilities = ['*'];
 
     public const string name = 'name';

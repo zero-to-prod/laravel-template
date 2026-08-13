@@ -19,8 +19,8 @@ test('initials are taken from the first and last word of the name', function (st
 
 test('the menu links to settings and logout', function (): void {
     expect(UserMenu::items())->toHaveCount(2)
-        ->and(UserMenu::items()[0]['route'])->toBe(Auth::settingsProfile)
-        ->and(UserMenu::items()[1]['route'])->toBe(Web::logout);
+        ->and(UserMenu::items()[0]->route)->toBe(Auth::settingsProfile)
+        ->and(UserMenu::items()[1]->route)->toBe(Web::logout);
 });
 
 test('the topnav shows the account dropdown to an authenticated user', function (): void {

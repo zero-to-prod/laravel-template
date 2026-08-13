@@ -12,9 +12,9 @@ use ZeroToProd\SchemaValidator\Property;
  *
  * Nothing enforces a query parameter at runtime: the document describes them
  * and league checks them in tests, but no middleware stands between the
- * request and the controller. So `perPage()` clamps what arrived rather than
- * trusting it, and the declared `maximum` is a description of that clamp
- * rather than the thing doing it.
+ * request and the controller. So the page size is clamped here rather than trusted,
+ * and the ceiling the document declares describes that clamp rather than being the
+ * thing that applies it.
  *
  * @phpstan-import-type Parameter from ApiSchema
  */
@@ -25,9 +25,7 @@ readonly class PaginationParameters
     public const int default_per_page = 15;
     public const int max_per_page = 100;
 
-    /**
-     * @return list<Parameter>
-     */
+    /** @return list<Parameter> */
     public static function schema(): array
     {
         return [

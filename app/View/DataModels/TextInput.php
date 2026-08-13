@@ -6,6 +6,21 @@ use App\Helpers\DataModel;
 use Attribute;
 use Zerotoprod\DataModel\Describe;
 
+/**
+ * A text field, declared once and read twice.
+ *
+ * As an attribute on a form property it is that field's presentation, carried
+ * beside its type and its rules and never hydrated — the property name is the
+ * field name, so a form never repeats it. As a props model it is the same
+ * declaration hydrated at render time, when there is a request to read: the value
+ * falls back to what was submitted, except for a password, which never repopulates.
+ * One class means one set of key constants governs the declaration and its use, and
+ * a call site can still layer request-specific data over what was declared.
+ *
+ * Composes downward by projecting its children's props rather than restating their
+ * keys, and owns the decisions the caller should not make — the icon's size, and
+ * the fact that the wrapper needs the error key rather than the field name.
+ */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class TextInput
 {

@@ -1,6 +1,5 @@
 @props(['userMenu' => []])
 @php
-    use App\View\DataModels\Svg;
     use App\View\DataModels\UserMenu;
     $UserMenu = UserMenu::from($userMenu);
 @endphp
@@ -10,7 +9,7 @@
             <span class="text-sm">{{$UserMenu->initials()}}</span>
         </div>
     </div>
-    <ul tabindex="0" class="mt-3 w-64 p-2 shadow menu menu-sm dropdown-content bg-base-300 rounded-box z-[1]">
+    <ul tabindex="0" class="mt-3 w-64 p-2 shadow menu menu-sm dropdown-content bg-base-300 rounded-box z-1">
         <li class="menu-title">
             <div class="flex items-center gap-3">
                 <div class="avatar avatar-placeholder">
@@ -24,11 +23,11 @@
                 </div>
             </div>
         </li>
-        @foreach(UserMenu::items() as $item)
+        @foreach(UserMenu::items() as $NavItem)
             <li>
-                <a href="{{$item['route']->value}}">
-                    <x-svg :svg="[Svg::name => $item['icon'], Svg::classname => 'h-4 w-4 opacity-70']"/>
-                    {{$item['label']}}
+                <a href="{{$NavItem->url()}}">
+                    <x-svg :svg="$NavItem->svg()"/>
+                    {{$NavItem->label}}
                 </a>
             </li>
         @endforeach

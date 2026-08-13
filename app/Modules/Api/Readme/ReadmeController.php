@@ -3,12 +3,10 @@
 namespace App\Modules\Api\Readme;
 
 use Illuminate\Http\JsonResponse;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class ReadmeController
 {
-    /** @throws ReflectionException */
     #[ApiSchema(static function (): array {
         return ReadmeSchema::schema();
     })]

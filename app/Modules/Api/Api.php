@@ -6,11 +6,9 @@ use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\ErrorCode;
 use Illuminate\Contracts\Support\MessageProvider;
 use Illuminate\Http\JsonResponse;
-use ReflectionException;
 
 readonly class Api
 {
-    /** @throws ReflectionException */
     public function unprocessableEntity(MessageProvider $MessageProvider, mixed $data = []): JsonResponse
     {
         return $this->respond(ApiResponse::fromValidator($MessageProvider, data: $data), 422);
@@ -25,25 +23,21 @@ readonly class Api
         return $this->respond(ApiResponse::ok($type, $data), 200);
     }
 
-    /** @throws ReflectionException */
     public function unauthorized(ErrorCode $ErrorCode = ErrorCode::unauthorized): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 401);
     }
 
-    /** @throws ReflectionException */
     public function notFound(ErrorCode $ErrorCode, mixed $data = []): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value], $data), 404);
     }
 
-    /** @throws ReflectionException */
     public function conflict(ErrorCode $ErrorCode): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 409);
     }
 
-    /** @throws ReflectionException */
     public function unsupportedMediaType(ErrorCode $ErrorCode): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 415);

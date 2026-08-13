@@ -7,19 +7,13 @@ use App\Modules\Api\Support\PaginationParameters;
 use App\Modules\Api\Support\PaginationResponse;
 use App\Modules\Api\User\Token\Show\UserTokenShowResponse;
 use App\Sources\Db\App\PersonalAccessTokens;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class UserTokenIndexController
 {
-    /**
-     * @throws ReflectionException
-     * @throws AuthenticationException
-     */
     #[ApiSchema(static function (): array {
         return UserTokenIndexSchema::schema();
     })]

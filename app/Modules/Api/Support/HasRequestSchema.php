@@ -6,7 +6,6 @@ use App\Helpers\Request;
 use Closure;
 use Illuminate\Validation\Validator;
 use ReflectionClass;
-use ReflectionException;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\SchemaValidator;
@@ -14,11 +13,7 @@ use ZeroToProd\SchemaValidator\SchemaValidator;
 /** @phpstan-import-type OpenApiSchema from ApiSchema */
 trait HasRequestSchema
 {
-    /**
-     * @return OpenApiSchema
-     *
-     * @throws ReflectionException
-     */
+    /** @return OpenApiSchema */
     public static function schema(): array
     {
         $properties = [];
@@ -33,11 +28,7 @@ trait HasRequestSchema
         return ObjectSchema::make($properties);
     }
 
-    /**
-     * @param  array<string, mixed>  $data
-     *
-     * @throws ReflectionException
-     */
+    /** @param  array<string, mixed>  $data */
     public static function validator(array $data): Validator
     {
         return SchemaValidator::make($data, self::schema())
@@ -73,8 +64,6 @@ trait HasRequestSchema
     /**
      * @param  array<string, mixed>  $data
      * @return list<Violation>
-     *
-     * @throws ReflectionException
      */
     public static function runChecks(array $data): array
     {
@@ -99,11 +88,7 @@ trait HasRequestSchema
         return $violations;
     }
 
-    /**
-     * @return iterable<string, Request>
-     *
-     * @throws ReflectionException
-     */
+    /** @return iterable<string, Request> */
     private static function requestFields(): iterable
     {
         foreach (new ReflectionClass(static::class)->getProperties() as $property) {

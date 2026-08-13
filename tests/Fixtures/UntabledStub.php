@@ -7,9 +7,9 @@ use ZeroToProd\DbModel\Column;
 use ZeroToProd\DbModel\ColumnType;
 
 /**
- * A table enum carrying no #[Table] attribute. Every enum under
- * App\Sources\Db does carry one, so this is the only way to reach the branch
- * where HasColumn::table() has no name to read.
+ * A table enum that names no table. Every generated one names its own, so this is
+ * the only way to reach the branch where there is no name to read — which answers
+ * empty rather than throwing.
  */
 enum UntabledStub: string
 {

@@ -6,14 +6,6 @@ use Illuminate\Support\Carbon;
 use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
 
 /**
- * Sanctum's token model, given the property docblock its own lacks.
- *
- * Nothing here changes behaviour. The vendor model declares no properties, so
- * every `$Token->expires_at` is an undefined-property error at phpstan level 9
- * and every endpoint that reads a token has to work around it. Sanctum's
- * documented extension point is a subclass registered with
- * `usePersonalAccessTokenModel`, so that is what this is.
- *
  * @property int $id
  * @property string $tokenable_type
  * @property string $tokenable_id
