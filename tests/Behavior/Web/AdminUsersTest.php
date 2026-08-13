@@ -1,6 +1,5 @@
 <?php
 
-use App\Helpers\Role;
 use App\Helpers\SortDirection;
 use App\Models\User;
 use App\Modules\Admin\Users\UsersQuery;
@@ -11,14 +10,6 @@ use App\Sources\Db\App\Users;
 use App\View\DataModels\UsersTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
-function adminUser(): User
-{
-    $User = User::factory()->createOne();
-    $User->assignRole(Role::admin->value);
-
-    return $User;
-}
 
 /** @param  array<string, string|int>  $query */
 function usersUrl(array $query = []): string

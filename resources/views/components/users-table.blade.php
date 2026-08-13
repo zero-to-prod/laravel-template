@@ -30,6 +30,7 @@
                         </a>
                     </th>
                 @endforeach
+                <th class="w-0"><span class="sr-only">Edit</span></th>
             </tr>
             </thead>
             <tbody>
@@ -38,6 +39,9 @@
                     @foreach($UserRow->cells() as $cell)
                         <td class="whitespace-nowrap">{{ $cell }}</td>
                     @endforeach
+                    <td class="whitespace-nowrap">
+                        <a href="{{ $UserRow->editUrl() }}" class="btn btn-ghost btn-xs">Edit</a>
+                    </td>
                 </tr>
             @empty
                 <tr>

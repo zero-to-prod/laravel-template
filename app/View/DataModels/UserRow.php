@@ -3,6 +3,7 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Routes\Admin;
 use App\Sources\Db\App\Users;
 use Illuminate\Support\Carbon;
 use Zerotoprod\DataModel\Describe;
@@ -11,6 +12,11 @@ use ZeroToProd\DbModel\ColumnType;
 readonly class UserRow
 {
     use DataModel;
+
+    public const string id = 'id';
+
+    #[Describe([Describe::required => true])]
+    public string $id;
 
     public const string name = 'name';
 
@@ -31,6 +37,11 @@ readonly class UserRow
 
     #[Describe([Describe::default => null])]
     public ?string $created_at;
+
+    public function editUrl(): string
+    {
+        return Admin::user->url([Admin::userParameter => $this->id]);
+    }
 
     /** @return list<string> */
     public function cells(): array

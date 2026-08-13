@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\Role;
 use App\Models\PersonalAccessToken;
 use App\Models\User;
 use Laravel\Sanctum\NewAccessToken;
@@ -7,6 +8,15 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)->in('Behavior', 'Feature');
 pest()->tia()->locally();
+
+/** An account holding the administrative role. */
+function adminUser(): User
+{
+    $User = User::factory()->createOne();
+    $User->assignRole(Role::admin->value);
+
+    return $User;
+}
 
 /**
  * The token Sanctum just issued, typed as the model this app registered.

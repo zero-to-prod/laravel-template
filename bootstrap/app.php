@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\HttpHeader;
+use App\Helpers\Role;
 use App\Http\Middleware\EnsureEmailIsVerifiedMiddleware;
 use App\Routes\MiddlewareTag;
 use App\Routes\Web;
@@ -19,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             Route::middleware([MiddlewareTag::web->value, MiddlewareTag::auth->value])
                 ->group(base_path('routes/web_auth.php'));
+
+            Route::middleware([MiddlewareTag::web->value, MiddlewareTag::auth->value, Role::admin->middleware()])
+                ->group(base_path('routes/web_admin.php'));
 
             Route::middleware(MiddlewareTag::api->value)
                 ->group(base_path('routes/api.php'));
