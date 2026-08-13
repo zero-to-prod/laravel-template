@@ -54,7 +54,7 @@ test('a token holding every ability ticks every verb', function (): void {
 
 test('an ability granted on another path does not tick this one', function (): void {
     $AbilityRow = abilityRow([
-        AbilityRow::granted => [HttpVerb::get->ability(ApiRoute::user_tokens->value)],
+        AbilityRow::granted => [HttpVerb::get->ability(ApiRoute::authenticated->value)],
     ]);
 
     expect($AbilityRow->checked(HttpVerb::get))->toBeFalse();

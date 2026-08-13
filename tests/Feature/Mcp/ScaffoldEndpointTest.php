@@ -94,18 +94,18 @@ test('a templated path writes the shared parameter class beside the modules', fu
         ->assertSee("ApiRoute::widget->url([WidgetParameter::name => 'example'])");
 });
 
-test('a templated path referencing an existing parameter class writes none', function (): void {
+test('a templated path handed a parameter class of its own writes none', function (): void {
     TemplateServer::tool(ScaffoldEndpoint::class, [
         ...scaffoldArguments(),
-        'module' => 'User/Token/Peek',
-        'path' => '/api/user/tokens/{token}',
-        'route_case' => 'user_token',
+        'module' => 'Widget/Show',
+        'path' => '/api/widgets/{widget}',
+        'route_case' => 'widget',
         'path_parameters' => [
-            ['name' => 'token', 'description' => 'The id of the token.', 'class' => 'App\Modules\Api\User\Token\TokenParameter'],
+            ['name' => 'widget', 'description' => 'The id of the widget.', 'class' => 'App\Modules\Api\Shared\WidgetParameter'],
         ],
     ])->assertOk()
-        ->assertSee('use App\Modules\Api\User\Token\TokenParameter;')
-        ->assertDontSee('app/Modules/Api/User/Token/TokenParameter.php');
+        ->assertSee('use App\Modules\Api\Shared\WidgetParameter;')
+        ->assertDontSee('app/Modules/Api/Widget/WidgetParameter.php');
 });
 
 test('a paginated index declares the query parameters and a pagination object', function (): void {
@@ -113,12 +113,12 @@ test('a paginated index declares the query parameters and a pagination object', 
         ...scaffoldArguments(),
         'paginated' => true,
         'response_fields' => [
-            ['name' => 'widgets', 'type' => 'array', 'items_of' => 'App\Modules\Api\User\Token\Show\UserTokenShowResponse'],
+            ['name' => 'widgets', 'type' => 'array', 'items_of' => 'App\Modules\Api\User\Show\UserShowResponse'],
         ],
     ])->assertOk()
         ->assertSee("'parameters' => [...PaginationParameters::schema()],")
         ->assertSee('use App\Modules\Api\Support\PaginationResponse;')
-        ->assertSee('Schema::items => UserTokenShowResponse::data(),')
+        ->assertSee('Schema::items => UserShowResponse::data(),')
         ->assertSee('return PaginationResponse::data();')
         ->assertSee('public array $pagination;');
 });

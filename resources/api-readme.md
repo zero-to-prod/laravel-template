@@ -43,16 +43,13 @@ Get your first token from the web UI, under Settings → Credentials, where you 
 it and give it an optional expiry. The plain-text token is shown once and stored only as
 a hash, so it cannot be read back — issue a new one instead.
 
-Once you hold a token you can manage tokens without the UI: `GET /api/user/tokens` lists
-them, `GET /api/user/tokens/{token}` reads one, and `POST /api/user/tokens` issues
-another, which also accepts `abilities` and an `expires_at`. Tokens default to all
-abilities and no expiry. `DELETE /api/user/tokens/{token}` revokes one by id, including
-the token making the call.
+Tokens are named, granted and revoked from that same page: there is no endpoint that
+issues or revokes one. Tokens default to all abilities and no expiry.
 
 ## Abilities
 
 An ability is one method reaching one path, written `GET:/api/user` — the path exactly as
-the document keys it, so a templated segment stays templated: `DELETE:/api/user/tokens/{token}`.
+the document keys it, so a templated segment stays templated: `DELETE:/api/widgets/{widget}`.
 A token granted `*` reaches everything, which is what a token is issued with unless you
 say otherwise.
 

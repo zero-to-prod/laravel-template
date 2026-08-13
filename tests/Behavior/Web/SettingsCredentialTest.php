@@ -29,8 +29,7 @@ test('the page lists every endpoint a token can be granted, and every verb', fun
     $response = $this->actingAs($User)->get(credentialUrl($User))->assertOk();
 
     $response->assertSee('Endpoint')
-        ->assertSee(ApiRoute::user->value)
-        ->assertSee(ApiRoute::user_token->value);
+        ->assertSee(ApiRoute::user->value);
 
     foreach (HttpVerb::cases() as $HttpVerb) {
         $response->assertSee($HttpVerb->value);
@@ -43,7 +42,7 @@ test('a toggle is offered only where a verb is bound to the path', function (): 
     $this->actingAs($User)
         ->get(credentialUrl($User))
         ->assertOk()
-        ->assertSee(HttpVerb::patch->ability(ApiRoute::user->value))
+        ->assertSee(HttpVerb::get->ability(ApiRoute::user->value))
         ->assertDontSee(HttpVerb::put->ability(ApiRoute::user->value));
 });
 
@@ -67,7 +66,7 @@ test('a token issued from the ui holds every ability, and says so', function ():
 test('the verbs ticked are the abilities the token is left holding', function (): void {
     $User = User::factory()->createOne();
     $url = credentialUrl($User);
-    $granted = [HttpVerb::get->ability(ApiRoute::user->value), HttpVerb::patch->ability(ApiRoute::user->value)];
+    $granted = [HttpVerb::get->ability(ApiRoute::user->value)];
 
     $this->actingAs($User)
         ->from($url)

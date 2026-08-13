@@ -1,82 +1,58 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Api\User\Token\Store\UserTokenStoreRequest;
 use Illuminate\Validation\ValidationException;
 use Tests\Fixtures\OasRequestStub;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
-test('the request body schema is assembled from the property attributes', function (): void {
-    expect(UserTokenStoreRequest::schema())->toBe([
-        Schema::type => Schema::object,
-        Schema::required => [UserTokenStoreRequest::name],
-        Schema::properties => [
-            UserTokenStoreRequest::name => [
-                Property::type => Property::string,
-                Property::maxLength => 255,
-                Property::description => 'A label for the token, shown back to the user.',
-            ],
-            UserTokenStoreRequest::abilities => [
-                Schema::type => Schema::array,
-                Schema::items => [Property::type => Property::string, Property::maxLength => 255],
-                Property::nullable => true,
-                Property::description => 'The abilities to grant. Omitted grants `*`, which is every ability.',
-            ],
-            UserTokenStoreRequest::expires_at => [
-                Property::type => Property::string,
-                Property::format => Property::date_time,
-                Property::nullable => true,
-                Property::description => 'When the token stops being accepted. Omitted never expires.',
-            ],
-        ],
-    ]);
-});
-
-test('a conforming request validates', function (): void {
-    expect(UserTokenStoreRequest::validator([
-        UserTokenStoreRequest::name => 'phone',
-    ])->passes())->toBeTrue();
-});
+/**
+ * A payload the declared schema accepts, so a single field carries the failure.
+ *
+ * @param  array<string, mixed>  $overrides
+ * @return array<string, mixed>
+ */
+function oasRequest(array $overrides = []): array
+{
+    return [
+        OasRequestStub::email => 'free@example.com',
+        OasRequestStub::password => 'secret',
+        OasRequestStub::password_confirmation => 'secret',
+        OasRequestStub::nickname => 'nick',
+        OasRequestStub::broken => 'x',
+        ...$overrides,
+    ];
+}
 
 test('a non scalar value is a 422 rather than a hydration TypeError', function (): void {
     // Validating the raw input keeps hydration off any payload the schema
     // rejects, so an array cannot reach a property typed as a string.
-    $errors = UserTokenStoreRequest::validator([
-        UserTokenStoreRequest::name => ['x'],
-    ])->errors();
+    $errors = OasRequestStub::validator(oasRequest([OasRequestStub::email => ['x']]))->errors();
 
-    expect($errors->keys())->toBe([UserTokenStoreRequest::name])
-        ->and($errors->first(UserTokenStoreRequest::name))->toBe('The name field must be a string.');
+    expect($errors->keys())->toBe([OasRequestStub::email])
+        ->and($errors->first(OasRequestStub::email))->toBe('The email field must be a string.');
 });
 
 test('a value the document does not allow is rejected rather than coerced', function (): void {
     // The cast would have made this "123" and let it pass a `type: string`
     // schema, leaving the runtime laxer than the published document.
-    $errors = UserTokenStoreRequest::validator([
-        UserTokenStoreRequest::name => 123,
-    ])->errors();
+    $errors = OasRequestStub::validator(oasRequest([OasRequestStub::email => 123]))->errors();
 
-    expect($errors->keys())->toBe([UserTokenStoreRequest::name]);
+    expect($errors->keys())->toBe([OasRequestStub::email]);
 });
 
 test('a blank required field conforms to the document but is still rejected', function (): void {
     // A required, non-nullable string translates to `required`, which rejects
     // "" without the document having to publish minLength: 1. That keeps the
     // 422 reachable by a request the document accepts.
-    $errors = UserTokenStoreRequest::validator([
-        UserTokenStoreRequest::name => '',
-    ])->errors();
+    $errors = OasRequestStub::validator(oasRequest([OasRequestStub::email => '']))->errors();
 
-    expect($errors->keys())->toBe([UserTokenStoreRequest::name])
-        ->and($errors->first(UserTokenStoreRequest::name))->toBe('The name field is required.');
+    expect($errors->keys())->toBe([OasRequestStub::email])
+        ->and($errors->first(OasRequestStub::email))->toBe('The email field is required.');
 });
 
 test('validate throws with the messages attached', function (): void {
-    UserTokenStoreRequest::validator([
-        UserTokenStoreRequest::name => 'phone',
-        UserTokenStoreRequest::expires_at => 'nope',
-    ])->validate();
+    OasRequestStub::validator(oasRequest([OasRequestStub::email => 123]))->validate();
 })->throws(ValidationException::class);
 
 test('a closure description overrides the fragment, and a non array schema is dropped', function (): void {
@@ -86,6 +62,10 @@ test('a closure description overrides the fragment, and a non array schema is dr
         OasRequestStub::nickname => [
             Property::type => Property::string,
             Property::description => 'The users email',
+        ],
+        OasRequestStub::expires_at => [
+            Property::type => Property::string,
+            Property::format => Property::date_time,
         ],
         OasRequestStub::broken => [],
     ]);
@@ -99,13 +79,10 @@ test('only properties flagged required are hoisted', function (): void {
 test('value checks run once the schema passes', function (): void {
     User::factory()->createOne(['email' => 'taken@example.com']);
 
-    $errors = OasRequestStub::validator([
+    $errors = OasRequestStub::validator(oasRequest([
         OasRequestStub::email => 'taken@example.com',
-        OasRequestStub::password => 'secret',
         OasRequestStub::password_confirmation => 'mismatch',
-        OasRequestStub::nickname => 'nick',
-        OasRequestStub::broken => 'x',
-    ])->errors();
+    ]))->errors();
 
     expect($errors->keys())->toBe([OasRequestStub::email, OasRequestStub::password])
         ->and($errors->first(OasRequestStub::email))->toBe('That email is already taken.')
@@ -115,26 +92,28 @@ test('value checks run once the schema passes', function (): void {
 test('value checks are skipped when the schema already failed', function (): void {
     User::factory()->createOne(['email' => 'taken@example.com']);
 
-    $errors = OasRequestStub::validator([
-        OasRequestStub::email => '',
-        OasRequestStub::password => 'secret',
-        OasRequestStub::password_confirmation => 'secret',
-        OasRequestStub::nickname => 'nick',
-        OasRequestStub::broken => 'x',
-    ])->errors();
+    $errors = OasRequestStub::validator(oasRequest([OasRequestStub::email => '']))->errors();
 
     expect($errors->keys())->toBe([OasRequestStub::email])
         ->and($errors->first(OasRequestStub::email))->toBe('The email field is required.');
 });
 
 test('a passing value check adds nothing', function (): void {
-    $Validator = OasRequestStub::validator([
-        OasRequestStub::email => 'free@example.com',
-        OasRequestStub::password => 'secret',
-        OasRequestStub::password_confirmation => 'secret',
-        OasRequestStub::nickname => 'nick',
-        OasRequestStub::broken => 'x',
-    ]);
+    expect(OasRequestStub::validator(oasRequest())->passes())->toBeTrue();
+});
 
-    expect($Validator->passes())->toBeTrue();
+test('an instant that has already passed is refused, however well formed it is', function (): void {
+    $errors = OasRequestStub::validator(oasRequest([
+        OasRequestStub::expires_at => now()->subDay()->toIso8601String(),
+    ]))->errors();
+
+    expect($errors->keys())->toBe([OasRequestStub::expires_at])
+        ->and($errors->first(OasRequestStub::expires_at))
+        ->toBe('The expires_at field must be a future date.');
+});
+
+test('an instant still ahead of now is accepted', function (): void {
+    expect(OasRequestStub::validator(oasRequest([
+        OasRequestStub::expires_at => now()->addDay()->toIso8601String(),
+    ]))->passes())->toBeTrue();
 });

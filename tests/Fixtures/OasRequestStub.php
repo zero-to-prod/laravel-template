@@ -6,6 +6,7 @@ use App\Helpers\DataModel;
 use App\Helpers\Request;
 use App\Models\User;
 use App\Modules\Api\Support\Confirmed;
+use App\Modules\Api\Support\Future;
 use App\Modules\Api\Support\HasRequestSchema;
 use App\Modules\Api\Support\Unique;
 use App\Sources\Db\App\Users;
@@ -56,6 +57,14 @@ readonly class OasRequestStub
         },
     ])]
     public string $nickname;
+
+    public const string expires_at = 'expires_at';
+
+    #[Request([
+        Request::schema => [Property::type => Property::string, Property::format => Property::date_time],
+        Request::checks => [new Future],
+    ])]
+    public string $expires_at;
 
     public const string broken = 'broken';
 

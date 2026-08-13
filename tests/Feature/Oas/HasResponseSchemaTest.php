@@ -2,13 +2,13 @@
 
 use App\Modules\Api\Authenticated\AuthenticatedResponse;
 use App\Modules\Api\Support\ApiResponse;
-use App\Modules\Api\User\Update\UserUpdateResponse;
+use App\Modules\Api\User\Show\UserShowResponse;
 use Tests\Fixtures\OasResponseStub;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 test('the envelope carries the model as data', function (): void {
-    expect(UserUpdateResponse::schema())->toBe([
+    expect(UserShowResponse::schema())->toBe([
         Schema::type => Schema::object,
         Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::data, ApiResponse::type],
         Schema::properties => [
@@ -16,23 +16,53 @@ test('the envelope carries the model as data', function (): void {
             ApiResponse::message => [Property::type => Property::string],
             ApiResponse::data => [
                 Schema::type => Schema::object,
-                Schema::required => [UserUpdateResponse::id, UserUpdateResponse::name],
+                Schema::required => [
+                    UserShowResponse::id,
+                    UserShowResponse::name,
+                    UserShowResponse::email,
+                    UserShowResponse::email_verified_at,
+                    UserShowResponse::created_at,
+                    UserShowResponse::updated_at,
+                ],
                 Schema::properties => [
-                    UserUpdateResponse::id => [
+                    UserShowResponse::id => [
                         Property::type => Property::string,
                         Property::maxLength => 26,
                         Property::description => 'The unique identifier of the user',
                     ],
-                    UserUpdateResponse::name => [
+                    UserShowResponse::name => [
                         Property::type => Property::string,
                         Property::maxLength => 255,
                         Property::description => 'The users name',
+                    ],
+                    UserShowResponse::email => [
+                        Property::type => Property::string,
+                        Property::maxLength => 255,
+                        Property::description => 'The users email',
+                    ],
+                    UserShowResponse::email_verified_at => [
+                        Property::type => Property::string,
+                        Property::format => Property::date_time,
+                        Property::description => 'When the users email was verified',
+                        Property::nullable => true,
+                    ],
+                    UserShowResponse::created_at => [
+                        Property::type => Property::string,
+                        Property::format => Property::date_time,
+                        Property::description => 'When the user was created',
+                        Property::nullable => true,
+                    ],
+                    UserShowResponse::updated_at => [
+                        Property::type => Property::string,
+                        Property::format => Property::date_time,
+                        Property::description => 'When the user was last updated',
+                        Property::nullable => true,
                     ],
                 ],
             ],
             ApiResponse::type => [
                 Property::type => Property::string,
-                Property::enum => [class_basename(UserUpdateResponse::class)],
+                Property::enum => [class_basename(UserShowResponse::class)],
             ],
         ],
     ]);

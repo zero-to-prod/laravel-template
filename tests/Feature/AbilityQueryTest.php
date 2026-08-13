@@ -11,9 +11,9 @@ test('a method this api does not answer is held to the ability that reads', func
 });
 
 test('an ability is one verb and one path, however the path was spelled', function (): void {
-    expect(HttpVerb::delete->ability(ApiRoute::user_token->value))
-        ->toBe('DELETE'.HttpVerb::separator.ApiRoute::user_token->value)
-        ->toBe(HttpVerb::delete->ability(ltrim(ApiRoute::user_token->value, '/')));
+    expect(HttpVerb::delete->ability(ApiRoute::user->value))
+        ->toBe('DELETE'.HttpVerb::separator.ApiRoute::user->value)
+        ->toBe(HttpVerb::delete->ability(ltrim(ApiRoute::user->value, '/')));
 });
 
 test('every path it offers is one the api index declares', function (): void {
@@ -28,8 +28,7 @@ test('a path no token is asked for is not one that can be granted', function ():
 });
 
 test('the verbs of a path are the ones bound to it', function (): void {
-    expect(AbilityQuery::get()[ApiRoute::user->value])->toBe([HttpVerb::get, HttpVerb::patch])
-        ->and(AbilityQuery::get()[ApiRoute::user_token->value])->toBe([HttpVerb::get, HttpVerb::delete]);
+    expect(AbilityQuery::get()[ApiRoute::user->value])->toBe([HttpVerb::get]);
 });
 
 test('the grantable abilities are every verb of every path it offers', function (): void {
@@ -43,5 +42,5 @@ test('the grantable abilities are every verb of every path it offers', function 
     }
 
     expect($abilities)->toBe($expected)
-        ->and($abilities)->toContain(HttpVerb::patch->ability(ApiRoute::user->value));
+        ->and($abilities)->toContain(HttpVerb::get->ability(ApiRoute::user->value));
 });

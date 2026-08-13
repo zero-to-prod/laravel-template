@@ -40,10 +40,10 @@ class ScaffoldEndpoint extends Tool
     {
         return [
             'module' => $schema->string()
-                ->description('Directory under app/Modules/Api, such as User/Token/Store.')
+                ->description('Directory under app/Modules/Api, such as Widget/Part/Store.')
                 ->required(),
             'class_prefix' => $schema->string()
-                ->description('Prefix the generated classes share, such as UserTokenStore. Defaults to the module path with the separators removed.'),
+                ->description('Prefix the generated classes share, such as WidgetPartStore. Defaults to the module path with the separators removed.'),
             'method' => $schema->string()
                 ->enum(['get', 'post', 'put', 'patch', 'delete'])
                 ->description('The HTTP method this operation serves.')

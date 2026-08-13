@@ -9,7 +9,7 @@ sail up -d / sail down
 sail composer dev                  # dev server
 sail composer fix                  # refactor + format
 sail composer check                # validate
-sail pest --filter=UpdateUserName  # the test you are writing
+sail pest --filter=ApiUser         # the test you are writing
 sail composer openapi-validate     # document only, seconds
 ```
 
@@ -45,8 +45,8 @@ Ranked; higher entries constrain lower.
 `app/Modules/Api/<Concept>[/<Sub>]/<Verb>/` holds four files:
 `<Concept><Verb>{Controller,Request,Response,Schema}`. Verbs: `Index`, `Show`,
 `Store`, `Update`, `Destroy`; `Request` omitted when there is no body. Canonical:
-[User/Update](app/Modules/Api/User/Update). Path parameters sit one level up,
-beside the verbs ([User/Token/TokenParameter.php](app/Modules/Api/User/Token/TokenParameter.php)).
+[User/Show](app/Modules/Api/User/Show). Path parameters sit one level up,
+beside the verbs, as a shared parameter class the scaffolder writes.
 Non-API modules are `app/Modules/<Concept>/` with `Controller` + `Request` +
 `Form` (+ `FormFactory`).
 
@@ -95,9 +95,8 @@ Web side instead: `use DataModel; use IsRequest;` with `Request::rules` (plus
 `use DataModel; use HasResponseSchema;`, same const-above-property pairing with
 `#[Response([Response::schema => ...])]`. All public properties are required;
 schema falls back to the PHP type. Compose, don't restate: an index response
-declares items as `XShowResponse::data()`
-([UserTokenIndexResponse](app/Modules/Api/User/Token/Index/UserTokenIndexResponse.php)) and
-pagination as `PaginationResponse::data()`.
+declares items as `XShowResponse::data()` and pagination as
+[PaginationResponse](app/Modules/Api/Support/PaginationResponse.php)`::data()`.
 
 ### 6. Schema
 

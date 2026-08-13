@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Api\Support\ErrorCode;
+use Illuminate\Support\Facades\Validator;
 use Tests\Fixtures\RequestStub;
 
 test('not found responds with 404 and echoes the supplied data', function (): void {
@@ -17,13 +18,13 @@ test('not found responds with 404 and echoes the supplied data', function (): vo
 });
 
 test('conflict responds with 409', function (): void {
-    $JsonResponse = api_response()->conflict(ErrorCode::token_not_found);
+    $JsonResponse = api_response()->conflict(ErrorCode::missing_ability);
 
     expect($JsonResponse->getStatusCode())->toBe(409)
         ->and($JsonResponse->getData(true))->toBe([
             'success' => false,
-            'message' => ErrorCode::token_not_found->value,
-            'errors' => [ErrorCode::token_not_found->value],
+            'message' => ErrorCode::missing_ability->value,
+            'errors' => [ErrorCode::missing_ability->value],
             'type' => 'error',
         ]);
 });
@@ -36,6 +37,18 @@ test('unsupported media type responds with 415', function (): void {
             'success' => false,
             'message' => ErrorCode::unsupported_media_type->value,
             'errors' => [ErrorCode::unsupported_media_type->value],
+            'type' => 'error',
+        ]);
+});
+
+test('unprocessable entity responds with 422 and the failures keyed by field', function (): void {
+    $JsonResponse = api_response()->unprocessableEntity(Validator::make([], ['name' => 'required']));
+
+    expect($JsonResponse->getStatusCode())->toBe(422)
+        ->and($JsonResponse->getData(true))->toBe([
+            'success' => false,
+            'message' => 'unprocessable entity',
+            'errors' => ['name' => ['The name field is required.']],
             'type' => 'error',
         ]);
 });

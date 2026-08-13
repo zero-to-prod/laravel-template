@@ -2,8 +2,8 @@
 
 use App\Modules\Api\Authenticated\AuthenticatedResponse;
 use App\Modules\Api\Support\HasResponseSchema;
+use App\Modules\Api\Support\PaginationResponse;
 use App\Modules\Api\User\Show\UserShowResponse;
-use App\Modules\Api\User\Token\Show\UserTokenShowResponse;
 
 // `HasResponseSchema` publishes every declared field as required, so a nullable
 // one is `required` plus `nullable: true`: always present, sometimes null.
@@ -62,7 +62,7 @@ test('a response model initializes every nullable property, so the field is publ
 test('the walk reaches the models, rather than passing over an empty list', function (): void {
     expect(responseModels())
         ->toContain(UserShowResponse::class)
-        ->toContain(UserTokenShowResponse::class)
+        ->toContain(PaginationResponse::class)
         // One with no properties at all, which the walk still has to see.
         ->toContain(AuthenticatedResponse::class);
 });
