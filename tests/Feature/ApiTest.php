@@ -17,13 +17,13 @@ test('not found responds with 404 and echoes the supplied data', function (): vo
 });
 
 test('conflict responds with 409', function (): void {
-    $JsonResponse = api_response()->conflict(ErrorCode::invalid_credentials);
+    $JsonResponse = api_response()->conflict(ErrorCode::token_not_found);
 
     expect($JsonResponse->getStatusCode())->toBe(409)
         ->and($JsonResponse->getData(true))->toBe([
             'success' => false,
-            'message' => ErrorCode::invalid_credentials->value,
-            'errors' => [ErrorCode::invalid_credentials->value],
+            'message' => ErrorCode::token_not_found->value,
+            'errors' => [ErrorCode::token_not_found->value],
             'type' => 'error',
         ]);
 });

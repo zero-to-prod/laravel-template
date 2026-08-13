@@ -1,6 +1,6 @@
 <?php
 
-use App\Modules\Api\Logout\LogoutResponse;
+use App\Modules\Api\Authenticated\AuthenticatedResponse;
 use App\Modules\Api\Support\HasResponseSchema;
 use App\Modules\Api\User\Show\UserShowResponse;
 use App\Modules\Api\User\Token\Show\UserTokenShowResponse;
@@ -64,7 +64,7 @@ test('the walk reaches the models, rather than passing over an empty list', func
         ->toContain(UserShowResponse::class)
         ->toContain(UserTokenShowResponse::class)
         // One with no properties at all, which the walk still has to see.
-        ->toContain(LogoutResponse::class);
+        ->toContain(AuthenticatedResponse::class);
 });
 
 /**

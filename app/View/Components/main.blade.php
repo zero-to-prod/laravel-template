@@ -16,6 +16,8 @@
   <x-left-nav/>
 @elseif($Main->adminNav)
   <x-admin-nav/>
+@elseif($Main->settingsNav)
+  <x-settings-nav/>
 @endif
 <div @class(['mt-16', 'lg:pl-56' => $Main->nav()])>
   <div class="min-h-[calc(100vh-4rem)]">{{$slot}}</div>

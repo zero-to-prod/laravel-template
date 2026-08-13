@@ -1,93 +1,81 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Api\Login\LoginRequest;
+use App\Modules\Api\User\Token\Store\UserTokenStoreRequest;
 use Illuminate\Validation\ValidationException;
 use Tests\Fixtures\OasRequestStub;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 test('the request body schema is assembled from the property attributes', function (): void {
-    expect(LoginRequest::schema())->toBe([
+    expect(UserTokenStoreRequest::schema())->toBe([
         Schema::type => Schema::object,
-        Schema::required => [
-            LoginRequest::email,
-            LoginRequest::password,
-            LoginRequest::device_name,
-        ],
+        Schema::required => [UserTokenStoreRequest::name],
         Schema::properties => [
-            LoginRequest::email => [
+            UserTokenStoreRequest::name => [
                 Property::type => Property::string,
                 Property::maxLength => 255,
-                Property::description => 'User email',
-                Property::format => Property::email,
+                Property::description => 'A label for the token, shown back to the user.',
             ],
-            LoginRequest::password => [
-                Property::type => Property::string,
-                Property::maxLength => 255,
-                Property::description => 'User password',
+            UserTokenStoreRequest::abilities => [
+                Schema::type => Schema::array,
+                Schema::items => [Property::type => Property::string, Property::maxLength => 255],
+                Property::nullable => true,
+                Property::description => 'The abilities to grant. Omitted grants `*`, which is every ability.',
             ],
-            LoginRequest::device_name => [
+            UserTokenStoreRequest::expires_at => [
                 Property::type => Property::string,
-                Property::maxLength => 255,
-                Property::description => 'Name of the requesting device',
+                Property::format => Property::date_time,
+                Property::nullable => true,
+                Property::description => 'When the token stops being accepted. Omitted never expires.',
             ],
         ],
     ]);
 });
 
 test('a conforming request validates', function (): void {
-    expect(LoginRequest::validator([
-        LoginRequest::email => 'user@example.com',
-        LoginRequest::password => 'secret',
-        LoginRequest::device_name => 'phone',
+    expect(UserTokenStoreRequest::validator([
+        UserTokenStoreRequest::name => 'phone',
     ])->passes())->toBeTrue();
 });
 
 test('a non scalar value is a 422 rather than a hydration TypeError', function (): void {
-    // Validating the raw input keeps `from()` off any payload the schema
-    // rejects, so `password[]=x` cannot reach the typed property.
-    $errors = LoginRequest::validator([
-        LoginRequest::email => 'user@example.com',
-        LoginRequest::password => ['x'],
-        LoginRequest::device_name => 'phone',
+    // Validating the raw input keeps hydration off any payload the schema
+    // rejects, so an array cannot reach a property typed as a string.
+    $errors = UserTokenStoreRequest::validator([
+        UserTokenStoreRequest::name => ['x'],
     ])->errors();
 
-    expect($errors->keys())->toBe([LoginRequest::password])
-        ->and($errors->first(LoginRequest::password))->toBe('The password field must be a string.');
+    expect($errors->keys())->toBe([UserTokenStoreRequest::name])
+        ->and($errors->first(UserTokenStoreRequest::name))->toBe('The name field must be a string.');
 });
 
 test('a value the document does not allow is rejected rather than coerced', function (): void {
     // The cast would have made this "123" and let it pass a `type: string`
     // schema, leaving the runtime laxer than the published document.
-    $errors = LoginRequest::validator([
-        LoginRequest::email => 'user@example.com',
-        LoginRequest::password => 123,
-        LoginRequest::device_name => 'phone',
+    $errors = UserTokenStoreRequest::validator([
+        UserTokenStoreRequest::name => 123,
     ])->errors();
 
-    expect($errors->keys())->toBe([LoginRequest::password]);
+    expect($errors->keys())->toBe([UserTokenStoreRequest::name]);
 });
 
-test('a blank password conforms to the document but is still rejected', function (): void {
+test('a blank required field conforms to the document but is still rejected', function (): void {
     // A required, non-nullable string translates to `required`, which rejects
     // "" without the document having to publish minLength: 1. That keeps the
     // 422 reachable by a request the document accepts.
-    $errors = LoginRequest::validator([
-        LoginRequest::email => 'user@example.com',
-        LoginRequest::password => '',
-        LoginRequest::device_name => 'phone',
+    $errors = UserTokenStoreRequest::validator([
+        UserTokenStoreRequest::name => '',
     ])->errors();
 
-    expect($errors->keys())->toBe([LoginRequest::password])
-        ->and($errors->first(LoginRequest::password))->toBe('The password field is required.');
+    expect($errors->keys())->toBe([UserTokenStoreRequest::name])
+        ->and($errors->first(UserTokenStoreRequest::name))->toBe('The name field is required.');
 });
 
 test('validate throws with the messages attached', function (): void {
-    LoginRequest::validator([
-        LoginRequest::email => 'nope',
-        LoginRequest::password => 'secret',
-        LoginRequest::device_name => 'phone',
+    UserTokenStoreRequest::validator([
+        UserTokenStoreRequest::name => 'phone',
+        UserTokenStoreRequest::expires_at => 'nope',
     ])->validate();
 })->throws(ValidationException::class);
 

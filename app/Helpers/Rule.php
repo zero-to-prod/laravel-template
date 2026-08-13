@@ -28,6 +28,12 @@ enum Rule: string
     case unique = 'unique';
     case integer = 'integer';
     case date = 'date';
+    case after = 'after';
+
+    public static function after(string $date): string
+    {
+        return self::after->value.':'.$date;
+    }
 
     public static function max(int $length): string
     {

@@ -13,7 +13,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -77,10 +76,5 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return $User;
-    }
-
-    public function matchesPassword(string $password): bool
-    {
-        return Hash::check($password, $this->password);
     }
 }

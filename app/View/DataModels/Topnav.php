@@ -17,18 +17,22 @@ class Topnav
 
     public bool $adminNav = false;
 
+    public const string settingsNav = 'settingsNav';
+
+    public bool $settingsNav = false;
+
     public function nav(): bool
     {
-        return $this->leftNav || $this->adminNav;
+        return $this->leftNav || $this->adminNav || $this->settingsNav;
     }
 
-    /**
-     * The dropdown is the small-screen face of whichever rail the page carries.
-     *
-     * @return list<NavItem>
-     */
+    /** @return list<NavItem> */
     public function items(): array
     {
-        return $this->adminNav ? AdminNav::items() : LeftNav::items();
+        return match (true) {
+            $this->adminNav => AdminNav::items(),
+            $this->settingsNav => SettingsNav::items(),
+            default => LeftNav::items(),
+        };
     }
 }

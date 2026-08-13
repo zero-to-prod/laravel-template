@@ -1,14 +1,14 @@
 <?php
 
 use App\Modules\Api\Authenticated\AuthenticatedResponse;
-use App\Modules\Api\Login\LoginResponse;
 use App\Modules\Api\Support\ApiResponse;
+use App\Modules\Api\User\Update\UserUpdateResponse;
 use Tests\Fixtures\OasResponseStub;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
 test('the envelope carries the model as data', function (): void {
-    expect(LoginResponse::schema())->toBe([
+    expect(UserUpdateResponse::schema())->toBe([
         Schema::type => Schema::object,
         Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::data, ApiResponse::type],
         Schema::properties => [
@@ -16,17 +16,23 @@ test('the envelope carries the model as data', function (): void {
             ApiResponse::message => [Property::type => Property::string],
             ApiResponse::data => [
                 Schema::type => Schema::object,
-                Schema::required => [LoginResponse::token],
+                Schema::required => [UserUpdateResponse::id, UserUpdateResponse::name],
                 Schema::properties => [
-                    LoginResponse::token => [
+                    UserUpdateResponse::id => [
                         Property::type => Property::string,
-                        Property::description => 'API authentication token',
+                        Property::maxLength => 26,
+                        Property::description => 'The unique identifier of the user',
+                    ],
+                    UserUpdateResponse::name => [
+                        Property::type => Property::string,
+                        Property::maxLength => 255,
+                        Property::description => 'The users name',
                     ],
                 ],
             ],
             ApiResponse::type => [
                 Property::type => Property::string,
-                Property::enum => [class_basename(LoginResponse::class)],
+                Property::enum => [class_basename(UserUpdateResponse::class)],
             ],
         ],
     ]);

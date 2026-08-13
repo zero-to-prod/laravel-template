@@ -27,6 +27,11 @@ readonly class NavItem
     #[Describe([Describe::required => true])]
     public Admin|Auth|Web $route;
 
+    public const string nested = 'nested';
+
+    #[Describe([Describe::default => false])]
+    public bool $nested;
+
     public function url(): string
     {
         return $this->route->url();
@@ -34,7 +39,9 @@ readonly class NavItem
 
     public function active(): bool
     {
-        return $this->route->isExact(request());
+        return $this->nested
+            ? $this->route->isActive(request())
+            : $this->route->isExact(request());
     }
 
     /** @return array<string, mixed> */

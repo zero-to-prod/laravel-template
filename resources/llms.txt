@@ -9,9 +9,10 @@ conventions that document does not state.
 - Every response is an envelope — `{"type": ..., "message": ..., "data": {...}}` — where
   `type` names the response object. Errors use the same envelope, except a 401 raised by
   the authentication middleware, which is a bare `{"message": ...}`.
-- Authentication is a Sanctum bearer token. `POST /api/login` with `email`, `password` and
-  `device_name` returns a plain-text token; send it as `Authorization: Bearer <token>`.
-  The token is returned once and stored hashed.
+- Authentication is a Sanctum bearer token, sent as `Authorization: Bearer <token>`. There
+  is no login endpoint: the first token is issued from the web UI under Settings →
+  Credentials, and further tokens from `POST /api/user/tokens` once you hold one. A token
+  is shown once and stored hashed. Revoking is `DELETE /api/user/tokens/{token}`.
 - A field documented as nullable may be null, never absent: every documented key is
   present in the body.
 - Requests are validated against the schema the document publishes, so a body the document

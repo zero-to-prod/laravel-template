@@ -17,10 +17,14 @@ enum Auth: string
 {
     use RendersRoute;
 
+    public const string credentialParameter = 'credential';
+
     case dashboard = '/dashboard';
     case settings = '/settings';
     case settingsProfile = '/settings/profile';
     case settingsAuthentication = '/settings/authentication';
+    case settingsCredentials = '/settings/credentials';
+    case settingsCredential = '/settings/credentials/{'.self::credentialParameter.'}';
     case settingsAppearance = '/settings/appearance';
     case verificationNotice = '/email/verify';
     case verificationVerify = '/email/verify/{id}/{hash}';

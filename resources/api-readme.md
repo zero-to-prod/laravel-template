@@ -32,17 +32,22 @@ Errors use the same envelope with `success: false` and `type: "error"`:
 
 ## Authentication
 
-`POST /api/login` with `email`, `password` and `device_name` returns a token in
-`data.token`. Send it on every authenticated request:
+There is no login endpoint and no session: a bearer token is the only credential the
+API accepts. Send it on every authenticated request:
 
 ```
 Authorization: Bearer <token>
 ```
 
-The plain-text token is returned once and stored only as a hash, so it cannot be read
-back — issue a new one instead. `POST /api/logout` revokes the token used to make the
-call; `DELETE /api/user/tokens/{token}` revokes any other token by id.
+Get your first token from the web UI, under Settings → Credentials, where you can name
+it and give it an optional expiry. The plain-text token is shown once and stored only as
+a hash, so it cannot be read back — issue a new one instead.
 
-A token can be issued directly with `POST /api/user/tokens`, which also accepts
-`abilities` and an `expires_at`. Tokens default to all abilities and no expiry.
+Once you hold a token you can manage tokens without the UI: `GET /api/user/tokens` lists
+them, `GET /api/user/tokens/{token}` reads one, and `POST /api/user/tokens` issues
+another, which also accepts `abilities` and an `expires_at`. Tokens default to all
+abilities and no expiry. `DELETE /api/user/tokens/{token}` revokes one by id, including
+the token making the call.
+
+`GET /api/authenticated` reports whether the token you sent is currently accepted.
 

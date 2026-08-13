@@ -12,8 +12,8 @@ test('a route is active for itself and its descendants', function (): void {
 });
 
 test('a route is exact only for itself', function (): void {
-    expect(ApiRoute::login->isExact(Request::create(ApiRoute::login->value)))->toBeTrue()
-        ->and(ApiRoute::login->isExact(Request::create(ApiRoute::login->value.'/callback')))->toBeFalse();
+    expect(ApiRoute::user->isExact(Request::create(ApiRoute::user->value)))->toBeTrue()
+        ->and(ApiRoute::user->isExact(Request::create(ApiRoute::user->value.'/callback')))->toBeFalse();
 });
 
 test('route parameters are substituted before matching', function (): void {

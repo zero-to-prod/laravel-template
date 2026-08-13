@@ -1,8 +1,10 @@
 <?php
 
+use App\Routes\Auth;
 use App\Routes\Web;
 use App\View\DataModels\NavItem;
 use App\View\DataModels\Svg;
+use Illuminate\Http\Request;
 use Zerotoprod\DataModel\PropertyRequiredException;
 
 test('an entry carries its label, icon and route case', function (): void {
@@ -42,9 +44,27 @@ test('an entry is active only on its own path', function (): void {
 
     $this->get(Web::home->value)->assertOk();
 
-    expect($NavItem->active())->toBeTrue();
+    expect($NavItem->nested)->toBeFalse()
+        ->and($NavItem->active())->toBeTrue();
 
     $this->get(Web::contact->value)->assertOk();
+
+    expect($NavItem->active())->toBeFalse();
+});
+
+test('a nested entry stays active below its own path', function (): void {
+    $NavItem = NavItem::from([
+        NavItem::label => 'Credentials',
+        NavItem::icon => 'command-line',
+        NavItem::route => Auth::settingsCredentials,
+        NavItem::nested => true,
+    ]);
+
+    app()->instance('request', Request::create(Auth::settingsCredential->url([Auth::credentialParameter => 'abc'])));
+
+    expect($NavItem->active())->toBeTrue();
+
+    app()->instance('request', Request::create(Auth::settingsProfile->value));
 
     expect($NavItem->active())->toBeFalse();
 });

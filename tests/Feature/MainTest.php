@@ -12,6 +12,7 @@ test('a guest gets no theme, no classnames and no rail', function (): void {
         ->and($Main->theme)->toBeNull()
         ->and($Main->leftNav)->toBeFalse()
         ->and($Main->adminNav)->toBeFalse()
+        ->and($Main->settingsNav)->toBeFalse()
         ->and($Main->nav())->toBeFalse();
 });
 
@@ -31,7 +32,8 @@ test('the auto theme renders no attribute', function (): void {
     expect(Main::from([])->theme)->toBeNull();
 });
 
-test('either rail widens the content', function (): void {
+test('any rail widens the content', function (): void {
     expect(Main::from([Main::leftNav => true])->nav())->toBeTrue()
-        ->and(Main::from([Main::adminNav => true])->nav())->toBeTrue();
+        ->and(Main::from([Main::adminNav => true])->nav())->toBeTrue()
+        ->and(Main::from([Main::settingsNav => true])->nav())->toBeTrue();
 });

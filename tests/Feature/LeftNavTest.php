@@ -17,11 +17,12 @@ test('the rail is shown to an authenticated user', function (): void {
         ->assertSee('lg:pl-56');
 });
 
-test('the rail is hidden on the settings pages, which carry their own nav', function (): void {
+test('the settings pages carry their own rail instead', function (): void {
     $this->actingAs(User::factory()->createOne())
         ->get(Auth::settingsProfile->value)
         ->assertOk()
-        ->assertDontSee('lg:pl-56');
+        ->assertDontSee('aria-label="Primary"', false)
+        ->assertSee('aria-label="Settings"', false);
 });
 
 test('the rail is hidden from a guest', function (): void {

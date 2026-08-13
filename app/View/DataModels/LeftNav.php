@@ -3,7 +3,6 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
-use App\Routes\Auth;
 use App\Routes\Web;
 
 readonly class LeftNav
@@ -21,7 +20,7 @@ readonly class LeftNav
     public static function visible(): bool
     {
         return request()->user() !== null
-            && ! Auth::settings->isActive(request())
+            && ! SettingsNav::visible()
             && ! AdminNav::visible();
     }
 }

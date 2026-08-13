@@ -30,12 +30,12 @@ test('every body the document publishes can be expressed as validation rules', f
 test('the walk reaches every request and response body, an empty one passing vacuously', function (): void {
     $operations = array_keys(OasDocument::generated()->bodySchemas());
 
-    expect($operations)->toContain('post /api/login request')
+    expect($operations)->toContain('post /api/user/tokens request')
         ->toContain('get /api/user response 200')
         // The error envelopes are published as `$ref`, so reaching these is what
         // says the references were resolved rather than skipped.
-        ->toContain('post /api/login response 401')
-        ->toContain('post /api/login response 422');
+        ->toContain('post /api/user/tokens response 401')
+        ->toContain('post /api/user/tokens response 422');
 });
 
 test('a schema the request validator cannot express is reported rather than passed over', function (): void {
