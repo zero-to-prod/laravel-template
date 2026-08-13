@@ -8,6 +8,8 @@ use App\View\DataModels\CredentialRow;
 use App\View\DataModels\CredentialsTable;
 use App\View\DataModels\TextInput;
 use App\View\ViewDirectory;
+use Illuminate\Session\ArraySessionHandler;
+use Illuminate\Session\Store;
 use Zerotoprod\DataModel\PropertyRequiredException;
 
 /** @param  array<string, mixed>  $overrides */
@@ -74,7 +76,9 @@ test('the expiry defaults to a month out', function (): void {
 });
 
 test('a submitted expiry outlives the default', function (): void {
-    session()->put('_old_input', [TokenForm::expires_at => '2030-01-01']);
+    $Store = new Store('test', new ArraySessionHandler(1));
+    $Store->put('_old_input', [TokenForm::expires_at => '2030-01-01']);
+    request()->setLaravelSession($Store);
 
     expect(credentialsTable()->expiresAtInput()[TextInput::value])->toBe('2030-01-01');
 });
