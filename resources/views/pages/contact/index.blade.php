@@ -15,14 +15,14 @@ Head::title('Contact')
             <div class="mt-4 space-y-6 text-sm leading-relaxed">
                 <p>
                     We would like to hear from you. Email us and we will usually reply within
-                    {{config('company.response_time')}}.
+                    {{config('brand.response_time')}}.
                 </p>
 
                 <section class="space-y-2">
                     <h2 class="text-base font-semibold">Email</h2>
                     <p>
-                        <a href="mailto:{{config('company.support_email')}}" class="link link-primary">
-                            {{config('company.support_email')}}
+                        <a href="mailto:{{config('brand.support_email')}}" class="link link-primary">
+                            {{config('brand.support_email')}}
                         </a>
                     </p>
                 </section>
@@ -61,10 +61,10 @@ Head::title('Contact')
                     </p>
                 </section>
 
-                @if(config('company.address'))
+                @if(config('brand.address'))
                     <section class="space-y-2">
                         <h2 class="text-base font-semibold">Mailing address</h2>
-                        <p class="whitespace-pre-line">{{config('company.address')}}</p>
+                        <p class="whitespace-pre-line">{{config('brand.address')}}</p>
                     </section>
                 @endif
             </div>

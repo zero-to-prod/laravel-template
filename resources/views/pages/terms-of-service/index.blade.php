@@ -140,8 +140,8 @@ Head::title('Terms of Service')
                 <section class="space-y-2">
                     <h2 class="text-base font-semibold">13. Governing Law and Disputes</h2>
                     <p>
-                        These terms are governed by the laws of {{config('company.jurisdiction')}}, without regard to
-                        its conflict of law rules, and the courts located in {{config('company.venue')}} have exclusive
+                        These terms are governed by the laws of {{config('brand.jurisdiction')}}, without regard to
+                        its conflict of law rules, and the courts located in {{config('brand.venue')}} have exclusive
                         jurisdiction over any dispute, except that either party may seek injunctive relief in any court
                         of competent jurisdiction.
                     </p>

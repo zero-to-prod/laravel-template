@@ -34,7 +34,7 @@
             >
                 <x-svg :svg="[Svg::name => 'logo', Svg::classname => 'h-6 w-6']"/>
             </a>
-            <span class="lg:inline-flex ml-2" title="Company Name">
+            <span class="lg:inline-flex ml-2" title="Brand Name">
                 {{config('app.name')}}
             </span>
         </div>

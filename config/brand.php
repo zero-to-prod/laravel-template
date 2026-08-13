@@ -16,11 +16,11 @@ return [
     |
     */
 
-    'support_email' => env('COMPANY_SUPPORT_EMAIL', (string) env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+    'support_email' => env('BRAND_SUPPORT_EMAIL', (string) env('MAIL_FROM_ADDRESS', 'hello@example.com')),
 
-    'response_time' => env('COMPANY_RESPONSE_TIME', 'two business days'),
+    'response_time' => env('BRAND_RESPONSE_TIME', 'two business days'),
 
-    'address' => env('COMPANY_ADDRESS'),
+    'address' => env('BRAND_ADDRESS'),
 
     /*
     |--------------------------------------------------------------------------
@@ -34,8 +34,8 @@ return [
     |
     */
 
-    'jurisdiction' => env('COMPANY_JURISDICTION', '[jurisdiction]'),
+    'jurisdiction' => env('BRAND_JURISDICTION', '[jurisdiction]'),
 
-    'venue' => env('COMPANY_VENUE', '[venue]'),
+    'venue' => env('BRAND_VENUE', '[venue]'),
 
 ];
