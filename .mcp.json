@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "laravel-openapi": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "laravel-openapi"]
+    },
+    "db-model": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "db-model"]
+    },
+    "schema-validator": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "schema-validator"]
+    },
+    "laravel-rector": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "laravel-rector"]
+    },
+    "project": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "project"]
+    },
+    "phpstorm": {
+      "url": "http://127.0.0.1:64442/stream",
+      "type": "http"
+    }
+  }
+}

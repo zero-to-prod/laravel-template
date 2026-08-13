@@ -2,7 +2,7 @@
 
 use App\Modules\Login\LoginForm;
 use Illuminate\Support\Facades\Event;
-use Tests\Fixtures\FieldStub;
+use Tests\Fixtures\RequestStub;
 
 test('a data model collects, serialises and converts to an array', function (): void {
     $LoginForm = LoginForm::from([
@@ -28,9 +28,9 @@ test('dispatch fires the data model as an event', function (): void {
 });
 
 test('sanitize squishes whitespace', function (): void {
-    expect(FieldStub::sanitize("  a   b \n"))->toBe('a b');
+    expect(RequestStub::sanitize("  a   b \n"))->toBe('a b');
 });
 
 test('sanitize email squishes and lowercases', function (): void {
-    expect(FieldStub::sanitizeEmail('  JOHN@Example.COM '))->toBe('john@example.com');
+    expect(RequestStub::sanitizeEmail('  JOHN@Example.COM '))->toBe('john@example.com');
 });

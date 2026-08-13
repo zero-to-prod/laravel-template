@@ -15,7 +15,13 @@ trait RendersRoute
     /** @param  array<string, string|int>  $route */
     public function isExact(Request $Request, array $route = []): bool
     {
-        return $Request->path() === ltrim(self::render($this->value, $route), '/');
+        return trim($Request->path(), '/') === trim(self::render($this->value, $route), '/');
+    }
+
+    /** @param  array<string, string|int>  $route */
+    public function url(array $route = []): string
+    {
+        return self::render($this->value, $route);
     }
 
     /** @param  array<string, string|int>  $route */

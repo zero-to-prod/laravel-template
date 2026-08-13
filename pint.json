@@ -1,5 +1,8 @@
 {
     "preset": "laravel",
+    "exclude": [
+        "docs/repos"
+    ],
     "rules": {
         "class_attributes_separation": {
             "elements": {

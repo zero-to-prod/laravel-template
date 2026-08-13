@@ -2,10 +2,82 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../../app/View/*.php';
 @source "../**/*.blade.php";
 @source "../**/*.js";
 @source "../**/*.vue";
 
+
 @plugin "daisyui" {
-    themes: light --default, dark --prefersdark;
+    themes: false;
+}
+
+@plugin "daisyui/theme" {
+    name: "light";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: oklch(99% 0.004 248);
+    --color-base-200: oklch(98% 0 0);
+    --color-base-300: oklch(95% 0 0);
+    --color-base-content: oklch(21% 0.006 285.885);
+    --color-primary: oklch(51.1% 0.102 249);
+    --color-primary-content: oklch(98% 0.008 248);
+    --color-secondary: oklch(65.4% 0.12 248);
+    --color-secondary-content: oklch(18% 0.035 248);
+    --color-accent: oklch(72% 0.12 225);
+    --color-accent-content: oklch(20% 0.04 235);
+    --color-neutral: oklch(31% 0.04 248);
+    --color-neutral-content: oklch(96% 0.008 248);
+    --color-info: oklch(67% 0.13 235);
+    --color-info-content: oklch(18% 0.035 240);
+    --color-success: oklch(64% 0.14 155);
+    --color-success-content: oklch(98% 0.01 155);
+    --color-warning: oklch(80% 0.15 82);
+    --color-warning-content: oklch(25% 0.05 65);
+    --color-error: oklch(61% 0.20 28);
+    --color-error-content: oklch(98% 0.01 28);
+    --radius-selector: 0.25rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.25rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 2px;
+    --depth: 2;
+    --noise: 4;
+}
+
+@plugin "daisyui/theme" {
+    name: "dark";
+    default: false;
+    prefersdark: true;
+    color-scheme: "dark";
+    --color-base-100: oklch(24% 0.012 248);
+    --color-base-200: oklch(21% 0.010 248);
+    --color-base-300: oklch(17% 0.008 248);
+    --color-base-content: oklch(96% 0.005 248);
+    --color-primary: oklch(70% 0.105 249);
+    --color-primary-content: oklch(20% 0.035 249);
+    --color-secondary: oklch(74% 0.10 248);
+    --color-secondary-content: oklch(18% 0.035 248);
+    --color-accent: oklch(78% 0.10 225);
+    --color-accent-content: oklch(20% 0.04 235);
+    --color-neutral: oklch(40% 0.035 248);
+    --color-neutral-content: oklch(96% 0.008 248);
+    --color-info: oklch(74% 0.11 235);
+    --color-info-content: oklch(18% 0.035 240);
+    --color-success: oklch(72% 0.12 155);
+    --color-success-content: oklch(18% 0.04 155);
+    --color-warning: oklch(84% 0.13 82);
+    --color-warning-content: oklch(25% 0.05 65);
+    --color-error: oklch(71% 0.16 28);
+    --color-error-content: oklch(20% 0.05 28);
+    --radius-selector: 0.25rem;
+    --radius-field: 0.25rem;
+    --radius-box: 0.25rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 2px;
+    --depth: 0;
+    --noise: 0;
 }

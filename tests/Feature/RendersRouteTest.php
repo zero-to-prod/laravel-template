@@ -1,6 +1,7 @@
 <?php
 
 use App\Routes\ApiRoute;
+use App\Routes\Auth;
 use App\Routes\Web;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,6 @@ test('a route is exact only for itself', function (): void {
 test('route parameters are substituted before matching', function (): void {
     $route = ['id' => '1', 'hash' => 'abc'];
 
-    expect(Web::verificationVerify->isExact(Request::create('/email/verify/1/abc'), $route))->toBeTrue()
-        ->and(Web::verificationVerify->isActive(Request::create('/email/verify/1/abc'), $route))->toBeTrue();
+    expect(Auth::verificationVerify->isExact(Request::create('/email/verify/1/abc'), $route))->toBeTrue()
+        ->and(Auth::verificationVerify->isActive(Request::create('/email/verify/1/abc'), $route))->toBeTrue();
 });

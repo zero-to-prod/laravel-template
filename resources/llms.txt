@@ -1,0 +1,31 @@
+# Laravel Template
+
+> An opinionated Laravel template for JSON APIs. Its OpenAPI document is generated from the code and enforced by the test suite, so the document is the contract rather than a description of one.
+
+Read [/openapi.json](/openapi.json) first: it is machine-readable, always current, and
+covers every path, request body, response and error shape. The notes below are the
+conventions that document does not state.
+
+- Every response is an envelope — `{"type": ..., "message": ..., "data": {...}}` — where
+  `type` names the response object. Errors use the same envelope, except a 401 raised by
+  the authentication middleware, which is a bare `{"message": ...}`.
+- Authentication is a Sanctum bearer token. `POST /api/login` with `email`, `password` and
+  `device_name` returns a plain-text token; send it as `Authorization: Bearer <token>`.
+  The token is returned once and stored hashed.
+- A field documented as nullable may be null, never absent: every documented key is
+  present in the body.
+- Requests are validated against the schema the document publishes, so a body the document
+  rejects is refused with a 422 before it reaches a controller.
+
+## API
+
+- [OpenAPI document](/openapi.json): Every endpoint in full — paths, methods, request bodies, response schemas, and the statuses each operation can return.
+- [API readme](/api/readme): The prose tour — envelope, error shapes, token flow, and what each endpoint is for. Returns the standard envelope; the markdown is the `data.content` string.
+
+## Docs
+
+- [README](https://github.com/zero-to-prod/laravel-template/blob/main/README.md): What the template is and how to run it.
+
+## Optional
+
+- [Source repository](https://github.com/zero-to-prod/laravel-template): The template itself.

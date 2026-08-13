@@ -1,27 +1,24 @@
 <?php
 
-use App\DataModels\User;
-use App\Helpers\FieldViewDefaults;
-use App\Models\User as ModelUser;
-use App\Modules\Register\RegisterConfig;
+use App\Models\User;
+use App\Modules\Register\RegisterFormFactory;
 use App\Routes\Web;
+use App\Sources\Db\App\Users;
 use Illuminate\Support\Facades\RateLimiter;
-use Tests\Factories\UserFactory;
 
 test('registration is blocked after too many attempts', function (): void {
-    $RegisterForm = UserFactory::factory()->make();
-    $RegisterConfig = new RegisterConfig;
+    $RegisterForm = RegisterFormFactory::factory()->make();
 
-    $key = $RegisterConfig->rateLimitKey($RegisterForm->email);
-    for ($i = 0; $i < $RegisterConfig->rateLimitMaxAttempts(); $i++) {
+    $key = 'register:'.$RegisterForm->email;
+    for ($i = 0; $i < 5; $i++) {
         RateLimiter::hit($key);
     }
 
     $this->post(Web::register->value, $RegisterForm->toArray())
-        ->assertSessionHasErrors(User::email, errorBag: FieldViewDefaults::bag(User::class));
+        ->assertSessionHasErrors(Users::email->value);
 
     $this->assertGuest();
-    $this->assertDatabaseMissing((new ModelUser)->getTable(), [
-        User::email => $RegisterForm->email,
+    $this->assertDatabaseMissing((new User)->getTable(), [
+        Users::email->value => $RegisterForm->email,
     ]);
 });

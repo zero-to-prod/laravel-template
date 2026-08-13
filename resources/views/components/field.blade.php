@@ -1,18 +1,16 @@
-@props(['legend' => null, 'name' => null, 'bag' => null, 'required' => null, 'model' => null])
+@props(['fieldset'])
 @php
-    use App\Helpers\FieldViewDefaults;
-    $bag ??= FieldViewDefaults::bag($model);
-    $required ??= FieldViewDefaults::required($model, $name);
-    $legend ??= FieldViewDefaults::legend($model, $name);
-    $title = FieldViewDefaults::description($model, $name);
+    $Fieldset = App\View\DataModels\Fieldset::from($fieldset);
 @endphp
 <fieldset class="fieldset">
-    <legend class="fieldset-legend"@if($title) title="{{ $title }}"@endif>
-        {{ $legend }}@if($required)<span class="text-error">*</span>@endif
+    <legend class="fieldset-legend" @if($Fieldset->title) title="{{ $Fieldset->title }}"@endif>
+        {{ $Fieldset->legend }}@if($Fieldset->required)
+            <span class="text-error">*</span>
+        @endif
         {{ $note ?? '' }}
     </legend>
     {{ $slot }}
-    @if($name)
-        @error($name, $bag)<p class="label text-error">{{ $message }}</p>@enderror
+    @if($Fieldset->name)
+        @error($Fieldset->name, $Fieldset->bag)<p class="label text-error">{{ $message }}</p>@enderror
     @endif
 </fieldset>

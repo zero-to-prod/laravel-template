@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Helpers;
+
+use App\View\DataModels\TextInput;
+use ReflectionClass;
+
+trait HasTextInput
+{
+    /** @return array<string, mixed> */
+    public static function textInput(string $property): array
+    {
+        $attributes = new ReflectionClass(static::class)
+            ->getProperty($property)
+            ->getAttributes(TextInput::class);
+
+        return [
+            TextInput::name => $property,
+            ...$attributes === [] ? [] : $attributes[0]->newInstance()->attributes,
+        ];
+    }
+}

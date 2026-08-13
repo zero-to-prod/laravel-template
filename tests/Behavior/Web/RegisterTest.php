@@ -1,18 +1,18 @@
 <?php
 
-use App\DataModels\User;
-use App\Helpers\FieldViewDefaults;
-use App\Models\User as ModelUser;
+use App\Models\User;
+use App\Modules\Register\RegisterForm;
+use App\Modules\Register\RegisterFormFactory;
 use App\Routes\Web;
+use App\Sources\Db\App\Users;
 use Illuminate\Support\Facades\Hash;
-use Tests\Factories\UserFactory;
 
 test('route is accessible', function (): void {
     $this->get(Web::register->value)->assertOk();
 });
 
 test('registration', function (): void {
-    $RegisterForm = UserFactory::factory()->make();
+    $RegisterForm = RegisterFormFactory::factory()->make();
 
     $this->post(
         Web::register->value,
@@ -20,17 +20,17 @@ test('registration', function (): void {
     )->assertRedirect(Web::home->value);
 
     $this->assertAuthenticated();
-    $this->assertDatabaseHas((new ModelUser)->getTable(), [
-        User::name => $RegisterForm->name,
-        User::email => $RegisterForm->email,
+    $this->assertDatabaseHas((new User)->getTable(), [
+        Users::name->value => $RegisterForm->name,
+        Users::email->value => $RegisterForm->email,
     ]);
 });
 
 test('validation fails with invalid name', function (): void {
     $this->post(
         Web::register->value,
-        UserFactory::factory()->set([User::name => ''])->context()
-    )->assertSessionHasErrors(User::name, errorBag: FieldViewDefaults::bag(User::class));
+        RegisterFormFactory::factory()->set([RegisterForm::name => ''])->context()
+    )->assertSessionHasErrors(RegisterForm::name);
 
     $this->assertGuest();
 });
@@ -38,20 +38,20 @@ test('validation fails with invalid name', function (): void {
 test('validation fails with invalid email', function (): void {
     $this->post(
         Web::register->value,
-        UserFactory::factory()->set([User::email => ''])->context()
-    )->assertSessionHasErrors(User::email, errorBag: FieldViewDefaults::bag(User::class));
+        RegisterFormFactory::factory()->set([RegisterForm::email => ''])->context()
+    )->assertSessionHasErrors(RegisterForm::email);
 
     $this->assertGuest();
 });
 
 test('validation fails with duplicate email', function (): void {
-    $RegisterForm = UserFactory::factory()->make();
-    ModelUser::factory()->createOne([User::email => $RegisterForm->email]);
+    $RegisterForm = RegisterFormFactory::factory()->make();
+    User::factory()->createOne([Users::email->value => $RegisterForm->email]);
 
     $this->post(
         Web::register->value,
         $RegisterForm->toArray()
-    )->assertSessionHasErrors(User::email, errorBag: FieldViewDefaults::bag(User::class));
+    )->assertSessionHasErrors(RegisterForm::email);
 
     $this->assertGuest();
 });
@@ -59,29 +59,29 @@ test('validation fails with duplicate email', function (): void {
 test('validation fails with mismatched passwords', function (): void {
     $this->post(
         Web::register->value,
-        UserFactory::factory()->set([User::password_confirmation => 'mismatch'])->context()
-    )->assertSessionHasErrors(User::password, errorBag: FieldViewDefaults::bag(User::class));
+        RegisterFormFactory::factory()->set([RegisterForm::password_confirmation => 'mismatch'])->context()
+    )->assertSessionHasErrors(RegisterForm::password);
 
     $this->assertGuest();
 });
 
 test('password is hashed after registration', function (): void {
-    $RegisterForm = UserFactory::factory()->make();
+    $RegisterForm = RegisterFormFactory::factory()->make();
 
     $this->post(Web::register->value, $RegisterForm->toArray());
 
-    $user = ModelUser::query()->where(User::email, $RegisterForm->email)->firstOrFail();
-    expect($user->password)->not->toBe($RegisterForm->password)
-        ->and(Hash::check($RegisterForm->password, $user->password))->toBeTrue();
+    $User = User::query()->where(Users::email->value, $RegisterForm->email)->firstOrFail();
+    expect($User->password)->not->toBe($RegisterForm->password)
+        ->and(Hash::check($RegisterForm->password, $User->password))->toBeTrue();
 });
 
 test('validation fails with missing required fields', function (): void {
     $this->post(Web::register->value)
         ->assertSessionHasErrors([
-            User::name,
-            User::email,
-            User::password,
-        ], errorBag: FieldViewDefaults::bag(User::class));
+            RegisterForm::name,
+            RegisterForm::email,
+            RegisterForm::password,
+        ]);
 
     $this->assertGuest();
 });
@@ -91,15 +91,15 @@ test('validation errors are displayed on the form', function (): void {
         ->followingRedirects()
         ->post(
             Web::register->value,
-            UserFactory::factory()->set([User::name => ''])->context()
+            RegisterFormFactory::factory()->set([RegisterForm::name => ''])->context()
         )
         ->assertOk()
         ->assertSee('The name field is required.');
 });
 
 test('old input is preserved on validation failure', function (): void {
-    $RegisterForm = UserFactory::factory()
-        ->set([User::email => 'invalid-email'])
+    $RegisterForm = RegisterFormFactory::factory()
+        ->set([RegisterForm::email => 'invalid-email'])
         ->make();
 
     $this->post(Web::register->value, $RegisterForm->toArray())
@@ -114,7 +114,7 @@ test('intended url is preserved after registration', function (): void {
 
     $this->post(
         Web::register->value,
-        UserFactory::factory()->make()->toArray()
+        RegisterFormFactory::factory()->make()->toArray()
     )->assertRedirect(Web::home->value);
 
     $this->assertAuthenticated();

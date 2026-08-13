@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\HttpHeader;
+use App\Helpers\Role;
 use App\Http\Middleware\EnsureEmailIsVerifiedMiddleware;
 use App\Routes\MiddlewareTag;
 use App\Routes\Web;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Spatie\Permission\Middleware\RoleMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             Route::middleware([MiddlewareTag::web->value, MiddlewareTag::auth->value])
                 ->group(base_path('routes/web_auth.php'));
+
+            Route::middleware([MiddlewareTag::web->value, MiddlewareTag::auth->value, Role::admin->middleware()])
+                ->group(base_path('routes/web_admin.php'));
 
             Route::middleware(MiddlewareTag::api->value)
                 ->group(base_path('routes/api.php'));
@@ -32,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(static fn () => Web::login->value);
         $middleware->alias([
             MiddlewareTag::verified->value => EnsureEmailIsVerifiedMiddleware::class,
+            MiddlewareTag::role->value => RoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

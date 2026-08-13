@@ -1,21 +1,20 @@
 <?php
 
-use App\DataModels\User;
-use App\Helpers\FieldViewDefaults;
-use App\Models\User as ModelUser;
+use App\Models\User;
 use App\Modules\Login\LoginForm;
 use App\Modules\Login\LoginFormFactory;
 use App\Routes\Web;
+use App\Sources\Db\App\Users;
 
 test('route is accessible', function (): void {
     $this->get(Web::login->value)->assertOk();
 });
 
 test('login with valid credentials', function (): void {
-    $User = ModelUser::factory([User::password => User::password])->createOne();
+    $User = User::factory([Users::password->value => Users::password->value])->createOne();
     $LoginForm = LoginFormFactory::factory()
         ->set([LoginForm::email => $User->email])
-        ->set([LoginForm::password => User::password])
+        ->set([LoginForm::password => Users::password->value])
         ->make();
 
     $this->post(
@@ -30,7 +29,7 @@ test('validation fails with invalid email', function (): void {
     $this->post(
         Web::login->value,
         LoginFormFactory::factory()->set([LoginForm::email => ''])->context()
-    )->assertSessionHasErrors(LoginForm::email, errorBag: FieldViewDefaults::bag(LoginForm::class));
+    )->assertSessionHasErrors(LoginForm::email);
 
     $this->assertGuest();
 });
@@ -39,13 +38,13 @@ test('validation fails with invalid password', function (): void {
     $this->post(
         Web::login->value,
         LoginFormFactory::factory()->set([LoginForm::password => ''])->context()
-    )->assertSessionHasErrors(LoginForm::password, errorBag: FieldViewDefaults::bag(LoginForm::class));
+    )->assertSessionHasErrors(LoginForm::password);
 
     $this->assertGuest();
 });
 
 test('login fails with invalid credentials', function (): void {
-    $user = ModelUser::factory()->createOne();
+    $user = User::factory()->createOne();
     $LoginForm = LoginFormFactory::factory()
         ->set([LoginForm::email => $user->email])
         ->set([LoginForm::password => 'wrong-password'])
@@ -73,7 +72,7 @@ test('login fails with non existent user', function (): void {
 });
 
 test('user can login with remember me', function (): void {
-    $User = ModelUser::factory()->createOne();
+    $User = User::factory()->createOne();
     $LoginForm = LoginFormFactory::factory()
         ->set([LoginForm::email => $User->email])
         ->set([LoginForm::remember_token => true])
@@ -90,7 +89,7 @@ test('user can login with remember me', function (): void {
 });
 
 test('user stays logged in with remember me', function (): void {
-    $User = ModelUser::factory()->createOne();
+    $User = User::factory()->createOne();
     $LoginForm = LoginFormFactory::factory()
         ->set([LoginForm::email => $User->email])
         ->set([LoginForm::remember_token => true])
@@ -120,23 +119,6 @@ test('validation errors are displayed on the form', function (): void {
         ->assertSee('The email field is required.');
 });
 
-test('failed authentication is displayed on the form', function (): void {
-    $User = ModelUser::factory()->createOne();
-
-    $this->from(Web::login->value)
-        ->followingRedirects()
-        ->post(
-            Web::login->value,
-            LoginFormFactory::factory()
-                ->set([LoginForm::email => $User->email])
-                ->set([LoginForm::password => 'wrong-password'])
-                ->make()
-                ->toArray()
-        )
-        ->assertOk()
-        ->assertSee('These credentials do not match our records.');
-});
-
 test('old input is preserved on validation failure', function (): void {
     $LoginForm = LoginFormFactory::factory()->make();
 
@@ -151,7 +133,7 @@ test('old input is preserved on validation failure', function (): void {
 });
 
 test('intended url is preserved after login', function (): void {
-    $user = ModelUser::factory()->createOne();
+    $user = User::factory()->createOne();
     $LoginForm = LoginFormFactory::factory()
         ->set([LoginForm::email => $user->email])
         ->make();
@@ -167,8 +149,8 @@ test('intended url is preserved after login', function (): void {
 });
 
 test('input is sanitized during login', function (): void {
-    ModelUser::factory()->createOne([
-        User::email => 'test@example.com',
+    User::factory()->createOne([
+        Users::email->value => 'test@example.com',
     ]);
 
     $LoginForm = LoginFormFactory::factory()
@@ -188,13 +170,13 @@ test('validation fails with missing required fields', function (): void {
         ->assertSessionHasErrors([
             LoginForm::email,
             LoginForm::password,
-        ], errorBag: FieldViewDefaults::bag(LoginForm::class));
+        ]);
 
     $this->assertGuest();
 });
 
 test('user cannot login when already authenticated', function (): void {
-    $user = ModelUser::factory()->createOne();
+    $user = User::factory()->createOne();
     $this->actingAs($user);
 
     $LoginForm = LoginFormFactory::factory()
@@ -205,4 +187,18 @@ test('user cannot login when already authenticated', function (): void {
         Web::login->value,
         $LoginForm->toArray()
     )->assertRedirect(Web::home->value);
+});
+
+test('failed authentication is displayed on the form', function (): void {
+    $User = User::factory()->createOne();
+    $LoginForm = LoginFormFactory::factory()
+        ->set([LoginForm::email => $User->email])
+        ->set([LoginForm::password => 'wrong-password'])
+        ->make();
+
+    $this->from(Web::login->value)
+        ->followingRedirects()
+        ->post(Web::login->value, $LoginForm->toArray())
+        ->assertOk()
+        ->assertSee('These credentials do not match our records.');
 });

@@ -2,9 +2,15 @@
 
 use App\Modules\Login\LoginForm;
 use App\Routes\Web;
+use App\View\DataModels\AuthCard;
 use Illuminate\View\View;
+use Laravel\Head\Facades\Head;
 
 use function Laravel\Folio\render;
+
+Head::title('Login')
+    ->description('Sign in to your account.')
+    ->hiddenFromRobots();
 
 render(function (View $view) {
     if (auth()->check()) {
@@ -14,15 +20,12 @@ render(function (View $view) {
     return $view;
 });
 ?>
-<x-auth-card title="Login">
+<x-auth-card :authCard="[AuthCard::title => 'Login']">
     <form class="space-y-4" method="POST" action="{{Web::login->value}}">
         @csrf
-        <x-text-input :model="LoginForm::class" :name="LoginForm::email"/>
-        <x-text-input :model="LoginForm::class" :name="LoginForm::password" autocomplete="current-password"/>
+        <x-text-input :textInput="LoginForm::textInput(LoginForm::email)"/>
+        <x-text-input :textInput="LoginForm::textInput(LoginForm::password)"/>
         <button class="btn btn-primary mt-4 w-full">Login</button>
-        @if(isset($errors))
-            <x-errors :$errors :take="1"/>
-        @endif
     </form>
     <x-slot:footer>
         <a href="{{Web::register->value}}" class="link link-primary text-center p-3">Register</a>

@@ -2,50 +2,52 @@
 
 namespace App\Modules\Api\Support;
 
-/**
- * OpenAPI components shared by every API endpoint.
- *
- * Referenced from each module's schema so the definitions survive as long as
- * any one endpoint does. `components` merge across attributes, so declaring
- * them everywhere is idempotent.
- *
- * Property keys come from ApiResponse, the model the envelope is built from,
- * so renaming a property there breaks the document at compile time.
- */
+use ZeroToProd\SchemaValidator\Property;
+use ZeroToProd\SchemaValidator\Schema;
+
 readonly class SharedSchema
 {
     public const string bearer = 'bearer';
     public const string api_error = '#/components/schemas/ApiError';
     public const string api_validation_error = '#/components/schemas/ApiValidationError';
+    public const string middleware_error = '#/components/schemas/MiddlewareError';
+    public const string middleware_error_description = 'The token was missing, expired or unrecognised. Produced by the auth:sanctum middleware, so it does not use the standard error envelope.';
     public const array components = [
         'securitySchemes' => [
             self::bearer => ['type' => 'http', 'scheme' => 'bearer'],
         ],
         'schemas' => [
+            'MiddlewareError' => [
+                Schema::type => Schema::object,
+                Schema::required => [ApiResponse::message],
+                Schema::properties => [
+                    ApiResponse::message => [Property::type => Property::string],
+                ],
+            ],
             'ApiError' => [
-                'type' => 'object',
-                'required' => [ApiResponse::success, ApiResponse::message, ApiResponse::type],
-                'properties' => [
-                    ApiResponse::success => ['type' => 'boolean', 'enum' => [false]],
-                    ApiResponse::message => ['type' => 'string'],
-                    ApiResponse::errors => ['type' => 'array', 'items' => ['type' => 'string']],
-                    ApiResponse::type => ['type' => 'string', 'enum' => ['error']],
+                Schema::type => Schema::object,
+                Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::type],
+                Schema::properties => [
+                    ApiResponse::success => [Property::type => Property::boolean, Property::enum => [false]],
+                    ApiResponse::message => [Property::type => Property::string],
+                    ApiResponse::errors => [Property::type => Schema::array, Schema::items => [Property::type => Property::string]],
+                    ApiResponse::type => [Property::type => Property::string, Property::enum => ['error']],
                 ],
             ],
             'ApiValidationError' => [
-                'type' => 'object',
-                'required' => [ApiResponse::success, ApiResponse::message, ApiResponse::errors, ApiResponse::type],
-                'properties' => [
-                    ApiResponse::success => ['type' => 'boolean', 'enum' => [false]],
-                    ApiResponse::message => ['type' => 'string'],
+                Schema::type => Schema::object,
+                Schema::required => [ApiResponse::success, ApiResponse::message, ApiResponse::errors, ApiResponse::type],
+                Schema::properties => [
+                    ApiResponse::success => [Property::type => Property::boolean, Property::enum => [false]],
+                    ApiResponse::message => [Property::type => Property::string],
                     ApiResponse::errors => [
-                        'type' => 'object',
-                        'additionalProperties' => [
-                            'type' => 'array',
-                            'items' => ['type' => 'string'],
+                        Property::type => Schema::object,
+                        Schema::additionalProperties => [
+                            Property::type => Schema::array,
+                            Schema::items => [Property::type => Property::string],
                         ],
                     ],
-                    ApiResponse::type => ['type' => 'string', 'enum' => ['error']],
+                    ApiResponse::type => [Property::type => Property::string, Property::enum => ['error']],
                 ],
             ],
         ],

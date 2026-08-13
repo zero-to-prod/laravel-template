@@ -2,7 +2,6 @@
 
 namespace App\Modules\Login;
 
-use App\Helpers\FieldViewDefaults;
 use App\Routes\Web;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -13,12 +12,10 @@ readonly class LoginController
 {
     public function __invoke(): RedirectResponse
     {
-        $LoginForm = LoginForm::from(request()->all());
-        $Validator = Validator::make($LoginForm->toArray(), $LoginForm->rules());
+        $LoginRequest = LoginRequest::from(request()->all());
+        $Validator = Validator::make(...$LoginRequest->validator());
 
-        $credentials = $Validator->validateWithBag(FieldViewDefaults::bag(LoginForm::class));
-
-        if (Auth::attempt($credentials, $LoginForm->remember_token)) {
+        if (Auth::attempt($Validator->validate(), $LoginRequest->remember_token)) {
             request()->session()->regenerate();
 
             return redirect()->intended(Web::home->value);

@@ -1,16 +1,16 @@
 <?php
 
-use App\DataModels\User;
-use App\Models\User as ModelUser;
-use App\Modules\Api\Requests\ApiLoginRequest;
+use App\Models\User;
+use App\Modules\Api\Login\LoginRequest;
 use App\Routes\ApiRoute;
+use App\Sources\Db\App\Users;
 
 test('login with valid credentials', function (): void {
-    $User = ModelUser::factory([User::password => User::password])->createOne();
-    $payload = ApiLoginRequest::from([
-        ApiLoginRequest::email => $User->email,
-        ApiLoginRequest::password => User::password,
-        ApiLoginRequest::device_name => 'test-device',
+    $User = User::factory([Users::password->value => Users::password->value])->createOne();
+    $payload = LoginRequest::from([
+        LoginRequest::email => $User->email,
+        LoginRequest::password => Users::password->value,
+        LoginRequest::device_name => 'test-device',
     ]);
 
     $response = $this->assertMatchesSchema(
@@ -24,46 +24,50 @@ test('login with valid credentials', function (): void {
 
 test('validation fails with invalid email', function (): void {
     $payload = [
-        ApiLoginRequest::email => 'invalid-email',
-        ApiLoginRequest::password => 'password',
-        ApiLoginRequest::device_name => 'test-device',
+        LoginRequest::email => 'invalid-email',
+        LoginRequest::password => 'password',
+        LoginRequest::device_name => 'test-device',
     ];
 
     $this->postJson(ApiRoute::login->value, $payload)
         ->assertStatus(422)
-        ->assertJsonValidationErrors(ApiLoginRequest::email);
+        ->assertJsonValidationErrors(LoginRequest::email);
 });
 
 test('validation fails with invalid password', function (): void {
     $payload = [
-        ApiLoginRequest::email => 'test@example.com',
-        ApiLoginRequest::password => '',
-        ApiLoginRequest::device_name => 'test-device',
+        LoginRequest::email => 'test@example.com',
+        LoginRequest::password => '',
+        LoginRequest::device_name => 'test-device',
     ];
 
-    $this->postJson(ApiRoute::login->value, $payload)
+    // The only 422 whose request still conforms to the document: blank is a
+    // server policy (NotBlank), not a published constraint. Every other 422
+    // case sends a body the document rejects, so the response validator would
+    // fail on the request before it ever looked at the response.
+    $this->assertMatchesSchema($this->postJson(ApiRoute::login->value, $payload))
         ->assertStatus(422)
-        ->assertJsonValidationErrors(ApiLoginRequest::password);
+        ->assertJsonValidationErrors(LoginRequest::password);
 });
 
 test('validation fails with missing device name', function (): void {
-    $User = ModelUser::factory()->createOne();
+    $User = User::factory()->createOne();
     $payload = [
-        ApiLoginRequest::email => $User->email,
-        ApiLoginRequest::password => 'password',
+        LoginRequest::email => $User->email,
+        LoginRequest::password => 'password',
     ];
 
     $this->postJson(ApiRoute::login->value, $payload)
         ->assertStatus(422)
-        ->assertJsonValidationErrors(ApiLoginRequest::device_name);
+        ->assertJsonValidationErrors(LoginRequest::device_name);
 });
 
 test('login fails with invalid credentials', function (): void {
-    $User = ModelUser::factory()->createOne();
+    $User = User::factory()->createOne();
     $payload = [
-        ApiLoginRequest::email => $User->email,
-        ApiLoginRequest::password => 'wrong-password',
-        ApiLoginRequest::device_name => 'test-device',
+        LoginRequest::email => $User->email,
+        LoginRequest::password => 'wrong-password',
+        LoginRequest::device_name => 'test-device',
     ];
 
     $this->assertMatchesSchema($this->postJson(ApiRoute::login->value, $payload))
@@ -76,9 +80,9 @@ test('login fails with invalid credentials', function (): void {
 
 test('login fails with non existent user', function (): void {
     $payload = [
-        ApiLoginRequest::email => 'nonexistent@example.com',
-        ApiLoginRequest::password => 'password',
-        ApiLoginRequest::device_name => 'test-device',
+        LoginRequest::email => 'nonexistent@example.com',
+        LoginRequest::password => 'password',
+        LoginRequest::device_name => 'test-device',
     ];
 
     $this->postJson(ApiRoute::login->value, $payload)
@@ -90,24 +94,24 @@ test('login fails with non existent user', function (): void {
 });
 
 test('validation fails with missing required fields', function (): void {
-    $this->assertMatchesSchema($this->postJson(ApiRoute::login->value, []))
+    $this->postJson(ApiRoute::login->value, [])
         ->assertStatus(422)
         ->assertJsonValidationErrors([
-            ApiLoginRequest::email,
-            ApiLoginRequest::password,
-            ApiLoginRequest::device_name,
+            LoginRequest::email,
+            LoginRequest::password,
+            LoginRequest::device_name,
         ]);
 });
 
 test('input is sanitized during login', function (): void {
-    ModelUser::factory()->createOne([
-        User::email => 'test@example.com',
+    User::factory()->createOne([
+        Users::email->value => 'test@example.com',
     ]);
 
     $payload = [
-        ApiLoginRequest::email => ' TEST@EXAMPLE.COM ',
-        ApiLoginRequest::password => User::password,
-        ApiLoginRequest::device_name => 'test-device',
+        LoginRequest::email => ' TEST@EXAMPLE.COM ',
+        LoginRequest::password => Users::password->value,
+        LoginRequest::device_name => 'test-device',
     ];
 
     $this->postJson(ApiRoute::login->value, $payload)
@@ -116,13 +120,13 @@ test('input is sanitized during login', function (): void {
 });
 
 test('token is created with correct device name', function (): void {
-    $User = ModelUser::factory([User::password => User::password])->createOne();
+    $User = User::factory([Users::password->value => Users::password->value])->createOne();
     $deviceName = 'test-device-name';
 
     $payload = [
-        ApiLoginRequest::email => $User->email,
-        ApiLoginRequest::password => User::password,
-        ApiLoginRequest::device_name => $deviceName,
+        LoginRequest::email => $User->email,
+        LoginRequest::password => Users::password->value,
+        LoginRequest::device_name => $deviceName,
     ];
 
     $this->postJson(ApiRoute::login->value, $payload)->assertOk();

@@ -2,6 +2,15 @@
 
 namespace App\Helpers;
 
+/**
+ * The validation rules a request adds on top of what its columns already say.
+ *
+ * A column is the source of truth for what the database enforces — presence, type,
+ * length — and states those rules itself. A case here is the request's own
+ * addition: uniqueness, confirmation, a format the storage does not care about. A
+ * rule taking an argument gets a static builder that assembles it, so no caller
+ * concatenates one; a builder named after a case reads the case for its own name.
+ */
 enum Rule: string
 {
     case required = 'required';
@@ -13,54 +22,20 @@ enum Rule: string
     case json = 'json';
     case ulid = 'ulid';
     case confirmed = 'confirmed';
+    case current_password = 'current_password';
     case alpha_dash = 'alpha_dash';
     case max = 'max';
-    case in = 'in';
     case unique = 'unique';
-    case exists = 'exists';
-    case regex = 'regex';
-    case required_if = 'required_if';
     case integer = 'integer';
-    case min = 'min';
+    case date = 'date';
 
     public static function max(int $length): string
     {
         return self::max->value.':'.$length;
     }
 
-    public static function min(int $value): string
-    {
-        return self::min->value.':'.$value;
-    }
-
-    public static function requiredIf(string $field, string ...$values): string
-    {
-        return self::required_if->value.':'.$field.','.implode(',', $values);
-    }
-
-    public static function regex(string $pattern): string
-    {
-        return self::regex->value.':'.$pattern;
-    }
-
-    public static function in(string ...$values): string
-    {
-        return self::in->value.':'.implode(',', $values);
-    }
-
-    public static function email(string ...$validations): string
-    {
-        return self::email->value.':'.implode(',', $validations);
-
-    }
-
     public static function unique(string $table, ?string $column = null): string
     {
         return self::unique->value.':'.$table.($column !== null ? ','.$column : '');
-    }
-
-    public static function exists(string $table, ?string $column = null): string
-    {
-        return self::exists->value.':'.$table.($column !== null ? ','.$column : '');
     }
 }
