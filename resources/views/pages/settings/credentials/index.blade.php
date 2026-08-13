@@ -9,6 +9,9 @@ Head::title('Credentials')
     ->description('The personal access tokens that reach this account through the API.')
     ->hiddenFromRobots();
 ?>
+@php
+    $tokens = TokenQuery::get(request());
+@endphp
 <x-settings-card :settingsCard="[SettingsCard::title => 'Credentials']">
     <x-status-toast/>
     <p class="text-sm text-base-content/70">
@@ -16,5 +19,5 @@ Head::title('Credentials')
         created, and reaches every endpoint until you narrow it under Manage.
     </p>
 
-    <x-credentials-table :credentialsTable="[CredentialsTable::tokens => TokenQuery::get(request())]"/>
+    <x-credentials-table :credentialsTable="[CredentialsTable::tokens => $tokens]"/>
 </x-settings-card>

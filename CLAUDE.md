@@ -211,6 +211,15 @@ layout/card component. URLs come from [Web](app/Routes/Web.php) /
 [Auth](app/Routes/Auth.php) cases (`Auth::settingsProfile->value`), never
 literals.
 
+That block holds imports and `Head` **only**. Folio requires the raw page file a
+second time to read inline metadata, so the block runs twice per request — a query
+there is a silent duplicate. Anything that touches the database goes in an `@php`
+block in the body, which only the compiled render executes
+([credentials/index](resources/views/pages/settings/credentials/index.blade.php)).
+Pass the resulting variable to the component: Blade compiles a bound attribute
+expression into both `resolve()` and `withAttributes()`, so a call written inline in
+`:prop="[...]"` also runs twice.
+
 ### Two component kinds
 
 1. **Class** — [app/View/Components](app/View/Components), PHP class and blade

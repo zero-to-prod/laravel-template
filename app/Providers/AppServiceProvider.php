@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Helpers\Theme;
 use App\Models\PersonalAccessToken;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -19,7 +20,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         View::addLocation(dirname(__DIR__).'/View/Components');
-
+        Model::preventLazyLoading();
+        Model::preventAccessingMissingAttributes();
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
     }
 
