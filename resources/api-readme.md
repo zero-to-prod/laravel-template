@@ -52,7 +52,7 @@ the token making the call.
 ## Abilities
 
 An ability is one method reaching one path, written `GET:/api/user` — the path exactly as
-the document keys it, so a templated segment stays templated: `DELETE:/api/cache/{key}`.
+the document keys it, so a templated segment stays templated: `DELETE:/api/user/tokens/{token}`.
 A token granted `*` reaches everything, which is what a token is issued with unless you
 say otherwise.
 

@@ -30,7 +30,7 @@ test('the page lists every endpoint a token can be granted, and every verb', fun
 
     $response->assertSee('Endpoint')
         ->assertSee(ApiRoute::user->value)
-        ->assertSee(ApiRoute::cache_key->value);
+        ->assertSee(ApiRoute::user_token->value);
 
     foreach (HttpVerb::cases() as $HttpVerb) {
         $response->assertSee($HttpVerb->value);

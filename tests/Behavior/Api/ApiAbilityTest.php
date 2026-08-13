@@ -2,8 +2,6 @@
 
 use App\Helpers\HttpVerb;
 use App\Models\User;
-use App\Modules\Api\Cache\Store\CacheStoreRequest;
-use App\Modules\Api\CacheLocks\Store\CacheLocksStoreRequest;
 use App\Modules\Api\Support\AbilityQuery;
 use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\ErrorCode;
@@ -24,16 +22,6 @@ function acceptedBodies(): array
     return [
         HttpVerb::patch->ability(ApiRoute::user->value) => [UserUpdateRequest::name => 'Renamed'],
         HttpVerb::post->ability(ApiRoute::user_tokens->value) => [UserTokenStoreRequest::name => 'Another'],
-        HttpVerb::post->ability(ApiRoute::cache->value) => [
-            CacheStoreRequest::key => 'key',
-            CacheStoreRequest::value => 'value',
-            CacheStoreRequest::expiration => 60,
-        ],
-        HttpVerb::post->ability(ApiRoute::cache_locks->value) => [
-            CacheLocksStoreRequest::key => 'key',
-            CacheLocksStoreRequest::owner => 'owner',
-            CacheLocksStoreRequest::expiration => 60,
-        ],
     ];
 }
 

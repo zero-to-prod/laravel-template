@@ -46,7 +46,7 @@ Ranked; higher entries constrain lower.
 `<Concept><Verb>{Controller,Request,Response,Schema}`. Verbs: `Index`, `Show`,
 `Store`, `Update`, `Destroy`; `Request` omitted when there is no body. Canonical:
 [User/Update](app/Modules/Api/User/Update). Path parameters sit one level up,
-beside the verbs ([Cache/KeyParameter.php](app/Modules/Api/Cache/KeyParameter.php)).
+beside the verbs ([User/Token/TokenParameter.php](app/Modules/Api/User/Token/TokenParameter.php)).
 Non-API modules are `app/Modules/<Concept>/` with `Controller` + `Request` +
 `Form` (+ `FormFactory`).
 
@@ -96,7 +96,7 @@ Web side instead: `use DataModel; use IsRequest;` with `Request::rules` (plus
 `#[Response([Response::schema => ...])]`. All public properties are required;
 schema falls back to the PHP type. Compose, don't restate: an index response
 declares items as `XShowResponse::data()`
-([CacheIndexResponse](app/Modules/Api/Cache/Index/CacheIndexResponse.php)) and
+([UserTokenIndexResponse](app/Modules/Api/User/Token/Index/UserTokenIndexResponse.php)) and
 pagination as `PaginationResponse::data()`.
 
 ### 6. Schema

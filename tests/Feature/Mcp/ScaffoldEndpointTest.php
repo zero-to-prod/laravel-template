@@ -113,12 +113,12 @@ test('a paginated index declares the query parameters and a pagination object', 
         ...scaffoldArguments(),
         'paginated' => true,
         'response_fields' => [
-            ['name' => 'widgets', 'type' => 'array', 'items_of' => 'App\Modules\Api\Cache\Show\CacheShowResponse'],
+            ['name' => 'widgets', 'type' => 'array', 'items_of' => 'App\Modules\Api\User\Token\Show\UserTokenShowResponse'],
         ],
     ])->assertOk()
         ->assertSee("'parameters' => [...PaginationParameters::schema()],")
         ->assertSee('use App\Modules\Api\Support\PaginationResponse;')
-        ->assertSee('Schema::items => CacheShowResponse::data(),')
+        ->assertSee('Schema::items => UserTokenShowResponse::data(),')
         ->assertSee('return PaginationResponse::data();')
         ->assertSee('public array $pagination;');
 });
