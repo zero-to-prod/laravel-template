@@ -7,25 +7,16 @@ use Closure;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Contracts\Validation\ValidationRule;
 use ReflectionClass;
-use ReflectionException;
 
 trait IsRequest
 {
-    /**
-     * @return array{array<string, mixed>, array<string, list<string|ValidationRule|RuleContract>>, array<string, string>, array<string, string>}
-     *
-     * @throws ReflectionException
-     */
+    /** @return array{array<string, mixed>, array<string, list<string|ValidationRule|RuleContract>>, array<string, string>, array<string, string>} */
     public function validator(): array
     {
         return [$this->toArray(), $this->rules(), $this->messages(), $this->attributes()];
     }
 
-    /**
-     * @return array<string, list<string|ValidationRule|RuleContract>>
-     *
-     * @throws ReflectionException
-     */
+    /** @return array<string, list<string|ValidationRule|RuleContract>> */
     public function rules(): array
     {
         $rules = [];

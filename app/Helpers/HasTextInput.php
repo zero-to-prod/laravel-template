@@ -4,15 +4,10 @@ namespace App\Helpers;
 
 use App\View\DataModels\TextInput;
 use ReflectionClass;
-use ReflectionException;
 
 trait HasTextInput
 {
-    /**
-     * @return array<string, mixed>
-     *
-     * @throws ReflectionException
-     */
+    /** @return array<string, mixed> */
     public static function textInput(string $property): array
     {
         $attributes = new ReflectionClass(static::class)
