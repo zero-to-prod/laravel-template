@@ -118,9 +118,15 @@ Paths are cases on [ApiRoute](app/Routes/ApiRoute.php) /
 (`auth:sanctum`), [web.php](routes/web.php), [web_auth.php](routes/web_auth.php).
 A new endpoint = a case *and* a line. Which web enum a path belongs to follows
 the route file it is bound in: `web.php` and the public Folio pages are `Web`,
-`web_auth.php` and the auth globs are `Auth`. `Web` cases are listed in
-[/sitemap.xml](app/Modules/Sitemap/SitemapController.php) unless marked
-[ExcludeFromSitemap](app/Routes/ExcludeFromSitemap.php); `Auth` cases never are.
+`web_auth.php` and the auth globs are `Auth`. `Web` cases are listed in the
+sitemap unless marked [ExcludeFromSitemap](app/Routes/ExcludeFromSitemap.php);
+`Auth` cases never are. `/sitemap.xml` is a
+[sitemap index](app/Modules/Sitemap/SitemapController.php) over numbered
+`/sitemap-{page}.xml` [pages](app/Modules/Sitemap/SitemapPageController.php);
+[Sitemap](app/Modules/Sitemap/Sitemap.php) owns the split, the protocol's 50,000-url
+cap and the `lastmod` each page reports. Nothing under `web.php` may carry a shared
+`throttle` — the crawler reads the index and then every page it names in one visit,
+and the limit is keyed by ip, not by path.
 
 ### 7a. Roles
 

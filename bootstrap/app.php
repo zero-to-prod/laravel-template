@@ -16,7 +16,7 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         using: function () {
-            Route::middleware([MiddlewareTag::web->value, 'throttle:5,1'])
+            Route::middleware(MiddlewareTag::web->value)
                 ->group(base_path('routes/web.php'));
 
             Route::middleware([MiddlewareTag::web->value, MiddlewareTag::auth->value])

@@ -10,17 +10,19 @@ readonly class SitemapController
 {
     public function __invoke(): Response
     {
-        $urls = array_map(
-            static fn (Web $page): string => '    <url><loc>'.url($page->url()).'</loc></url>',
-            Web::sitemap(),
-        );
+        $sitemaps = [];
+
+        foreach (Sitemap::pages() as $page => $cases) {
+            $sitemaps[] = '    <sitemap><loc>'.url(Web::sitemapPage->url(['page' => $page])).'</loc>'
+                .Sitemap::lastmod(...$cases).'</sitemap>';
+        }
 
         return new Response(
             implode("\n", [
                 '<?xml version="1.0" encoding="UTF-8"?>',
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-                ...$urls,
-                '</urlset>',
+                '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                ...$sitemaps,
+                '</sitemapindex>',
                 '',
             ]),
             ResponseAlias::HTTP_OK,

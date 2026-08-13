@@ -30,6 +30,8 @@ enum Web: string
     #[AdminLink]
     case sitemap = '/sitemap.xml';
     #[ExcludeFromSitemap]
+    case sitemapPage = '/sitemap-{page}.xml';
+    #[ExcludeFromSitemap]
     #[AdminLink]
     case openapi = '/openapi.json';
     case contact = '/contact';
