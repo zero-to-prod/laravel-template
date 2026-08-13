@@ -16,6 +16,7 @@ readonly class CredentialsTable
 
     public const string sessionKey = 'credential';
     public const string tokens = 'tokens';
+    public const int expiryDays = 30;
 
     /** @var list<array<string, mixed>> */
     #[Describe([Describe::required => true])]
@@ -78,7 +79,10 @@ readonly class CredentialsTable
     /** @return array<string, mixed> */
     public function expiresAtInput(): array
     {
-        return TokenForm::textInput(TokenForm::expires_at);
+        return [
+            ...TokenForm::textInput(TokenForm::expires_at),
+            TextInput::value => old(TokenForm::expires_at, now()->addDays(self::expiryDays)->toDateString()),
+        ];
     }
 
     /** @param  array<string, mixed>  $context */

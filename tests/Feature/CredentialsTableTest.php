@@ -68,6 +68,17 @@ test('the inputs are the ones the form declares', function (): void {
         ->and(credentialsTable()->expiresAtInput()[TextInput::name])->toBe(TokenForm::expires_at);
 });
 
+test('the expiry defaults to a month out', function (): void {
+    expect(credentialsTable()->expiresAtInput()[TextInput::value])
+        ->toBe(now()->addDays(CredentialsTable::expiryDays)->toDateString());
+});
+
+test('a submitted expiry outlives the default', function (): void {
+    session()->put('_old_input', [TokenForm::expires_at => '2030-01-01']);
+
+    expect(credentialsTable()->expiresAtInput()[TextInput::value])->toBe('2030-01-01');
+});
+
 test('an icon an input asks for exists', function (): void {
     expect(ViewDirectory::svg->has((string) TextInput::from(credentialsTable()->nameInput())->icon))->toBeTrue();
 });
