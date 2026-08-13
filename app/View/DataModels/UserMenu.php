@@ -3,6 +3,9 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Helpers\Role;
+use App\Models\User;
+use App\Routes\Admin;
 use App\Routes\Auth;
 use App\Routes\Web;
 use Illuminate\Support\Str;
@@ -23,9 +26,19 @@ class UserMenu
     public static function items(): array
     {
         return [
+            ...(self::isAdmin()
+                ? [NavItem::from([NavItem::label => 'Admin', NavItem::icon => 'command-line', NavItem::route => Admin::index])]
+                : []),
             NavItem::from([NavItem::label => 'Settings', NavItem::icon => 'gear', NavItem::route => Auth::settingsProfile]),
             NavItem::from([NavItem::label => 'Logout', NavItem::icon => 'logout', NavItem::route => Web::logout]),
         ];
+    }
+
+    private static function isAdmin(): bool
+    {
+        $User = auth()->guard()->user();
+
+        return $User instanceof User && $User->hasRole(Role::admin->value);
     }
 
     public function initials(): string

@@ -46,7 +46,8 @@
                             @if($CredentialRow->expired())
                                 <span class="badge badge-warning badge-sm">Expired</span>
                             @endif
-                            <form method="POST" action="{{ $CredentialRow->revokeUrl() }}">
+                            <a href="{{ $CredentialRow->url() }}" class="btn btn-ghost btn-xs">Manage</a>
+                            <form method="POST" action="{{ $CredentialRow->url() }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-ghost btn-xs text-error">Revoke</button>

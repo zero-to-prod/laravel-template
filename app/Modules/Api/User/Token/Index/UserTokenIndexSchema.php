@@ -42,6 +42,14 @@ readonly class UserTokenIndexSchema implements DescribesOperation
                                     ],
                                 ],
                             ],
+                            '403' => [
+                                'description' => SharedSchema::missing_ability_description,
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => ['$ref' => SharedSchema::api_error],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],

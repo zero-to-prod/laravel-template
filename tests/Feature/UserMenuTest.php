@@ -1,6 +1,8 @@
 <?php
 
+use App\Helpers\Role;
 use App\Models\User;
+use App\Routes\Admin;
 use App\Routes\Auth;
 use App\Routes\Web;
 use App\Sources\Db\App\Users;
@@ -21,6 +23,29 @@ test('the menu links to settings and logout', function (): void {
     expect(UserMenu::items())->toHaveCount(2)
         ->and(UserMenu::items()[0]->route)->toBe(Auth::settingsProfile)
         ->and(UserMenu::items()[1]->route)->toBe(Web::logout);
+});
+
+test('the menu links an admin to the admin pages', function (): void {
+    $this->actingAs(User::factory()->createOne()->assignRole(Role::admin->value));
+
+    expect(UserMenu::items())->toHaveCount(3)
+        ->and(UserMenu::items()[0]->route)->toBe(Admin::index);
+});
+
+test('the dropdown shows the admin link only to an admin', function (): void {
+    $User = User::factory()->createOne();
+
+    $this->actingAs($User)
+        ->get(Web::home->value)
+        ->assertOk()
+        ->assertDontSee(Admin::index->value);
+
+    $User->assignRole(Role::admin->value);
+
+    $this->actingAs($User)
+        ->get(Web::home->value)
+        ->assertOk()
+        ->assertSee(Admin::index->value);
 });
 
 test('the topnav shows the account dropdown to an authenticated user', function (): void {

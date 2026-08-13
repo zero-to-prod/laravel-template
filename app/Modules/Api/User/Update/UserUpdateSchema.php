@@ -46,6 +46,14 @@ readonly class UserUpdateSchema implements DescribesOperation
                                     ],
                                 ],
                             ],
+                            '403' => [
+                                'description' => SharedSchema::missing_ability_description,
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => ['$ref' => SharedSchema::api_error],
+                                    ],
+                                ],
+                            ],
                             '422' => [
                                 'description' => 'The request body failed validation.',
                                 'content' => [

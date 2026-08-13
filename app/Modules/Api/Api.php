@@ -28,6 +28,11 @@ readonly class Api
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 401);
     }
 
+    public function forbidden(ErrorCode $ErrorCode): JsonResponse
+    {
+        return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value]), 403);
+    }
+
     public function notFound(ErrorCode $ErrorCode, mixed $data = []): JsonResponse
     {
         return $this->respond(ApiResponse::error($ErrorCode->value, [$ErrorCode->value], $data), 404);

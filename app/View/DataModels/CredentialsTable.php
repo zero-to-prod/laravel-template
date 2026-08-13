@@ -15,7 +15,6 @@ readonly class CredentialsTable
     use DataModel;
 
     public const string sessionKey = 'credential';
-
     public const string tokens = 'tokens';
 
     /** @var list<array<string, mixed>> */
@@ -32,7 +31,6 @@ readonly class CredentialsTable
     {
         return [
             PersonalAccessTokens::name,
-            PersonalAccessTokens::abilities,
             PersonalAccessTokens::last_used_at,
             PersonalAccessTokens::expires_at,
             PersonalAccessTokens::created_at,

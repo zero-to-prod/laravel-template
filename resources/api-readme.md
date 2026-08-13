@@ -49,5 +49,18 @@ another, which also accepts `abilities` and an `expires_at`. Tokens default to a
 abilities and no expiry. `DELETE /api/user/tokens/{token}` revokes one by id, including
 the token making the call.
 
+## Abilities
+
+An ability is one method reaching one path, written `GET:/api/user` — the path exactly as
+the document keys it, so a templated segment stays templated: `DELETE:/api/cache/{key}`.
+A token granted `*` reaches everything, which is what a token is issued with unless you
+say otherwise.
+
+A request the token was not granted is refused with a `403` and
+`"message": "missing_ability"` before it reaches the endpoint, so nothing is read, written
+or validated. Abilities are set on a token when it is issued, and changed afterwards from
+the web UI under Settings → Credentials, where each token has a grid of every endpoint
+against every method it answers.
+
 `GET /api/authenticated` reports whether the token you sent is currently accepted.
 

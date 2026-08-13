@@ -13,6 +13,10 @@ conventions that document does not state.
   is no login endpoint: the first token is issued from the web UI under Settings →
   Credentials, and further tokens from `POST /api/user/tokens` once you hold one. A token
   is shown once and stored hashed. Revoking is `DELETE /api/user/tokens/{token}`.
+- A token carries abilities, each one method reaching one path as the document keys it —
+  `GET:/api/user`, `DELETE:/api/cache/{key}` — or `*` for all of them, which is the
+  default. A method the token was not granted is refused with a 403 and
+  `missing_ability` before the endpoint runs.
 - A field documented as nullable may be null, never absent: every documented key is
   present in the body.
 - Requests are validated against the schema the document publishes, so a body the document

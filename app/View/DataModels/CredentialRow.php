@@ -24,11 +24,6 @@ readonly class CredentialRow
     #[Describe([Describe::required => true])]
     public string $name;
 
-    public const string abilities = 'abilities';
-
-    /** @var list<string>|null */
-    public ?array $abilities;
-
     public const string last_used_at = 'last_used_at';
 
     public ?string $last_used_at;
@@ -41,7 +36,7 @@ readonly class CredentialRow
 
     public ?string $created_at;
 
-    public function revokeUrl(): string
+    public function url(): string
     {
         return Auth::settingsCredential->url([Auth::credentialParameter => $this->id]);
     }
@@ -59,12 +54,6 @@ readonly class CredentialRow
 
     public function cell(PersonalAccessTokens $PersonalAccessTokens): string
     {
-        if ($PersonalAccessTokens === PersonalAccessTokens::abilities) {
-            return $this->abilities === null || $this->abilities === []
-                ? '—'
-                : implode(', ', $this->abilities);
-        }
-
         $value = $this->collect()->get($PersonalAccessTokens->value);
 
         return match (true) {

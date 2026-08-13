@@ -41,6 +41,14 @@ readonly class CacheLocksDestroySchema implements DescribesOperation
                                     ],
                                 ],
                             ],
+                            '403' => [
+                                'description' => SharedSchema::missing_ability_description,
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => ['$ref' => SharedSchema::api_error],
+                                    ],
+                                ],
+                            ],
                             '404' => [
                                 'description' => 'There is no cache lock with that key.',
                                 'content' => [

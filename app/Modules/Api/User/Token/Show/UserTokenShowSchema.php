@@ -42,6 +42,14 @@ readonly class UserTokenShowSchema implements DescribesOperation
                                     ],
                                 ],
                             ],
+                            '403' => [
+                                'description' => SharedSchema::missing_ability_description,
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => ['$ref' => SharedSchema::api_error],
+                                    ],
+                                ],
+                            ],
                             '404' => [
                                 'description' => 'The authenticated user has no token with that id.',
                                 'content' => [

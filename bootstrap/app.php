@@ -3,6 +3,7 @@
 use App\Helpers\HttpHeader;
 use App\Helpers\Role;
 use App\Http\Middleware\EnsureEmailIsVerifiedMiddleware;
+use App\Http\Middleware\EnsureTokenAbilityMiddleware;
 use App\Routes\MiddlewareTag;
 use App\Routes\Web;
 use Illuminate\Auth\AuthenticationException;
@@ -27,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware(MiddlewareTag::api->value)
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware(MiddlewareTag::sanctum->value)
+            Route::middleware([MiddlewareTag::sanctum->value, EnsureTokenAbilityMiddleware::class])
                 ->group(base_path('routes/api_auth.php'));
         },
         commands: __DIR__.'/../routes/console.php',

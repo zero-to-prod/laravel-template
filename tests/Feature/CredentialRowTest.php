@@ -22,7 +22,7 @@ test('a row hydrates from the token it renders', function (): void {
     $CredentialRow = CredentialRow::from(credentialToken($User));
 
     expect($CredentialRow->name)->toBe('Laptop CLI')
-        ->and($CredentialRow->abilities)->toBe(['*']);
+        ->and($CredentialRow->id)->not->toBeEmpty();
 });
 
 test('the id and the name are required', function (): void {
@@ -44,25 +44,11 @@ test('a timestamp renders as a date and an absent one as a dash', function (): v
         ->and($CredentialRow->cell(PersonalAccessTokens::created_at))->toBe(now()->toFormattedDateString());
 });
 
-test('abilities render as a list', function (): void {
-    $CredentialRow = CredentialRow::from(credentialToken(User::factory()->createOne()));
+test('what a token is allowed to reach is not one of its cells', function (): void {
+    $cells = CredentialRow::from(credentialToken(User::factory()->createOne()))->cells();
 
-    expect($CredentialRow->cell(PersonalAccessTokens::abilities))->toBe('*');
-});
-
-test('a token granted nothing renders a dash rather than an empty cell', function (): void {
-    $granted = CredentialRow::from([
-        ...credentialToken(User::factory()->createOne()),
-        CredentialRow::abilities => [],
-    ]);
-
-    $ungranted = CredentialRow::from([
-        ...credentialToken(User::factory()->createOne()),
-        CredentialRow::abilities => null,
-    ]);
-
-    expect($granted->cell(PersonalAccessTokens::abilities))->toBe('—')
-        ->and($ungranted->cell(PersonalAccessTokens::abilities))->toBe('—');
+    expect(CredentialsTable::columns())->not->toContain(PersonalAccessTokens::abilities)
+        ->and($cells)->not->toContain('*');
 });
 
 test('the cells line up with the headings, in order', function (): void {
@@ -88,9 +74,9 @@ test('a token with no expiry is never expired', function (): void {
     expect(CredentialRow::from(credentialToken(User::factory()->createOne()))->expired())->toBeFalse();
 });
 
-test('the revoke url carries the token id', function (): void {
+test('the url of a row carries the token id', function (): void {
     $CredentialRow = CredentialRow::from(credentialToken(User::factory()->createOne()));
 
-    expect($CredentialRow->revokeUrl())
+    expect($CredentialRow->url())
         ->toBe(Auth::settingsCredential->url([Auth::credentialParameter => $CredentialRow->id]));
 });
