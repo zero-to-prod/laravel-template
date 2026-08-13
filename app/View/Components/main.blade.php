@@ -13,7 +13,7 @@
 <body class="h-screen overflow-y-scroll scrollbar-visible {{$Main->classnames}}">
 <x-topnav :topnav="$Main->topnav()"/>
 @if($Main->leftNav)
-  <x-left-nav/>
+{{--  <x-left-nav/>--}}
 @elseif($Main->adminNav)
   <x-admin-nav/>
 @elseif($Main->settingsNav)
@@ -21,8 +21,8 @@
 @endif
 <div @class(['mt-16', 'lg:pl-56' => $Main->nav()])>
   <div class="min-h-[calc(100vh-4rem)]">{{$slot}}</div>
-  <x-footer/>
 </div>
+<x-footer/>
 @vite('resources/js/app.js')
 </body>
 </html>
