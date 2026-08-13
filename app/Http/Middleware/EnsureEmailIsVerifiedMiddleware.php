@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Helpers\HttpHeader;
-use App\Routes\Web;
+use App\Routes\Auth;
 use Closure;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -21,7 +21,7 @@ class EnsureEmailIsVerifiedMiddleware extends EnsureEmailIsVerified
         }
 
         if ($request->hasHeader(HttpHeader::HxRequest->value)) {
-            return response()->noContent(403)->header(HttpHeader::HxRedirect->value, Web::verificationNotice->value);
+            return response()->noContent(403)->header(HttpHeader::HxRedirect->value, Auth::verificationNotice->value);
         }
 
         return parent::handle($request, $next, $redirectToRoute);

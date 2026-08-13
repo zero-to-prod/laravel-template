@@ -1,7 +1,7 @@
 <?php
 
 use App\Modules\Settings\Authentication\PasswordForm;
-use App\Routes\Web;
+use App\Routes\Auth;
 use App\View\DataModels\SettingsCard;
 use Laravel\Head\Facades\Head;
 
@@ -14,7 +14,7 @@ Head::title('Authentication')
     <p class="text-sm text-base-content/70">
         Confirm your current password to choose a new one.
     </p>
-    <form class="mt-2 space-y-4" method="POST" action="{{Web::settingsAuthentication->value}}">
+    <form class="mt-2 space-y-4" method="POST" action="{{Auth::settingsAuthentication->value}}">
         @csrf
         <input type="text" name="username" autocomplete="username" value="{{auth()->user()?->email}}" readonly hidden>
         <x-text-input :textInput="PasswordForm::textInput(PasswordForm::current_password)"/>

@@ -1,8 +1,8 @@
 @php
-use App\Routes\Web;
-use App\View\DataModels\LeftNav;
-use App\View\DataModels\Svg;
-use App\View\DataModels\UserMenu;
+    use App\Routes\Web;
+    use App\View\DataModels\LeftNav;
+    use App\View\DataModels\Svg;
+    use App\View\DataModels\UserMenu;
 @endphp
 <div class="fixed top-0 z-20 shadow-md navbar bg-base-100">
     <div class="navbar-start">
@@ -18,7 +18,7 @@ use App\View\DataModels\UserMenu;
                         @foreach(LeftNav::items() as $item)
                             <li>
                                 <a href="{{$item['route']->value}}"
-                                   @class(['menu-active' => $item['route']->isExact(request())])
+                                        @class(['menu-active' => $item['route']->isExact(request())])
                                 >
                                     <x-svg :svg="[Svg::name => $item['icon'], Svg::classname => 'h-4 w-4 opacity-70']"/>
                                     {{$item['label']}}

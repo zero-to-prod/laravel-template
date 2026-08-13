@@ -1,5 +1,6 @@
 <?php
 
+use App\Routes\Auth;
 use App\Routes\Web;
 use App\View\DataModels\AuthCard;
 use Illuminate\View\View;
@@ -26,7 +27,7 @@ render(function (View $view) {
     <p class="text-sm text-base-content/70">
         We've emailed you a verification link. Click it to activate your account.
     </p>
-    <form method="POST" action="{{Web::verificationSend->value}}" class="mt-4">
+    <form method="POST" action="{{Auth::verificationSend->value}}" class="mt-4">
         @csrf
         <button class="btn btn-primary btn-sm w-full">Resend Verification Email</button>
     </form>

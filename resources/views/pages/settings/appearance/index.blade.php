@@ -2,7 +2,7 @@
 
 use App\Helpers\Theme;
 use App\Modules\Settings\Appearance\AppearanceRequest;
-use App\Routes\Web;
+use App\Routes\Auth;
 use App\View\DataModels\SettingsCard;
 use App\View\DataModels\Svg;
 use Laravel\Head\Facades\Head;
@@ -19,7 +19,7 @@ Head::title('Appearance')
     <p class="text-sm text-base-content/70">
         Choose how this app looks to you.
     </p>
-    <form class="mt-2 space-y-4" method="POST" action="{{Web::settingsAppearance->value}}">
+    <form class="mt-2 space-y-4" method="POST" action="{{Auth::settingsAppearance->value}}">
         @csrf
         <fieldset class="fieldset gap-2">
             <legend class="fieldset-legend">Theme</legend>
@@ -29,7 +29,7 @@ Head::title('Appearance')
                            name="{{AppearanceRequest::theme}}"
                            value="{{$Theme->value}}"
                            class="radio radio-primary"
-                           @checked($selected === $Theme->value)
+                            @checked($selected === $Theme->value)
                     />
                     <x-svg :svg="[Svg::name => $Theme->icon(), Svg::classname => 'h-4 w-4 opacity-70']"/>
                     <div class="min-w-0">

@@ -3,22 +3,23 @@
 use App\Helpers\Theme;
 use App\Models\User;
 use App\Modules\Settings\Appearance\AppearanceRequest;
+use App\Routes\Auth;
 use App\Routes\Web;
 use App\Sources\Db\App\Users;
 
 test('guests are redirected to login', function (): void {
-    $this->get(Web::settingsAppearance->value)
+    $this->get(Auth::settingsAppearance->value)
         ->assertRedirect(Web::login->value);
 });
 
 test('guests cannot update a theme', function (): void {
-    $this->post(Web::settingsAppearance->value, [AppearanceRequest::theme => Theme::dark->value])
+    $this->post(Auth::settingsAppearance->value, [AppearanceRequest::theme => Theme::dark->value])
         ->assertRedirect(Web::login->value);
 });
 
 test('the page lists every theme', function (): void {
     $this->actingAs(User::factory()->createOne())
-        ->get(Web::settingsAppearance->value)
+        ->get(Auth::settingsAppearance->value)
         ->assertOk()
         ->assertSee('Appearance')
         ->assertSee('Light')
@@ -35,9 +36,9 @@ test('a theme is selected', function (Theme $Theme): void {
     $User = User::factory()->createOne();
 
     $this->actingAs($User)
-        ->from(Web::settingsAppearance->value)
-        ->post(Web::settingsAppearance->value, [AppearanceRequest::theme => $Theme->value])
-        ->assertRedirect(Web::settingsAppearance->value)
+        ->from(Auth::settingsAppearance->value)
+        ->post(Auth::settingsAppearance->value, [AppearanceRequest::theme => $Theme->value])
+        ->assertRedirect(Auth::settingsAppearance->value)
         ->assertSessionHas('status', 'Appearance updated.');
 
     expect($User->refresh()->theme)->toBe($Theme);
@@ -49,9 +50,9 @@ test('a theme is selected', function (Theme $Theme): void {
 
 test('the status toast carries a dismiss control', function (): void {
     $content = (string) $this->actingAs(User::factory()->createOne())
-        ->from(Web::settingsAppearance->value)
+        ->from(Auth::settingsAppearance->value)
         ->followingRedirects()
-        ->post(Web::settingsAppearance->value, [AppearanceRequest::theme => Theme::dark->value])
+        ->post(Auth::settingsAppearance->value, [AppearanceRequest::theme => Theme::dark->value])
         ->assertOk()
         ->assertSee('Appearance updated.')
         ->getContent();
@@ -63,7 +64,7 @@ test('the status toast carries a dismiss control', function (): void {
 
 test('the selected theme is the checked radio when the page is shown again', function (): void {
     $content = (string) $this->actingAs(User::factory()->createOne([Users::theme->value => Theme::dark]))
-        ->get(Web::settingsAppearance->value)
+        ->get(Auth::settingsAppearance->value)
         ->assertOk()
         ->getContent();
 
@@ -75,8 +76,8 @@ test('validation fails with an unknown theme', function (): void {
     $User = User::factory()->createOne([Users::theme->value => Theme::light]);
 
     $this->actingAs($User)
-        ->from(Web::settingsAppearance->value)
-        ->post(Web::settingsAppearance->value, [AppearanceRequest::theme => 'solarized'])
+        ->from(Auth::settingsAppearance->value)
+        ->post(Auth::settingsAppearance->value, [AppearanceRequest::theme => 'solarized'])
         ->assertSessionHasErrors(AppearanceRequest::theme);
 
     expect($User->refresh()->theme)->toBe(Theme::light);
@@ -84,8 +85,8 @@ test('validation fails with an unknown theme', function (): void {
 
 test('validation fails with a missing theme', function (): void {
     $this->actingAs(User::factory()->createOne())
-        ->from(Web::settingsAppearance->value)
-        ->post(Web::settingsAppearance->value)
+        ->from(Auth::settingsAppearance->value)
+        ->post(Auth::settingsAppearance->value)
         ->assertSessionHasErrors(AppearanceRequest::theme);
 });
 

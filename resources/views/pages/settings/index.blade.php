@@ -1,9 +1,9 @@
 <?php
 
-use App\Routes\Web;
+use App\Routes\Auth;
 
 use function Laravel\Folio\render;
 
 render(function () {
-    return redirect(Web::settingsProfile->value);
+    return redirect(Auth::settingsProfile->value);
 });

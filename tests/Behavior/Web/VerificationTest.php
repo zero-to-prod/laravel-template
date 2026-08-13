@@ -3,6 +3,7 @@
 use App\Helpers\HttpHeader;
 use App\Models\User;
 use App\Modules\Register\RegisterFormFactory;
+use App\Routes\Auth;
 use App\Routes\Web;
 use App\Sources\Db\App\Users;
 use Illuminate\Auth\Events\Verified;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 
 test('guests are redirected to login when visiting the notice', function (): void {
-    $this->get(Web::verificationNotice->value)
+    $this->get(Auth::verificationNotice->value)
         ->assertRedirect(Web::login->value);
 });
 
@@ -20,7 +21,7 @@ test('an unverified user can view the notice', function (): void {
     $User = User::factory()->unverified()->createOne();
 
     $this->actingAs($User)
-        ->get(Web::verificationNotice->value)
+        ->get(Auth::verificationNotice->value)
         ->assertOk();
 });
 
@@ -28,7 +29,7 @@ test('a verified user visiting the notice is redirected home', function (): void
     $User = User::factory()->createOne();
 
     $this->actingAs($User)
-        ->get(Web::verificationNotice->value)
+        ->get(Auth::verificationNotice->value)
         ->assertRedirect(Web::home->value);
 });
 
@@ -37,7 +38,7 @@ test('a verified user reaches a protected route in production', function (): voi
     $User = User::factory()->createOne();
 
     $this->actingAs($User)
-        ->get(Web::dashboard->value)
+        ->get(Auth::dashboard->value)
         ->assertNoContent();
 });
 
@@ -45,7 +46,7 @@ test('an unverified user reaches a protected route outside production', function
     $User = User::factory()->unverified()->createOne();
 
     $this->actingAs($User)
-        ->get(Web::dashboard->value)
+        ->get(Auth::dashboard->value)
         ->assertNoContent();
 });
 
@@ -54,8 +55,8 @@ test('an unverified user is redirected to the notice from a protected route in p
     $User = User::factory()->unverified()->createOne();
 
     $this->actingAs($User)
-        ->get(Web::dashboard->value)
-        ->assertRedirect(Web::verificationNotice->value);
+        ->get(Auth::dashboard->value)
+        ->assertRedirect(Auth::verificationNotice->value);
 });
 
 test('an unverified htmx request to a protected route returns a no content response with an hx redirect header in production', function (): void {
@@ -64,9 +65,9 @@ test('an unverified htmx request to a protected route returns a no content respo
 
     $this->actingAs($User)
         ->withHeader(HttpHeader::HxRequest->value, 'true')
-        ->get(Web::dashboard->value)
+        ->get(Auth::dashboard->value)
         ->assertNoContent(403)
-        ->assertHeader(HttpHeader::HxRedirect->value, Web::verificationNotice->value);
+        ->assertHeader(HttpHeader::HxRedirect->value, Auth::verificationNotice->value);
 });
 
 test('a valid signed link marks the user as verified', function (): void {
@@ -121,7 +122,7 @@ test('resending the notification dispatches a new verification email', function 
     $User = User::factory()->unverified()->createOne();
 
     $this->actingAs($User)
-        ->post(Web::verificationSend->value)
+        ->post(Auth::verificationSend->value)
         ->assertRedirect()
         ->assertSessionHas('status', 'Verification link sent!');
 

@@ -62,9 +62,14 @@ Head::title('Privacy Policy')
                     <h2 class="text-base font-semibold">5. How We Share Information</h2>
                     <p>We do not sell your personal information. We share it only as follows:</p>
                     <ul class="list-disc space-y-1 pl-5">
-                        <li><strong>Service providers.</strong> Vendors who host our infrastructure, send email, or provide analytics on our behalf, under contract and only for those purposes.</li>
-                        <li><strong>Legal reasons.</strong> When required by law, subpoena, or other legal process, or to protect the rights, safety, and property of our users or the public.</li>
-                        <li><strong>Business transfers.</strong> In connection with a merger, acquisition, or sale of assets, subject to this policy.</li>
+                        <li><strong>Service providers.</strong> Vendors who host our infrastructure, send email, or provide analytics on our behalf,
+                            under contract and only for those purposes.
+                        </li>
+                        <li><strong>Legal reasons.</strong> When required by law, subpoena, or other legal process, or to protect the rights, safety,
+                            and property of our users or the public.
+                        </li>
+                        <li><strong>Business transfers.</strong> In connection with a merger, acquisition, or sale of assets, subject to this policy.
+                        </li>
                         <li><strong>With your direction.</strong> When you ask us to share information or connect a third-party service.</li>
                     </ul>
                 </section>

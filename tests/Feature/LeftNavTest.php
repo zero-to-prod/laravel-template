@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Routes\Auth;
 use App\Routes\Web;
 use App\View\DataModels\LeftNav;
 
@@ -18,7 +19,7 @@ test('the rail is shown to an authenticated user', function (): void {
 
 test('the rail is hidden on the settings pages, which carry their own nav', function (): void {
     $this->actingAs(User::factory()->createOne())
-        ->get(Web::settingsProfile->value)
+        ->get(Auth::settingsProfile->value)
         ->assertOk()
         ->assertDontSee('lg:pl-56');
 });

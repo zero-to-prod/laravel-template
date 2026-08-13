@@ -1,7 +1,7 @@
 <?php
 
 use App\Modules\Settings\Profile\ProfileForm;
-use App\Routes\Web;
+use App\Routes\Auth;
 use App\View\DataModels\SettingsCard;
 use App\View\DataModels\TextInput;
 use Laravel\Head\Facades\Head;
@@ -15,7 +15,7 @@ Head::title('Profile')
     <p class="text-sm text-base-content/70">
         The name other people see on your account.
     </p>
-    <form class="mt-2 space-y-4" method="POST" action="{{Web::settingsProfile->value}}">
+    <form class="mt-2 space-y-4" method="POST" action="{{Auth::settingsProfile->value}}">
         @csrf
         <x-text-input :textInput="[
             ...ProfileForm::textInput(ProfileForm::name),

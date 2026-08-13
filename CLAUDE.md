@@ -112,10 +112,15 @@ Index operations add `PaginationParameters::schema()`.
 ### 7. Routing
 
 Paths are cases on [ApiRoute](app/Routes/ApiRoute.php) /
-[Web](app/Routes/Web.php); route files bind `ApiRoute::x->value` to an invokable
-controller and nothing else. [api.php](routes/api.php) (public),
-[api_auth.php](routes/api_auth.php) (`auth:sanctum`), [web.php](routes/web.php),
-[web_auth.php](routes/web_auth.php). A new endpoint = a case *and* a line.
+[Web](app/Routes/Web.php) / [Auth](app/Routes/Auth.php); route files bind
+`ApiRoute::x->value` to an invokable controller and nothing else.
+[api.php](routes/api.php) (public), [api_auth.php](routes/api_auth.php)
+(`auth:sanctum`), [web.php](routes/web.php), [web_auth.php](routes/web_auth.php).
+A new endpoint = a case *and* a line. Which web enum a path belongs to follows
+the route file it is bound in: `web.php` and the public Folio pages are `Web`,
+`web_auth.php` and the auth globs are `Auth`. `Web` cases are listed in
+[/sitemap.xml](app/Modules/Sitemap/SitemapController.php) unless marked
+[ExcludeFromSitemap](app/Routes/ExcludeFromSitemap.php); `Auth` cases never are.
 
 ### 8. Tests
 
@@ -144,8 +149,9 @@ no custom CSS layer.
 entry. Auth is attached there by path glob. Each page opens with a `<?php ?>`
 block holding imports and `Head::title()->description()` (defaults in
 [AppServiceProvider](app/Providers/AppServiceProvider.php)), then renders one
-layout/card component. URLs come from [Web](app/Routes/Web.php) cases
-(`Web::settingsProfile->value`), never literals.
+layout/card component. URLs come from [Web](app/Routes/Web.php) /
+[Auth](app/Routes/Auth.php) cases (`Auth::settingsProfile->value`), never
+literals.
 
 ### Two component kinds
 

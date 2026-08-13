@@ -3,7 +3,7 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
-use App\Routes\Web;
+use App\Routes\Auth;
 
 class SettingsCard
 {
@@ -13,13 +13,13 @@ class SettingsCard
 
     public ?string $title = null;
 
-    /** @return list<array{label: string, icon: string, route: Web}> */
+    /** @return list<array{label: string, icon: string, route: Auth}> */
     public static function sections(): array
     {
         return [
-            ['label' => 'Profile', 'icon' => 'user', 'route' => Web::settingsProfile],
-            ['label' => 'Authentication', 'icon' => 'key', 'route' => Web::settingsAuthentication],
-            ['label' => 'Appearance', 'icon' => 'swatch', 'route' => Web::settingsAppearance],
+            ['label' => 'Profile', 'icon' => 'user', 'route' => Auth::settingsProfile],
+            ['label' => 'Authentication', 'icon' => 'key', 'route' => Auth::settingsAuthentication],
+            ['label' => 'Appearance', 'icon' => 'swatch', 'route' => Auth::settingsAppearance],
         ];
     }
 

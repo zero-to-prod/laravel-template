@@ -2,6 +2,7 @@
 
 use App\Helpers\Theme;
 use App\Models\User;
+use App\Routes\Auth;
 use App\Routes\Web;
 use Illuminate\Support\Facades\Config;
 
@@ -53,7 +54,7 @@ test('the settings pages are hidden from robots', function (): void {
     $name = Config::string('app.name');
 
     $this->actingAs(User::factory()->createOne())
-        ->get(Web::settingsAppearance->value)
+        ->get(Auth::settingsAppearance->value)
         ->assertOk()
         ->assertSee("<title>Appearance - $name</title>", false)
         ->assertSee('<meta name="robots" content="none">', false);

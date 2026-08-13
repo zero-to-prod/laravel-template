@@ -1,5 +1,6 @@
 <?php
 
+use App\Routes\Auth;
 use App\Routes\Web;
 use Laravel\Head\Facades\Head;
 
@@ -42,7 +43,7 @@ Head::title('Contact')
                     <h2 class="text-base font-semibold">Account help</h2>
                     <p>
                         Some things are faster to do yourself: you can update your name, email address, password, and
-                        appearance from your <a href="{{Web::settings->value}}" class="link link-primary">settings</a>.
+                        appearance from your <a href="{{Auth::settings->value}}" class="link link-primary">settings</a>.
                         If you cannot sign in, start at the
                         <a href="{{Web::login->value}}" class="link link-primary">login page</a>.
                     </p>

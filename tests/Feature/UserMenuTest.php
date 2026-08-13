@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Routes\Auth;
 use App\Routes\Web;
 use App\Sources\Db\App\Users;
 use App\View\DataModels\UserMenu;
@@ -18,7 +19,7 @@ test('initials are taken from the first and last word of the name', function (st
 
 test('the menu links to settings and logout', function (): void {
     expect(UserMenu::items())->toHaveCount(2)
-        ->and(UserMenu::items()[0]['route'])->toBe(Web::settingsProfile)
+        ->and(UserMenu::items()[0]['route'])->toBe(Auth::settingsProfile)
         ->and(UserMenu::items()[1]['route'])->toBe(Web::logout);
 });
 
@@ -34,7 +35,7 @@ test('the topnav shows the account dropdown to an authenticated user', function 
         ->assertSee('JD')
         ->assertSee('John Doe')
         ->assertSee('john@example.com')
-        ->assertSee(Web::settingsProfile->value)
+        ->assertSee(Auth::settingsProfile->value)
         ->assertSee(Web::logout->value);
 });
 
