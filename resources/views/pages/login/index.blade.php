@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\SvgName;
 use App\Modules\Login\LoginForm;
 use App\Routes\Web;
 use App\View\DataModels\AuthCard;
@@ -30,7 +31,7 @@ render(function (View $view) {
     </form>
     <div class="divider text-xs uppercase">or continue with</div>
     <a href="{{Web::googleRedirect->value}}" class="btn btn-outline w-full">
-        <x-svg :svg="[Svg::name => 'google', Svg::classname => 'size-5']"/>
+        <x-svg :svg="[Svg::name => SvgName::google, Svg::classname => 'size-5']"/>
         Google
     </a>
     <x-slot:footer>

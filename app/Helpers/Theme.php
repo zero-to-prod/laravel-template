@@ -51,12 +51,12 @@ enum Theme: string
         };
     }
 
-    public function icon(): string
+    public function icon(): SvgName
     {
         return match ($this) {
-            self::light => 'sun',
-            self::dark => 'moon',
-            self::auto => 'desktop',
+            self::light => SvgName::sun,
+            self::dark => SvgName::moon,
+            self::auto => SvgName::desktop,
         };
     }
 }

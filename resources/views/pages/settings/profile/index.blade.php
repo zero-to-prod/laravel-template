@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\SvgName;
 use App\Models\User;
 use App\Modules\Settings\Profile\ProfileForm;
 use App\Routes\Auth;
@@ -26,7 +27,7 @@ Head::title('Profile')
             TextInput::legend => 'Email',
             TextInput::type => 'email',
             TextInput::value => $User?->email,
-            TextInput::icon => 'email',
+            TextInput::icon => SvgName::email,
             TextInput::autocomplete => 'email',
             TextInput::readonly => true,
             TextInput::title => 'Email cannot be changed',

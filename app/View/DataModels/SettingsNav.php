@@ -3,6 +3,7 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Helpers\SvgName;
 use App\Routes\Auth;
 
 readonly class SettingsNav
@@ -13,10 +14,10 @@ readonly class SettingsNav
     public static function items(): array
     {
         return [
-            NavItem::from([NavItem::label => 'Profile', NavItem::icon => 'user', NavItem::route => Auth::settingsProfile]),
-            NavItem::from([NavItem::label => 'Security', NavItem::icon => 'key', NavItem::route => Auth::settingsSecurity]),
-            NavItem::from([NavItem::label => 'Credentials', NavItem::icon => 'command-line', NavItem::route => Auth::settingsCredentials, NavItem::nested => true]),
-            NavItem::from([NavItem::label => 'Appearance', NavItem::icon => 'swatch', NavItem::route => Auth::settingsAppearance]),
+            NavItem::from([NavItem::label => 'Profile', NavItem::icon => SvgName::user, NavItem::route => Auth::settingsProfile]),
+            NavItem::from([NavItem::label => 'Security', NavItem::icon => SvgName::key, NavItem::route => Auth::settingsSecurity]),
+            NavItem::from([NavItem::label => 'Credentials', NavItem::icon => SvgName::command_line, NavItem::route => Auth::settingsCredentials, NavItem::nested => true]),
+            NavItem::from([NavItem::label => 'Appearance', NavItem::icon => SvgName::swatch, NavItem::route => Auth::settingsAppearance]),
         ];
     }
 

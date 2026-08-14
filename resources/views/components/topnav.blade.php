@@ -1,6 +1,7 @@
 @props(['topnav'])
 @php
     use App\Helpers\SessionKey;
+    use App\Helpers\SvgName;
     use App\Routes\Web;
     use App\View\DataModels\Svg;
     use App\View\DataModels\Topnav;
@@ -34,7 +35,7 @@
                class="btn btn-ghost no-animation hover:border-transparent hover:bg-transparent hover:shadow-none"
                title="Go Home"
             >
-                <x-svg :svg="[Svg::name => 'logo', Svg::classname => 'h-6 w-6']"/>
+                <x-svg :svg="[Svg::name => SvgName::logo, Svg::classname => 'h-6 w-6']"/>
             </a>
             <span class="lg:inline-flex ml-2" title="Brand Name">
                 {{config('app.name')}}

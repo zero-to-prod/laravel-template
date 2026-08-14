@@ -2,6 +2,7 @@
 
 namespace App\View;
 
+use App\Helpers\SvgName;
 use Illuminate\Support\Facades\View as Views;
 
 /**
@@ -14,12 +15,12 @@ enum ViewDirectory: string
 {
     case svg = 'svg';
 
-    public function qualify(string $name): string
+    public function qualify(SvgName $name): string
     {
-        return $this->value.'.'.$name;
+        return $this->value.'.'.$name->value;
     }
 
-    public function has(string $name): bool
+    public function has(SvgName $name): bool
     {
         return Views::exists($this->qualify($name));
     }

@@ -26,11 +26,11 @@ enum SortDirection: string
         };
     }
 
-    public function icon(): string
+    public function icon(): SvgName
     {
         return match ($this) {
-            self::asc => 'chevron-up',
-            self::desc => 'chevron-down',
+            self::asc => SvgName::chevron_up,
+            self::desc => SvgName::chevron_down,
         };
     }
 

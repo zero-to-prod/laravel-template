@@ -1,5 +1,6 @@
 @props(['statusToast' => []])
 @php
+    use App\Helpers\SvgName;
     use App\View\DataModels\StatusToast;
     use App\View\DataModels\Svg;
     $StatusToast = StatusToast::from($statusToast);
@@ -9,7 +10,7 @@
         <div role="alert" class="alert {{ $StatusToast->alert }} pointer-events-auto">
             <span>{{ $StatusToast->message }}</span>
             <button type="button" class="btn btn-ghost btn-xs btn-circle" aria-label="Dismiss" data-dismiss-toast>
-                <x-svg :svg="[Svg::name => 'x-mark', Svg::classname => 'h-4 w-4']"/>
+                <x-svg :svg="[Svg::name => SvgName::x_mark, Svg::classname => 'h-4 w-4']"/>
             </button>
         </div>
     </div>

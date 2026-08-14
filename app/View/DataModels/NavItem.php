@@ -3,6 +3,7 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Helpers\SvgName;
 use App\Routes\Admin;
 use App\Routes\Auth;
 use App\Routes\Web;
@@ -20,7 +21,7 @@ readonly class NavItem
     public const string icon = 'icon';
 
     #[Describe([Describe::required => true])]
-    public string $icon;
+    public SvgName $icon;
 
     public const string route = 'route';
 

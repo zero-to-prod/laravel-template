@@ -4,6 +4,7 @@ namespace App\Modules\Settings\Authentication;
 
 use App\Helpers\DataModel;
 use App\Helpers\HasTextInput;
+use App\Helpers\SvgName;
 use App\View\DataModels\TextInput;
 
 readonly class PasswordForm
@@ -16,7 +17,7 @@ readonly class PasswordForm
     #[TextInput([
         TextInput::legend => 'Current Password',
         TextInput::type => 'password',
-        TextInput::icon => 'key',
+        TextInput::icon => SvgName::key,
         TextInput::placeholder => 'Current Password',
         TextInput::autocomplete => 'current-password',
         TextInput::title => 'The password you sign in with today',
@@ -29,7 +30,7 @@ readonly class PasswordForm
     #[TextInput([
         TextInput::legend => 'New Password',
         TextInput::type => 'password',
-        TextInput::icon => 'key',
+        TextInput::icon => SvgName::key,
         TextInput::placeholder => 'New Password',
         TextInput::autocomplete => 'new-password',
         TextInput::title => 'The password you want to use',
@@ -42,7 +43,7 @@ readonly class PasswordForm
     #[TextInput([
         TextInput::legend => 'Confirm New Password',
         TextInput::type => 'password',
-        TextInput::icon => 'key',
+        TextInput::icon => SvgName::key,
         TextInput::placeholder => 'Confirm New Password',
         TextInput::autocomplete => 'new-password',
         TextInput::title => 'New password confirmation',

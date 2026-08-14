@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\Role;
+use App\Helpers\SvgName;
 use App\Modules\Admin\Users\Update\UsersUpdateForm;
 use App\Modules\Admin\Users\Update\UsersUpdateRequest;
 use App\Routes\Admin;
@@ -20,7 +21,7 @@ Head::title('User')
 <x-main>
     <div class="mx-auto max-w-2xl p-4 sm:p-6">
         <a href="{{Admin::users->value}}" class="link link-hover inline-flex items-center gap-1 text-sm">
-            <x-svg :svg="[Svg::name => 'chevron-up', Svg::classname => 'h-3 w-3 -rotate-90 opacity-70']"/>
+            <x-svg :svg="[Svg::name => SvgName::chevron_up, Svg::classname => 'h-3 w-3 -rotate-90 opacity-70']"/>
             Users
         </a>
 

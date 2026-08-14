@@ -4,6 +4,7 @@ namespace App\Modules\Settings\Credentials;
 
 use App\Helpers\DataModel;
 use App\Helpers\HasTextInput;
+use App\Helpers\SvgName;
 use App\View\DataModels\TextInput;
 
 readonly class TokenForm
@@ -15,7 +16,7 @@ readonly class TokenForm
 
     #[TextInput([
         TextInput::legend => 'Token Name',
-        TextInput::icon => 'command-line',
+        TextInput::icon => SvgName::command_line,
         TextInput::placeholder => 'Laptop CLI',
         TextInput::title => 'A label to recognise this token by',
         TextInput::required => true,

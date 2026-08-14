@@ -4,6 +4,7 @@ namespace App\Modules\Register;
 
 use App\Helpers\DataModel;
 use App\Helpers\HasTextInput;
+use App\Helpers\SvgName;
 use App\View\DataModels\TextInput;
 use Zerotoprod\DataModel\Describe;
 
@@ -17,7 +18,7 @@ readonly class RegisterForm
     #[Describe([Describe::cast => [self::class, 'sanitize']])]
     #[TextInput([
         TextInput::legend => 'Full Name',
-        TextInput::icon => 'user',
+        TextInput::icon => SvgName::user,
         TextInput::placeholder => 'First and Last Name',
         TextInput::title => 'User name',
         TextInput::required => true,
@@ -30,7 +31,7 @@ readonly class RegisterForm
     #[TextInput([
         TextInput::legend => 'Email',
         TextInput::type => 'email',
-        TextInput::icon => 'email',
+        TextInput::icon => SvgName::email,
         TextInput::placeholder => 'Email',
         TextInput::title => 'User email address',
         TextInput::required => true,
@@ -42,7 +43,7 @@ readonly class RegisterForm
     #[TextInput([
         TextInput::legend => 'Password',
         TextInput::type => 'password',
-        TextInput::icon => 'key',
+        TextInput::icon => SvgName::key,
         TextInput::placeholder => 'Password',
         TextInput::autocomplete => 'new-password',
         TextInput::title => 'User password',
@@ -55,7 +56,7 @@ readonly class RegisterForm
     #[TextInput([
         TextInput::legend => 'Password Confirmation',
         TextInput::type => 'password',
-        TextInput::icon => 'key',
+        TextInput::icon => SvgName::key,
         TextInput::placeholder => 'Password Confirmation',
         TextInput::autocomplete => 'new-password',
         TextInput::title => 'Password confirmation',

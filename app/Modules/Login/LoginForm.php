@@ -4,6 +4,7 @@ namespace App\Modules\Login;
 
 use App\Helpers\DataModel;
 use App\Helpers\HasTextInput;
+use App\Helpers\SvgName;
 use App\View\DataModels\TextInput;
 use Zerotoprod\DataModel\Describe;
 
@@ -17,7 +18,7 @@ readonly class LoginForm
     #[TextInput([
         TextInput::legend => 'Email',
         TextInput::type => 'email',
-        TextInput::icon => 'email',
+        TextInput::icon => SvgName::email,
         TextInput::placeholder => 'Email',
         TextInput::title => 'User email address',
         TextInput::required => true,
@@ -29,7 +30,7 @@ readonly class LoginForm
     #[TextInput([
         TextInput::legend => 'Password',
         TextInput::type => 'password',
-        TextInput::icon => 'key',
+        TextInput::icon => SvgName::key,
         TextInput::placeholder => 'Password',
         TextInput::autocomplete => 'current-password',
         TextInput::title => 'User password',

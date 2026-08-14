@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\SvgName;
 use App\Routes\Auth;
 use App\Routes\Web;
 use App\View\DataModels\NavItem;
@@ -10,35 +11,35 @@ use Zerotoprod\DataModel\PropertyRequiredException;
 test('an entry carries its label, icon and route case', function (): void {
     $NavItem = NavItem::from([
         NavItem::label => 'Home',
-        NavItem::icon => 'home',
+        NavItem::icon => SvgName::home,
         NavItem::route => Web::home,
     ]);
 
     expect($NavItem->label)->toBe('Home')
-        ->and($NavItem->icon)->toBe('home')
+        ->and($NavItem->icon)->toBe(SvgName::home)
         ->and($NavItem->route)->toBe(Web::home)
         ->and($NavItem->url())->toBe(Web::home->url());
 });
 
 test('every property is required', function (): void {
-    NavItem::from([NavItem::label => 'Home', NavItem::icon => 'home']);
+    NavItem::from([NavItem::label => 'Home', NavItem::icon => SvgName::home]);
 })->throws(PropertyRequiredException::class);
 
 test('an entry projects its icon props', function (): void {
     $Svg = Svg::from(NavItem::from([
         NavItem::label => 'Home',
-        NavItem::icon => 'home',
+        NavItem::icon => SvgName::home,
         NavItem::route => Web::home,
     ])->svg());
 
-    expect($Svg->name)->toBe('home')
+    expect($Svg->name)->toBe(SvgName::home)
         ->and($Svg->classname)->toBe('h-4 w-4 opacity-70');
 });
 
 test('an entry is active only on its own path', function (): void {
     $NavItem = NavItem::from([
         NavItem::label => 'Home',
-        NavItem::icon => 'home',
+        NavItem::icon => SvgName::home,
         NavItem::route => Web::home,
     ]);
 
@@ -55,7 +56,7 @@ test('an entry is active only on its own path', function (): void {
 test('a nested entry stays active below its own path', function (): void {
     $NavItem = NavItem::from([
         NavItem::label => 'Credentials',
-        NavItem::icon => 'command-line',
+        NavItem::icon => SvgName::command_line,
         NavItem::route => Auth::settingsCredentials,
         NavItem::nested => true,
     ]);

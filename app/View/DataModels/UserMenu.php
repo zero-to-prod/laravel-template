@@ -4,6 +4,7 @@ namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
 use App\Helpers\Role;
+use App\Helpers\SvgName;
 use App\Models\User;
 use App\Routes\Admin;
 use App\Routes\Auth;
@@ -31,10 +32,10 @@ class UserMenu
     {
         return [
             ...(self::isAdmin()
-                ? [NavItem::from([NavItem::label => 'Admin', NavItem::icon => 'command-line', NavItem::route => Admin::index])]
+                ? [NavItem::from([NavItem::label => 'Admin', NavItem::icon => SvgName::command_line, NavItem::route => Admin::index])]
                 : []),
-            NavItem::from([NavItem::label => 'Settings', NavItem::icon => 'gear', NavItem::route => Auth::settingsProfile]),
-            NavItem::from([NavItem::label => 'Logout', NavItem::icon => 'logout', NavItem::route => Web::logout]),
+            NavItem::from([NavItem::label => 'Settings', NavItem::icon => SvgName::gear, NavItem::route => Auth::settingsProfile]),
+            NavItem::from([NavItem::label => 'Logout', NavItem::icon => SvgName::logout, NavItem::route => Web::logout]),
         ];
     }
 

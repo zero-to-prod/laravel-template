@@ -4,6 +4,7 @@ namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
 use App\Helpers\SortDirection;
+use App\Helpers\SvgName;
 use App\Models\User;
 use App\Modules\Admin\Users\UsersRequest;
 use App\Routes\Admin;
@@ -103,7 +104,7 @@ readonly class UsersTable
         return [
             TextInput::name => UsersRequest::search,
             TextInput::legend => 'Search',
-            TextInput::icon => 'magnifying-glass',
+            TextInput::icon => SvgName::magnifying_glass,
             TextInput::placeholder => 'Name or email',
             TextInput::title => 'Filter users by name or email',
             TextInput::value => $this->search,

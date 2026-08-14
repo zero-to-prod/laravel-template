@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\SvgName;
 use App\Models\User;
 use App\Modules\Settings\Credentials\TokenForm;
 use App\Routes\Auth;
@@ -84,7 +85,8 @@ test('a submitted expiry outlives the default', function (): void {
 });
 
 test('an icon an input asks for exists', function (): void {
-    expect(ViewDirectory::svg->has((string) TextInput::from(credentialsTable()->nameInput())->icon))->toBeTrue();
+    expect(TextInput::from(credentialsTable()->nameInput())->icon)->toBe(SvgName::command_line)
+        ->and(ViewDirectory::svg->has(SvgName::command_line))->toBeTrue();
 });
 
 test('no secret is shown when none was flashed', function (): void {

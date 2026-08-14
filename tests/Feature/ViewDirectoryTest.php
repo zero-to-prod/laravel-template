@@ -1,21 +1,25 @@
 <?php
 
+use App\Helpers\SvgName;
 use App\View\ViewDirectory;
 
 test('a name is qualified by the case', function (): void {
-    expect(ViewDirectory::svg->qualify('logo'))->toBe('svg.logo')
-        ->and(ViewDirectory::svg->has('logo'))->toBeTrue()
-        ->and(ViewDirectory::svg->has('no-such-icon'))->toBeFalse();
+    expect(ViewDirectory::svg->qualify(SvgName::logo))->toBe('svg.logo')
+        ->and(ViewDirectory::svg->has(SvgName::logo))->toBeTrue();
 });
 
-test('every view in every case directory is reachable through it', function (): void {
-    foreach (ViewDirectory::cases() as $case) {
-        $paths = glob(resource_path('views/'.$case->value.'/*.blade.php')) ?: [];
+test('every svg enum case names an existing view', function (): void {
+    foreach (SvgName::cases() as $SvgName) {
+        expect(ViewDirectory::svg->has($SvgName))->toBeTrue();
+    }
+});
 
-        expect($paths)->not->toBeEmpty();
+test('every svg view is represented by an enum case', function (): void {
+    $paths = glob(resource_path('views/svg/*.blade.php')) ?: [];
 
-        foreach ($paths as $path) {
-            expect($case->has(basename($path, '.blade.php')))->toBeTrue();
-        }
+    expect($paths)->not->toBeEmpty();
+
+    foreach ($paths as $path) {
+        expect(SvgName::from(basename($path, '.blade.php')))->toBeInstanceOf(SvgName::class);
     }
 });

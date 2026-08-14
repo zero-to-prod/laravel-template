@@ -3,6 +3,7 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Helpers\SvgName;
 use App\Routes\Admin;
 
 readonly class AdminNav
@@ -13,8 +14,8 @@ readonly class AdminNav
     public static function items(): array
     {
         return [
-            NavItem::from([NavItem::label => 'Users', NavItem::icon => 'user', NavItem::route => Admin::users]),
-            NavItem::from([NavItem::label => 'Links', NavItem::icon => 'document', NavItem::route => Admin::links]),
+            NavItem::from([NavItem::label => 'Users', NavItem::icon => SvgName::user, NavItem::route => Admin::users]),
+            NavItem::from([NavItem::label => 'Links', NavItem::icon => SvgName::document, NavItem::route => Admin::links]),
         ];
     }
 

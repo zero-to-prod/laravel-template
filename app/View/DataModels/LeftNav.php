@@ -3,6 +3,7 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Helpers\SvgName;
 use App\Routes\Web;
 
 readonly class LeftNav
@@ -13,7 +14,7 @@ readonly class LeftNav
     public static function items(): array
     {
         return [
-            NavItem::from([NavItem::label => 'Home', NavItem::icon => 'home', NavItem::route => Web::home]),
+            NavItem::from([NavItem::label => 'Home', NavItem::icon => SvgName::home, NavItem::route => Web::home]),
         ];
     }
 

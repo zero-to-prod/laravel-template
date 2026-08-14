@@ -3,6 +3,7 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Helpers\SvgName;
 use Attribute;
 use Zerotoprod\DataModel\Describe;
 
@@ -49,7 +50,7 @@ class TextInput
 
     public const string icon = 'icon';
 
-    public ?string $icon = null;
+    public ?SvgName $icon = null;
 
     public const string error = 'error';
 
