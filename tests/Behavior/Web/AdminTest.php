@@ -70,6 +70,37 @@ test('a user without the admin role is forbidden the links page', function (): v
         ->assertForbidden();
 });
 
+test('guests are redirected to login from the log viewer', function (): void {
+    $this->get(Admin::logs->value)
+        ->assertRedirect(Web::login->value);
+});
+
+test('a user without the admin role is forbidden the log viewer', function (): void {
+    $this->actingAs(User::factory()->createOne())
+        ->get(Admin::logs->value)
+        ->assertForbidden();
+});
+
+test('a user without the admin role is forbidden the log viewer api', function (): void {
+    $this->actingAs(User::factory()->createOne())
+        ->get(Admin::logs->value.'/api/folders')
+        ->assertForbidden();
+});
+
+test('the log viewer api recognizes an admin session on the local development port', function (): void {
+    $this->actingAs(admin())
+        ->withHeader('Referer', 'http://localhost:8080/admin/logs')
+        ->get('http://localhost:8080/admin/logs/api/folders')
+        ->assertOk();
+});
+
+test('the log viewer renders for an admin', function (): void {
+    $this->actingAs(admin())
+        ->get(Admin::logs->value)
+        ->assertOk()
+        ->assertSee('Log Viewer');
+});
+
 test('the links page lists every marked route', function (): void {
     $TestResponse = $this->actingAs(admin())
         ->get(Admin::links->value)

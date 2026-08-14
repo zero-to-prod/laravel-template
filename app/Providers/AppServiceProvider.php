@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Helpers\Role;
 use App\Helpers\Theme;
 use App\Models\PersonalAccessToken;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -14,6 +17,7 @@ use Laravel\Head\Enums\TwitterCard;
 use Laravel\Head\Facades\Head;
 use Laravel\Head\HeadBuilder;
 use Laravel\Sanctum\Sanctum;
+use Opcodes\LogViewer\Facades\LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +31,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        LogViewer::auth(static function (Request $request): bool {
+            $User = $request->user();
+
+            return $User instanceof User && $User->hasRole(Role::admin->value);
+        });
+
         $name = Config::string('app.name');
 
         Head::defaults(static fn (HeadBuilder $head): HeadBuilder => $head

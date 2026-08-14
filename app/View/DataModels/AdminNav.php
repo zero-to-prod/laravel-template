@@ -16,6 +16,7 @@ readonly class AdminNav
         return [
             NavItem::from([NavItem::label => 'Users', NavItem::icon => SvgName::user, NavItem::route => Admin::users]),
             NavItem::from([NavItem::label => 'Links', NavItem::icon => SvgName::document, NavItem::route => Admin::links]),
+            NavItem::from([NavItem::label => 'Logs', NavItem::icon => SvgName::command_line, NavItem::route => Admin::logs]),
         ];
     }
 

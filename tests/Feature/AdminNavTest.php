@@ -15,6 +15,10 @@ test('the users page is listed', function (): void {
     expect(collect(AdminNav::items())->pluck('route')->all())->toContain(Admin::users);
 });
 
+test('the log viewer is listed', function (): void {
+    expect(collect(AdminNav::items())->pluck('route')->all())->toContain(Admin::logs);
+});
+
 test('every entry names an icon that exists', function (): void {
     foreach (AdminNav::items() as $NavItem) {
         expect(ViewDirectory::svg->has($NavItem->icon))->toBeTrue();

@@ -8,6 +8,7 @@
     "laravel/sanctum": "^4.0",
     "laravel/socialite": "^5.29",
     "laravel/tinker": "^3.0",
+    "opcodesio/log-viewer": "^3.24",
     "spatie/laravel-permission": "^8.3",
     "zero-to-prod/data-model": "^81.10",
     "zero-to-prod/data-model-factory": "^71.5",
