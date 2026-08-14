@@ -3,6 +3,7 @@
 namespace App\Mcp\Servers;
 
 use App\Mcp\Tools\ScaffoldEndpoint;
+use App\Mcp\Tools\ScaffoldOpenApi;
 use Laravel\Mcp\Server;
 use Laravel\Mcp\Server\Tool;
 
@@ -15,10 +16,12 @@ class TemplateServer extends Server
         this one writes code against the conventions this application keeps.
 
         - `scaffold-endpoint` — the artifacts of one API endpoint module
+        - `scaffold-openapi` — endpoint modules for the operations in an OpenAPI 3.x document
         MARKDOWN;
 
     /** @var array<int, class-string<Tool>> */
     protected array $tools = [
         ScaffoldEndpoint::class,
+        ScaffoldOpenApi::class,
     ];
 }

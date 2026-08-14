@@ -113,7 +113,12 @@ class ScaffoldEndpoint extends Tool
 
     public function handle(Request $Request): Response
     {
-        $input = $Request->validate($this->rules());
+        return $this->scaffold($Request->validate($this->rules()));
+    }
+
+    /** @param array<string, mixed> $input */
+    public function scaffold(array $input): Response
+    {
 
         $Blueprint = EndpointBlueprint::from($input);
         $mismatch = $this->mismatchedParameters($Blueprint);
