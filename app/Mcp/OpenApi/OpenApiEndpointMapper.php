@@ -372,15 +372,9 @@ class OpenApiEndpointMapper
      */
     private function object(array $value): array
     {
-        $object = [];
-
-        foreach ($value as $key => $item) {
-            if (is_string($key)) {
-                $object[$key] = $item;
-            }
-        }
-
-        return $object;
+        return array_filter($value, static function ($key) {
+            return is_string($key);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /** @param array<string, mixed> $values */

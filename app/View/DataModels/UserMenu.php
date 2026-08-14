@@ -3,13 +3,13 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Helpers\Initials;
 use App\Helpers\Role;
 use App\Helpers\SvgName;
 use App\Models\User;
 use App\Routes\Admin;
 use App\Routes\Auth;
 use App\Routes\Web;
-use Illuminate\Support\Str;
 
 class UserMenu
 {
@@ -26,6 +26,11 @@ class UserMenu
     public const string picture = 'picture';
 
     public ?string $picture = null;
+
+    public function picture(): ?string
+    {
+        return $this->picture;
+    }
 
     /** @return list<NavItem> */
     public static function items(): array
@@ -48,14 +53,6 @@ class UserMenu
 
     public function initials(): string
     {
-        $words = array_values(array_filter(explode(' ', Str::squish($this->name))));
-
-        if ($words === []) {
-            return '?';
-        }
-
-        $last = count($words) > 1 ? Str::substr(end($words), 0, 1) : '';
-
-        return Str::upper(Str::substr($words[0], 0, 1).$last);
+        return Initials::from($this->name);
     }
 }

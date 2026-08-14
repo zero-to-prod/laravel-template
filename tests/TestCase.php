@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -25,6 +26,10 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Http::fake([
+            'www.gravatar.com/avatar/*' => Http::response('gravatar', 200, ['Content-Type' => 'image/jpeg']),
+        ]);
 
         if (! self::$migrated) {
             Artisan::call('migrate:fresh');

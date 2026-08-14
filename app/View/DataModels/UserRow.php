@@ -3,10 +3,11 @@
 namespace App\View\DataModels;
 
 use App\Helpers\DataModel;
+use App\Helpers\Gravatar;
+use App\Helpers\Initials;
 use App\Routes\Admin;
 use App\Sources\Db\App\Users;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Zerotoprod\DataModel\Describe;
 use ZeroToProd\DbModel\ColumnType;
 
@@ -51,20 +52,12 @@ readonly class UserRow
 
     public function initials(): string
     {
-        $words = array_values(array_filter(explode(' ', Str::squish($this->name))));
-
-        if ($words === []) {
-            return '?';
-        }
-
-        $last = count($words) > 1 ? Str::substr(end($words), 0, 1) : '';
-
-        return Str::upper(Str::substr($words[0], 0, 1).$last);
+        return Initials::from($this->name);
     }
 
-    public function picture(): ?string
+    public function picture(): string
     {
-        return $this->picture ?? null;
+        return $this->picture ?? Gravatar::url($this->email);
     }
 
     /** @return list<string> */

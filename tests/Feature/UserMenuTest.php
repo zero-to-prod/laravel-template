@@ -8,6 +8,7 @@ use App\Routes\Auth;
 use App\Routes\Web;
 use App\Sources\Db\App\Users;
 use App\View\DataModels\UserMenu;
+use Illuminate\Support\Facades\Http;
 
 test('initials are taken from the first and last word of the name', function (string $name, string $initials): void {
     expect(UserMenu::from([UserMenu::name => $name])->initials())->toBe($initials);
@@ -58,11 +59,24 @@ test('the topnav shows the account dropdown to an authenticated user', function 
     $this->actingAs($User)
         ->get(Web::home->value)
         ->assertOk()
-        ->assertSee('JD')
+        ->assertSee('data:image/jpeg;base64,'.base64_encode('gravatar'))
         ->assertSee('John Doe')
         ->assertSee('john@example.com')
         ->assertSee(Auth::settingsProfile->value)
         ->assertSee(Web::logout->value);
+});
+
+test('gravatar is fetched once and cached for the authentication session', function (): void {
+    $User = User::factory()->createOne([
+        Users::email->value => 'MyEmailAddress@example.com',
+    ]);
+
+    $this->actingAs($User)->get(Web::home->value)->assertOk();
+    $this->get(Web::home->value)->assertOk();
+
+    Http::assertSentCount(1);
+    Http::assertSent(fn ($Request): bool => $Request->url() === 'https://www.gravatar.com/avatar/84059b07d4be67b806386c0aad8070a23f18836bbaae342275dc0a83414c32ee?s=80&d=404&r=g');
+    expect(session(SessionKey::user_picture->value))->toBe('data:image/jpeg;base64,'.base64_encode('gravatar'));
 });
 
 test('the topnav uses the cached oauth provider picture as the avatar', function (): void {

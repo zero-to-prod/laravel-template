@@ -11,7 +11,7 @@ readonly class RobotsController
     public function __invoke(): Response
     {
         return new Response(
-            (string) file_get_contents(resource_path('robots.txt'))
+            file_get_contents(resource_path('robots.txt'))
             ."\nSitemap: ".url(Web::sitemap->url())."\n",
             ResponseAlias::HTTP_OK,
             ['Content-Type' => 'text/plain; charset=utf-8'],

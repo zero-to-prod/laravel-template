@@ -40,17 +40,10 @@
                         <td class="whitespace-nowrap">
                             @if($loop->first)
                                 <div class="flex items-center gap-3">
-                                    <div @class(['avatar', 'avatar-placeholder' => $UserRow->picture() === null])>
-                                        @if($UserRow->picture() !== null)
-                                            <div class="w-8 rounded-full text-neutral-content">
-                                                <img src="{{ $UserRow->picture() }}" alt="{{ $UserRow->name }}" referrerpolicy="no-referrer">
-                                            </div>
-                                        @else
-                                            <div class="w-8 rounded-full bg-neutral text-neutral-content">
-                                                <span class="text-xs">{{ $UserRow->initials() }}</span>
-                                            </div>
-                                        @endif
-
+                                    <div class="avatar">
+                                        <div class="w-8 rounded-full text-neutral-content">
+                                            <img src="{{ $UserRow->picture() }}" alt="{{ $UserRow->name }}" referrerpolicy="no-referrer">
+                                        </div>
                                     </div>
                                     <span>{{ $cell }}</span>
                                 </div>

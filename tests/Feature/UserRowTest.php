@@ -47,3 +47,10 @@ test('an empty name uses a question mark for initials', function (): void {
 
     expect(UserRow::from($attributes)->initials())->toBe('?');
 });
+
+test('a row uses gravatar when no provider picture is available', function (): void {
+    $User = User::factory()->createOne([Users::email->value => 'MyEmailAddress@example.com']);
+
+    expect(UserRow::from($User->toArray())->picture())
+        ->toBe('https://www.gravatar.com/avatar/84059b07d4be67b806386c0aad8070a23f18836bbaae342275dc0a83414c32ee?s=80&d=404&r=g');
+});

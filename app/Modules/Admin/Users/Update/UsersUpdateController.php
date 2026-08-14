@@ -25,7 +25,7 @@ readonly class UsersUpdateController
         $Validator = Validator::make(...$UsersUpdateRequest->validator());
         $violations = $this->violations($Request, $User, $UsersUpdateRequest);
 
-        if ($Validator->fails() || $violations !== []) {
+        if ($violations !== [] || $Validator->fails()) {
             return back()
                 ->withErrors($Validator->errors()->merge($violations))
                 ->withInput($UsersUpdateRequest->toArray());
