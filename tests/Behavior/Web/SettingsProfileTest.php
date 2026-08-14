@@ -22,16 +22,30 @@ test('the settings root redirects to the profile section', function (): void {
         ->assertRedirect(Auth::settingsProfile->value);
 });
 
-test('the page renders the nav and the current name', function (): void {
-    $User = User::factory()->createOne([Users::name->value => 'John Doe']);
+test('the page renders the nav and the immutable profile fields', function (): void {
+    $User = User::factory()->createOne([
+        Users::name->value => 'John Doe',
+        Users::email->value => 'john@example.com',
+    ]);
 
     $this->actingAs($User)
         ->get(Auth::settingsProfile->value)
         ->assertOk()
         ->assertSee('Profile')
-        ->assertSee('Authentication')
-        ->assertSee(Auth::settingsAuthentication->value)
-        ->assertSee('John Doe');
+        ->assertSee('Security')
+        ->assertSee(Auth::settingsSecurity->value)
+        ->assertSee('John Doe')
+        ->assertSee('john@example.com')
+        ->assertSee('Verified')
+        ->assertSee('name="email"', false)
+        ->assertSee('readonly', false);
+});
+
+test('an unverified email is not marked as verified', function (): void {
+    $this->actingAs(User::factory()->unverified()->createOne())
+        ->get(Auth::settingsProfile->value)
+        ->assertOk()
+        ->assertDontSee('Verified');
 });
 
 test('a name is updated', function (): void {
@@ -44,6 +58,22 @@ test('a name is updated', function (): void {
         ->assertSessionHas('status', 'Profile updated.');
 
     expect($User->refresh()->name)->toBe('Jane Doe');
+});
+
+test('the email cannot be updated from the profile form', function (): void {
+    $User = User::factory()->createOne([
+        Users::email->value => 'john@example.com',
+    ]);
+
+    $this->actingAs($User)
+        ->from(Auth::settingsProfile->value)
+        ->post(Auth::settingsProfile->value, [
+            ProfileForm::name => 'John Doe',
+            Users::email->value => 'jane@example.com',
+        ])
+        ->assertRedirect(Auth::settingsProfile->value);
+
+    expect($User->refresh()->email)->toBe('john@example.com');
 });
 
 test('a name is squished before it is stored', function (): void {

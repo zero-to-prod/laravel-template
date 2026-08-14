@@ -14,7 +14,7 @@ readonly class SettingsNav
     {
         return [
             NavItem::from([NavItem::label => 'Profile', NavItem::icon => 'user', NavItem::route => Auth::settingsProfile]),
-            NavItem::from([NavItem::label => 'Authentication', NavItem::icon => 'key', NavItem::route => Auth::settingsAuthentication]),
+            NavItem::from([NavItem::label => 'Security', NavItem::icon => 'key', NavItem::route => Auth::settingsSecurity]),
             NavItem::from([NavItem::label => 'Credentials', NavItem::icon => 'command-line', NavItem::route => Auth::settingsCredentials, NavItem::nested => true]),
             NavItem::from([NavItem::label => 'Appearance', NavItem::icon => 'swatch', NavItem::route => Auth::settingsAppearance]),
         ];

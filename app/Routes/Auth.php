@@ -22,7 +22,7 @@ enum Auth: string
     case dashboard = '/dashboard';
     case settings = '/settings';
     case settingsProfile = '/settings/profile';
-    case settingsAuthentication = '/settings/authentication';
+    case settingsSecurity = '/settings/security';
     case settingsCredentials = '/settings/credentials';
     case settingsCredential = '/settings/credentials/{'.self::credentialParameter.'}';
     case settingsAppearance = '/settings/appearance';

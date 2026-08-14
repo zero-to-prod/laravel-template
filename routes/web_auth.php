@@ -20,7 +20,7 @@ Route::post(Auth::verificationSend->value, VerificationNotificationController::c
     ->name('verification.send');
 
 Route::post(Auth::settingsProfile->value, ProfileController::class);
-Route::post(Auth::settingsAuthentication->value, PasswordController::class);
+Route::post(Auth::settingsSecurity->value, PasswordController::class);
 Route::post(Auth::settingsCredentials->value, TokenController::class);
 Route::post(Auth::settingsCredential->value, TokenUpdateController::class);
 Route::delete(Auth::settingsCredential->value, TokenDestroyController::class);

@@ -17,6 +17,7 @@
                    @if($TextInput->autocomplete) autocomplete="{{ $TextInput->autocomplete }}" @endif
                    @if($TextInput->title) title="{{ $TextInput->title }}" @endif
                    @if($TextInput->required) required @endif
+                   @if($TextInput->readonly) readonly @endif
                    class="grow"/>
         </label>
     @else
@@ -25,6 +26,7 @@
                @if($TextInput->autocomplete) autocomplete="{{ $TextInput->autocomplete }}" @endif
                @if($TextInput->title) title="{{ $TextInput->title }}" @endif
                @if($TextInput->required) required @endif
+               @if($TextInput->readonly) readonly @endif
                class="input w-full @error($TextInput->error, $TextInput->bag) input-error @enderror"/>
     @endif
     {{ $slot }}

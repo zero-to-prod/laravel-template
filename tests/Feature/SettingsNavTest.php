@@ -18,7 +18,7 @@ test('every settings section is listed', function (): void {
     expect(collect(SettingsNav::items())->pluck('route')->all())
         ->toBe([
             Auth::settingsProfile,
-            Auth::settingsAuthentication,
+            Auth::settingsSecurity,
             Auth::settingsCredentials,
             Auth::settingsAppearance,
         ]);

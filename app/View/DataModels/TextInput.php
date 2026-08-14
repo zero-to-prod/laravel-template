@@ -72,6 +72,10 @@ class TextInput
 
     public bool $required = false;
 
+    public const string readonly = 'readonly';
+
+    public bool $readonly = false;
+
     public const string title = 'title';
 
     public ?string $title = null;
