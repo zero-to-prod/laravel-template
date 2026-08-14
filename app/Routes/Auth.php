@@ -20,6 +20,7 @@ enum Auth: string
     public const string credentialParameter = 'credential';
 
     case dashboard = '/dashboard';
+    case confirmPassword = '/confirm-password';
     case settings = '/settings';
     case settingsProfile = '/settings/profile';
     case settingsSecurity = '/settings/security';

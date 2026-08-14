@@ -40,6 +40,12 @@ enum Web: string
     #[ExcludeFromSitemap]
     case login = '/login';
     #[ExcludeFromSitemap]
+    case forgotPassword = '/forgot-password';
+    #[ExcludeFromSitemap]
+    case forgotPasswordSent = '/forgot-password/sent';
+    #[ExcludeFromSitemap]
+    case resetPassword = '/reset-password/{token}';
+    #[ExcludeFromSitemap]
     case googleRedirect = '/auth/google/redirect';
     #[ExcludeFromSitemap]
     case googleCallback = '/auth/google/callback';

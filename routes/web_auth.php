@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\PasswordConfirmation\PasswordConfirmationController;
 use App\Modules\Settings\Appearance\AppearanceController;
 use App\Modules\Settings\Authentication\PasswordController;
 use App\Modules\Settings\Credentials\TokenController;
@@ -18,6 +19,8 @@ Route::get(Auth::verificationVerify->value, VerifyEmailController::class)
 Route::post(Auth::verificationSend->value, VerificationNotificationController::class)
     ->middleware('throttle:6,1')
     ->name('verification.send');
+Route::post(Auth::confirmPassword->value, PasswordConfirmationController::class)
+    ->middleware('throttle:6,1');
 
 Route::post(Auth::settingsProfile->value, ProfileController::class);
 Route::post(Auth::settingsSecurity->value, PasswordController::class);

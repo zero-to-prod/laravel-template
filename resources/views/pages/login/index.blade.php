@@ -27,6 +27,9 @@ render(function (View $view) {
         @csrf
         <x-text-input :textInput="LoginForm::textInput(LoginForm::email)"/>
         <x-text-input :textInput="LoginForm::textInput(LoginForm::password)"/>
+        <div class="text-right">
+            <a href="{{Web::forgotPassword->value}}" class="link link-primary text-sm">Forgot password?</a>
+        </div>
         <button class="btn btn-primary mt-4 w-full">Login</button>
     </form>
     <div class="divider text-xs uppercase">or continue with</div>

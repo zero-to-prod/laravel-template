@@ -14,6 +14,8 @@ class FolioServiceProvider extends ServiceProvider
         Folio::path(resource_path('views/pages'))->middleware([
             'admin' => [MiddlewareTag::auth->value, Role::admin->middleware()],
             'admin/*' => [MiddlewareTag::auth->value, Role::admin->middleware()],
+            'confirm-password' => [MiddlewareTag::auth->value],
+            'confirm-password/*' => [MiddlewareTag::auth->value],
             'email/verify/*' => [MiddlewareTag::auth->value],
             'settings' => [MiddlewareTag::auth->value],
             'settings/*' => [MiddlewareTag::auth->value],
