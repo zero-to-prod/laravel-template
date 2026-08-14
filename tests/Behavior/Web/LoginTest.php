@@ -10,8 +10,10 @@ use App\Modules\Login\LoginFormFactory;
 use App\Routes\Web;
 use App\Sources\Db\App\OauthProviders;
 use App\Sources\Db\App\Users;
+use Laravel\Socialite\Contracts\Provider as SocialiteProvider;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 use Laravel\Socialite\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 use Laravel\Socialite\Two\User as GoogleUser;
 use Mockery\MockInterface;
 
@@ -139,6 +141,33 @@ test('google login rejects an unexpected socialite user', function (): void {
     $this->get(Web::googleCallback->value)
         ->assertRedirect(Web::login->value)
         ->assertSessionHasErrors(LoginForm::email);
+
+    $this->assertGuest();
+});
+
+test('google login redirects stale callbacks back to login', function (): void {
+    $SocialiteProvider = new class implements SocialiteProvider
+    {
+        public function redirect(): never
+        {
+            throw new LogicException('Not used by this test.');
+        }
+
+        public function user(): never
+        {
+            throw new InvalidStateException;
+        }
+    };
+    Socialite::shouldReceive('driver')
+        ->once()
+        ->with(SocialiteDriver::google->value)
+        ->andReturn($SocialiteProvider);
+
+    $this->get(Web::googleCallback->value)
+        ->assertRedirect(Web::login->value)
+        ->assertSessionHasErrors([
+            LoginForm::email => 'Your Google sign-in session expired. Please try again.',
+        ]);
 
     $this->assertGuest();
 });

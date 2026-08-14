@@ -20,13 +20,15 @@
         <li class="menu-title">
             <div class="flex items-center gap-3">
                 <div @class(['avatar', 'avatar-placeholder' => $UserMenu->picture() === null])>
-                    <div class="w-9 rounded-full bg-neutral text-neutral-content">
-                        @if($UserMenu->picture() !== null)
+                    @if($UserMenu->picture() !== null)
+                        <div class="w-9 rounded-full text-neutral-content">
                             <img src="{{$UserMenu->picture()}}" alt="{{$UserMenu->name}}" referrerpolicy="no-referrer">
-                        @else
+                        </div>
+                    @else
+                        <div class="w-9 rounded-full bg-neutral text-neutral-content">
                             <span class="text-sm">{{$UserMenu->initials()}}</span>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
                 <div class="min-w-0">
                     <p class="truncate font-semibold text-base-content">{{$UserMenu->name}}</p>

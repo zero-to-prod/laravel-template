@@ -15,12 +15,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\AbstractUser;
 use Laravel\Socialite\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 
 readonly class GoogleCallbackController
 {
     public function __invoke(): RedirectResponse
     {
-        $google_user = Socialite::driver(SocialiteDriver::google->value)->user();
+        try {
+            $google_user = Socialite::driver(SocialiteDriver::google->value)->user();
+        } catch (InvalidStateException) {
+            return redirect(Web::login->value)->withErrors([
+                LoginForm::email => 'Your Google sign-in session expired. Please try again.',
+            ]);
+        }
 
         if (! $google_user instanceof AbstractUser) {
             return redirect(Web::login->value)->withErrors([
