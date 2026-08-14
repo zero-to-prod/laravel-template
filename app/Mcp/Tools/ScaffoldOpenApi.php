@@ -28,7 +28,7 @@ class ScaffoldOpenApi extends Tool
         ];
     }
 
-    public function handle(Request $Request, OpenApiEndpointMapper $Mapper, ScaffoldEndpoint $ScaffoldEndpoint): Response
+    public function handle(Request $Request, OpenApiEndpointMapper $OpenApiEndpointMapper, ScaffoldEndpoint $ScaffoldEndpoint): Response
     {
         $input = $Request->validate([
             'openapi' => ['required', 'string'],
@@ -43,7 +43,7 @@ class ScaffoldOpenApi extends Tool
         }
 
         try {
-            $endpoints = $Mapper->map($openapi);
+            $endpoints = $OpenApiEndpointMapper->map($openapi);
         } catch (InvalidArgumentException $Exception) {
             return Response::error($Exception->getMessage());
         }

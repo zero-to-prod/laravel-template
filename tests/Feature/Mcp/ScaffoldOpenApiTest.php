@@ -53,6 +53,30 @@ test('it scaffolds the operations in an openapi 3 schema', function (): void {
         ->assertSee('The widget was not found.');
 });
 
+test('it prefixes external paths and uses operation ids to avoid conventional module collisions', function (): void {
+    $schema = <<<'YAML'
+        openapi: 3.0.4
+        info:
+          title: Pets
+          version: 1.0.0
+        paths:
+          /pet/findByStatus:
+            get:
+              operationId: findPetsByStatus
+              summary: Find pets by status.
+              tags: [pet]
+              responses:
+                '200':
+                  description: Matching pets.
+        YAML;
+
+    TemplateServer::tool(ScaffoldOpenApi::class, ['openapi' => $schema, 'dry_run' => true])
+        ->assertOk()
+        ->assertHasNoErrors()
+        ->assertSee('app/Modules/Api/Pet/FindByStatus/PetFindByStatusController.php')
+        ->assertSee("case pet_find_by_status = self::prefix.'/pet/findByStatus';");
+});
+
 test('it rejects a non-openapi 3 schema', function (): void {
     TemplateServer::tool(ScaffoldOpenApi::class, [
         'openapi' => '{"swagger":"2.0"}',

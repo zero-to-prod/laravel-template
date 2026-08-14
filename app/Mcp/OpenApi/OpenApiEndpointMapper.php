@@ -28,6 +28,7 @@ class OpenApiEndpointMapper
 
         $this->document = $decoded;
         $endpoints = [];
+        $modules = [];
 
         $paths = $decoded['paths'] ?? [];
 
@@ -46,7 +47,16 @@ class OpenApiEndpointMapper
                 if (is_array($operation)) {
                     /** @var array<string, mixed> $pathItem */
                     /** @var array<string, mixed> $operation */
-                    $endpoints[] = $this->operation($method, $path, $pathItem, $operation);
+                    $endpoint = $this->operation($method, $path, $pathItem, $operation);
+                    $module = $endpoint['module'];
+
+                    if (is_string($module) && in_array($module, $modules, true)) {
+                        $resource = Str::before($module, '/');
+                        $endpoint['module'] = $resource.'/'.$this->specificAction($this->text($operation, 'operationId'), $resource);
+                    }
+
+                    $modules[] = $endpoint['module'];
+                    $endpoints[] = $endpoint;
                 }
             }
         }
@@ -68,7 +78,7 @@ class OpenApiEndpointMapper
         $operationTags = $operation['tags'] ?? [];
         $tags = is_array($operationTags) ? array_values(array_filter($operationTags, 'is_string')) : [];
         $resource = Str::studly(Str::singular($tags[0] ?? $this->resourceFrom($path)));
-        $action = $this->action($method, $path);
+        $action = $this->action($method, $path, $this->text($operation, 'operationId'), $resource);
         $responses = is_array($operation['responses'] ?? null) ? $operation['responses'] : [];
         [$successStatus, $success] = $this->success($responses);
         $security = array_key_exists('security', $operation)
@@ -78,7 +88,8 @@ class OpenApiEndpointMapper
         return [
             'module' => $resource.'/'.$action,
             'method' => $method,
-            'path' => $path,
+            'path' => '/api/'.ltrim($path, '/'),
+            'route_case' => $this->routeCase($path),
             'authenticated' => $security,
             'security' => $security,
             'success_status' => $successStatus,
@@ -251,15 +262,46 @@ class OpenApiEndpointMapper
         return $result;
     }
 
-    private function action(string $method, string $path): string
+    private function action(string $method, string $path, ?string $operationId, string $resource): string
     {
-        return match ($method) {
+        $conventional = match ($method) {
             'get' => str_ends_with($path, '}') ? 'Show' : 'Index',
             'post' => 'Store',
             'put', 'patch' => 'Update',
             'delete' => 'Delete',
             default => throw new InvalidArgumentException('Unsupported HTTP method '.$method.'.'),
         };
+
+        if ($operationId === null || $this->isConventionalOperation($operationId, $conventional)) {
+            return $conventional;
+        }
+
+        return $this->specificAction($operationId, $resource);
+    }
+
+    private function isConventionalOperation(string $operationId, string $action): bool
+    {
+        $operation = strtolower($operationId);
+
+        return match ($action) {
+            'Index' => str_starts_with($operation, 'list') || str_starts_with($operation, 'getall'),
+            'Show' => str_starts_with($operation, 'get') || str_starts_with($operation, 'show'),
+            'Store' => str_starts_with($operation, 'add') || str_starts_with($operation, 'create') || str_starts_with($operation, 'store'),
+            'Update' => str_starts_with($operation, 'update'),
+            'Delete' => str_starts_with($operation, 'delete') || str_starts_with($operation, 'remove'),
+            default => false,
+        };
+    }
+
+    private function specificAction(?string $operationId, string $resource): string
+    {
+        $specific = str_ireplace(
+            [Str::plural($resource), Str::singular($resource)],
+            '',
+            Str::studly($operationId ?? ''),
+        );
+
+        return $specific === '' ? 'Endpoint' : $specific;
     }
 
     private function resourceFrom(string $path): string
@@ -269,6 +311,13 @@ class OpenApiEndpointMapper
             |> array_values(...);
 
         return end($segments) ?: 'Endpoint';
+    }
+
+    private function routeCase(string $path): string
+    {
+        $case = trim(str_replace(['{', '}'], '', $path), '/');
+
+        return Str::snake(str_replace(['/', '-'], '_', $case));
     }
 
     /**
