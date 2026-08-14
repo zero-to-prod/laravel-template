@@ -3,7 +3,7 @@
 namespace App\Modules\Register;
 
 use App\Models\User;
-use App\Routes\Web;
+use App\Routes\Auth as AuthRoute;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +49,6 @@ readonly class RegisterController
             event(new Registered($User));
         });
 
-        return redirect()->intended(Web::home->value);
+        return redirect(AuthRoute::verificationNotice->value);
     }
 }

@@ -41,11 +41,10 @@ test('the page renders the nav and the immutable profile fields', function (): v
         ->assertSee('readonly', false);
 });
 
-test('an unverified email is not marked as verified', function (): void {
+test('an unverified user is redirected to the verification notice', function (): void {
     $this->actingAs(User::factory()->unverified()->createOne())
         ->get(Auth::settingsProfile->value)
-        ->assertOk()
-        ->assertDontSee('Verified');
+        ->assertRedirect(Auth::verificationNotice->value);
 });
 
 test('a name is updated', function (): void {

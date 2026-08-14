@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Modules\Register\RegisterForm;
 use App\Modules\Register\RegisterFormFactory;
+use App\Routes\Auth;
 use App\Routes\Web;
 use App\Sources\Db\App\Users;
 use Illuminate\Support\Facades\Hash;
@@ -17,12 +18,13 @@ test('registration', function (): void {
     $this->post(
         Web::register->value,
         $RegisterForm->toArray()
-    )->assertRedirect(Web::home->value);
+    )->assertRedirect(Auth::verificationNotice->value);
 
     $this->assertAuthenticated();
     $this->assertDatabaseHas((new User)->getTable(), [
         Users::name->value => $RegisterForm->name,
         Users::email->value => $RegisterForm->email,
+        Users::email_verified_at->value => null,
     ]);
 });
 
@@ -109,13 +111,13 @@ test('old input is preserved on validation failure', function (): void {
     $this->assertGuest();
 });
 
-test('intended url is preserved after registration', function (): void {
+test('the verification notice takes precedence over an intended url after registration', function (): void {
     session(['url.intended' => Web::home->value]);
 
     $this->post(
         Web::register->value,
         RegisterFormFactory::factory()->make()->toArray()
-    )->assertRedirect(Web::home->value);
+    )->assertRedirect(Auth::verificationNotice->value);
 
     $this->assertAuthenticated();
 });

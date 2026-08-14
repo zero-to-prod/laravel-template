@@ -6,7 +6,8 @@ use App\View\DataModels\AuthCard;
 use Illuminate\View\View;
 use Laravel\Head\Facades\Head;
 
-use function Laravel\Folio\{name, render};
+use function Laravel\Folio\name;
+use function Laravel\Folio\render;
 
 name('verification.notice');
 
@@ -22,7 +23,10 @@ render(function (View $view) {
     return $view;
 });
 ?>
-<x-auth-card :authCard="[AuthCard::title => 'Verify Your Email']">
+<x-auth-card :authCard="[
+    AuthCard::title => 'Verify Your Email',
+    AuthCard::classname => 'lg:-translate-x-28',
+]">
     <x-status-toast/>
     <p class="text-sm text-base-content/70">
         We've emailed you a verification link. Click it to activate your account.

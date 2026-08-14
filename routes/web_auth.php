@@ -19,16 +19,15 @@ Route::get(Auth::verificationVerify->value, VerifyEmailController::class)
 Route::post(Auth::verificationSend->value, VerificationNotificationController::class)
     ->middleware('throttle:6,1')
     ->name('verification.send');
-Route::post(Auth::confirmPassword->value, PasswordConfirmationController::class)
-    ->middleware('throttle:6,1');
-
-Route::post(Auth::settingsProfile->value, ProfileController::class);
-Route::post(Auth::settingsSecurity->value, PasswordController::class);
-Route::post(Auth::settingsCredentials->value, TokenController::class);
-Route::post(Auth::settingsCredential->value, TokenUpdateController::class);
-Route::delete(Auth::settingsCredential->value, TokenDestroyController::class);
-Route::post(Auth::settingsAppearance->value, AppearanceController::class);
 
 Route::middleware(MiddlewareTag::verified->value)->group(function () {
+    Route::post(Auth::confirmPassword->value, PasswordConfirmationController::class)
+        ->middleware('throttle:6,1');
+    Route::post(Auth::settingsProfile->value, ProfileController::class);
+    Route::post(Auth::settingsSecurity->value, PasswordController::class);
+    Route::post(Auth::settingsCredentials->value, TokenController::class);
+    Route::post(Auth::settingsCredential->value, TokenUpdateController::class);
+    Route::delete(Auth::settingsCredential->value, TokenDestroyController::class);
+    Route::post(Auth::settingsAppearance->value, AppearanceController::class);
     Route::get(Auth::dashboard->value, fn () => response()->noContent());
 });

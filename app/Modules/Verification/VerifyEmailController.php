@@ -12,6 +12,6 @@ readonly class VerifyEmailController
     {
         $EmailVerificationRequest->fulfill();
 
-        return redirect(Web::home->value);
+        return redirect(Web::home->value)->with('status', 'Email verified successfully.');
     }
 }

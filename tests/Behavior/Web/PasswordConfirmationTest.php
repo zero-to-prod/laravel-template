@@ -6,6 +6,7 @@ use App\Routes\Auth;
 use App\Routes\Web;
 use App\Sources\Db\App\Users;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 
 test('guests cannot access or submit password confirmation', function (): void {
     $this->get(Auth::confirmPassword->value)
@@ -27,6 +28,22 @@ test('the password confirmation page renders', function (): void {
         ->assertSee('action="'.Auth::confirmPassword->value.'"', false);
 
     expect(route('password.confirm'))->toContain(Auth::confirmPassword->value);
+});
+
+test('password confirmation middleware redirects until the password is verified', function (): void {
+    Route::get('/password-confirmation-protected', static fn () => response('protected'))
+        ->middleware(['web', 'auth', 'password.confirm']);
+    $User = User::factory()->createOne();
+
+    $this->actingAs($User)
+        ->get('/password-confirmation-protected')
+        ->assertRedirect(route('password.confirm'));
+
+    $this->actingAs($User)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get('/password-confirmation-protected')
+        ->assertOk()
+        ->assertSee('protected');
 });
 
 test('a user can confirm their password and return to the intended page', function (): void {

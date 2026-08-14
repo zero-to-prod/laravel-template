@@ -42,12 +42,52 @@ test('a verified user reaches a protected route in production', function (): voi
         ->assertNoContent();
 });
 
-test('an unverified user reaches a protected route outside production', function (): void {
+test('an unverified user is redirected from a protected route in every environment', function (): void {
     $User = User::factory()->unverified()->createOne();
 
     $this->actingAs($User)
         ->get(Auth::dashboard->value)
-        ->assertNoContent();
+        ->assertRedirect(Auth::verificationNotice->value);
+});
+
+test('an unverified user is blocked from every authenticated application route', function (): void {
+    $User = User::factory()->unverified()->createOne();
+    $credential = str_repeat('0', 26);
+    $credentialUrl = Auth::settingsCredential->url([
+        Auth::credentialParameter => $credential,
+    ]);
+
+    foreach ([
+        Auth::dashboard->value,
+        Auth::confirmPassword->value,
+        Auth::settings->value,
+        Auth::settingsProfile->value,
+        Auth::settingsSecurity->value,
+        Auth::settingsCredentials->value,
+        $credentialUrl,
+        Auth::settingsAppearance->value,
+    ] as $url) {
+        $this->actingAs($User)
+            ->get($url)
+            ->assertRedirect(Auth::verificationNotice->value);
+    }
+
+    foreach ([
+        Auth::confirmPassword->value,
+        Auth::settingsProfile->value,
+        Auth::settingsSecurity->value,
+        Auth::settingsCredentials->value,
+        $credentialUrl,
+        Auth::settingsAppearance->value,
+    ] as $url) {
+        $this->actingAs($User)
+            ->post($url)
+            ->assertRedirect(Auth::verificationNotice->value);
+    }
+
+    $this->actingAs($User)
+        ->delete($credentialUrl)
+        ->assertRedirect(Auth::verificationNotice->value);
 });
 
 test('an unverified user is redirected to the notice from a protected route in production', function (): void {
@@ -59,8 +99,7 @@ test('an unverified user is redirected to the notice from a protected route in p
         ->assertRedirect(Auth::verificationNotice->value);
 });
 
-test('an unverified htmx request to a protected route returns a no content response with an hx redirect header in production', function (): void {
-    config(['app.env' => 'production']);
+test('an unverified htmx request to a protected route returns a no content response with an hx redirect header', function (): void {
     $User = User::factory()->unverified()->createOne();
 
     $this->actingAs($User)
@@ -81,7 +120,12 @@ test('a valid signed link marks the user as verified', function (): void {
 
     $this->actingAs($User)
         ->get($url)
-        ->assertRedirect(Web::home->value);
+        ->assertRedirect(Web::home->value)
+        ->assertSessionHas('status', 'Email verified successfully.');
+
+    $this->get(Web::home->value)
+        ->assertOk()
+        ->assertSee('Email verified successfully.');
 
     expect($User->refresh()->hasVerifiedEmail())->toBeTrue();
     Event::assertDispatched(Verified::class);
@@ -134,7 +178,7 @@ test('registering sends an email verification notification', function (): void {
     $RegisterForm = RegisterFormFactory::factory()->make();
 
     $this->post(Web::register->value, $RegisterForm->toArray())
-        ->assertRedirect(Web::home->value);
+        ->assertRedirect(Auth::verificationNotice->value);
 
     $User = User::query()->where(Users::email->value, $RegisterForm->email)->firstOrFail();
 
