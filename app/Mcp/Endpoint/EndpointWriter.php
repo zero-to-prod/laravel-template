@@ -112,6 +112,12 @@ readonly class EndpointWriter
             $last = $index;
 
             if (strcasecmp($existing, $line) > 0) {
+                if ($prefix === '    case ') {
+                    while ($index > 0 && str_starts_with(trim($lines[$index - 1]), '#[')) {
+                        $index--;
+                    }
+                }
+
                 array_splice($lines, $index, 0, [$line]);
 
                 return implode("\n", $lines);

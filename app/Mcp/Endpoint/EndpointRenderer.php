@@ -328,9 +328,6 @@ readonly class EndpointRenderer
             <<<'PHP'
                 readonly class %s
                 {
-                    /**
-                     * @throws ReflectionException
-                     */
                     #[ApiSchema(static function (): array {
                         return %s::schema();
                     })]
