@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Routes\Admin;
 use App\Routes\Auth;
 use App\Routes\Web;
+use App\Sources\Db\App\OauthProviders;
 use App\Sources\Db\App\Users;
 use App\View\DataModels\UserMenu;
 
@@ -62,6 +63,29 @@ test('the topnav shows the account dropdown to an authenticated user', function 
         ->assertSee('john@example.com')
         ->assertSee(Auth::settingsProfile->value)
         ->assertSee(Web::logout->value);
+});
+
+test('the topnav uses the oauth provider picture as the avatar', function (): void {
+    $User = User::factory()->createOne([
+        Users::name->value => 'John Doe',
+    ]);
+    $User->oauthProviders()->create([
+        OauthProviders::sub->value => '123456789',
+        OauthProviders::name->value => 'John Doe',
+        OauthProviders::given_name->value => 'John',
+        OauthProviders::family_name->value => 'Doe',
+        OauthProviders::picture->value => 'https://example.com/avatar.jpg',
+        OauthProviders::email->value => $User->email,
+        OauthProviders::email_verified->value => true,
+        OauthProviders::id->value => '123456789',
+        OauthProviders::verified_email->value => true,
+    ]);
+
+    $this->actingAs($User)
+        ->get(Web::home->value)
+        ->assertOk()
+        ->assertSee('https://example.com/avatar.jpg')
+        ->assertDontSee('JD');
 });
 
 test('the topnav shows a login link to a guest', function (): void {

@@ -40,6 +40,10 @@ enum Web: string
     #[ExcludeFromSitemap]
     case login = '/login';
     #[ExcludeFromSitemap]
+    case googleRedirect = '/auth/google/redirect';
+    #[ExcludeFromSitemap]
+    case googleCallback = '/auth/google/callback';
+    #[ExcludeFromSitemap]
     case logout = '/logout';
     #[ExcludeFromSitemap]
     case register = '/register';

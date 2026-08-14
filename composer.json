@@ -6,6 +6,7 @@
     "laravel/framework": "^13.17",
     "laravel/head": "^0.1.0",
     "laravel/sanctum": "^4.0",
+    "laravel/socialite": "^5.29",
     "laravel/tinker": "^3.0",
     "spatie/laravel-permission": "^8.3",
     "zero-to-prod/data-model": "^81.10",

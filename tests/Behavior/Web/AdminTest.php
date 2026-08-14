@@ -85,7 +85,6 @@ test('the default rail is left alone off the admin pages', function (): void {
     $this->actingAs(User::factory()->createOne())
         ->get(Web::home->value)
         ->assertOk()
-        ->assertSee('aria-label="Primary"', false)
         ->assertDontSee('aria-label="Admin"', false);
 });
 

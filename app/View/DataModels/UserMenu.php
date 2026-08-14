@@ -22,6 +22,10 @@ class UserMenu
 
     public string $email = '';
 
+    public const string picture = 'picture';
+
+    public ?string $picture = null;
+
     /** @return list<NavItem> */
     public static function items(): array
     {

@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Helpers\Theme;
+use App\Sources\Db\App\OauthProviders;
 use App\Sources\Db\App\Users;
 use Database\Factories\UserFactory;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
@@ -26,6 +29,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Collection<int, OauthProvider> $oauthProviders
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -76,5 +80,18 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return $User;
+    }
+
+    /** @return HasMany<OauthProvider, $this> */
+    public function oauthProviders(): HasMany
+    {
+        return $this->hasMany(OauthProvider::class);
+    }
+
+    public function avatar(): ?string
+    {
+        $picture = $this->oauthProviders()->value(OauthProviders::picture->value);
+
+        return is_string($picture) && $picture !== '' ? $picture : null;
     }
 }

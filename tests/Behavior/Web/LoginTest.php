@@ -1,13 +1,127 @@
 <?php
 
+use App\Helpers\SocialiteDriver;
+use App\Models\OauthProvider;
 use App\Models\User;
 use App\Modules\Login\LoginForm;
 use App\Modules\Login\LoginFormFactory;
 use App\Routes\Web;
+use App\Sources\Db\App\OauthProviders;
 use App\Sources\Db\App\Users;
+use Laravel\Socialite\Socialite;
+use Laravel\Socialite\Two\User as GoogleUser;
 
 test('route is accessible', function (): void {
-    $this->get(Web::login->value)->assertOk();
+    $this->get(Web::login->value)
+        ->assertOk()
+        ->assertSee(Web::googleRedirect->value)
+        ->assertSee('Google');
+});
+
+test('google login redirects to google', function (): void {
+    Socialite::fake(SocialiteDriver::google->value);
+
+    $this->get(Web::googleRedirect->value)
+        ->assertRedirect('https://socialite.fake/google/authorize');
+});
+
+test('google login creates a verified user', function (): void {
+    Socialite::fake(SocialiteDriver::google->value, GoogleUser::fake([
+        'sub' => '123456789',
+        'name' => 'Google User',
+        'given_name' => 'Google',
+        'family_name' => 'User',
+        'picture' => 'https://example.com/avatar.jpg',
+        'email' => 'google@example.com',
+        'email_verified' => true,
+        'verified_email' => true,
+    ]));
+
+    $this->get(Web::googleCallback->value)->assertRedirect(Web::home->value);
+
+    $User = User::query()->where(Users::email->value, 'google@example.com')->sole();
+
+    $this->assertAuthenticatedAs($User);
+    expect($User->name)->toBe('Google User')
+        ->and($User->hasVerifiedEmail())->toBeTrue()
+        ->and($User->oauthProviders()->sole()->sub)->toBe('123456789');
+});
+
+test('google login updates the oauth provider', function (): void {
+    $User = User::factory()->createOne([
+        Users::email->value => 'google@example.com',
+    ]);
+    $User->oauthProviders()->create([
+        OauthProviders::sub->value => '123456789',
+        OauthProviders::name->value => 'Old Name',
+        OauthProviders::given_name->value => 'Old',
+        OauthProviders::family_name->value => 'Name',
+        OauthProviders::picture->value => 'https://example.com/old.jpg',
+        OauthProviders::email->value => 'old@example.com',
+        OauthProviders::email_verified->value => true,
+        OauthProviders::id->value => '123456789',
+        OauthProviders::verified_email->value => true,
+    ]);
+    Socialite::fake(SocialiteDriver::google->value, GoogleUser::fake([
+        'sub' => '123456789',
+        'name' => 'New Name',
+        'given_name' => 'New',
+        'family_name' => 'Name',
+        'picture' => 'https://example.com/new.jpg',
+        'email' => 'new@example.com',
+        'email_verified' => true,
+        'verified_email' => true,
+    ]));
+
+    $this->get(Web::googleCallback->value)->assertRedirect(Web::home->value);
+
+    $OauthProvider = OauthProvider::query()->where(OauthProviders::sub->value, '123456789')->sole();
+
+    $this->assertAuthenticatedAs($User);
+    expect($OauthProvider->name)->toBe('New Name')
+        ->and($OauthProvider->email)->toBe('new@example.com')
+        ->and($OauthProvider->picture)->toBe('https://example.com/new.jpg')
+        ->and(OauthProvider::query()->where(OauthProviders::sub->value, '123456789')->count())->toBe(1);
+});
+
+test('google login uses an existing user', function (): void {
+    $User = User::factory()->unverified()->createOne([
+        Users::email->value => 'google@example.com',
+    ]);
+    Socialite::fake(SocialiteDriver::google->value, GoogleUser::fake([
+        'sub' => '123456789',
+        'given_name' => 'Test',
+        'family_name' => 'User',
+        'picture' => 'https://example.com/avatar.jpg',
+        'email' => 'google@example.com',
+        'email_verified' => true,
+        'verified_email' => true,
+    ]));
+
+    $this->get(Web::googleCallback->value)->assertRedirect(Web::home->value);
+
+    $this->assertAuthenticatedAs($User);
+    expect($User->refresh()->hasVerifiedEmail())->toBeTrue()
+        ->and(User::query()->where(Users::email->value, 'google@example.com')->count())->toBe(1);
+});
+
+test('google login rejects an unverified email', function (): void {
+    Socialite::fake(SocialiteDriver::google->value, GoogleUser::fake([
+        'sub' => '123456789',
+        'given_name' => 'Test',
+        'family_name' => 'User',
+        'picture' => 'https://example.com/avatar.jpg',
+        'email' => 'google@example.com',
+        'email_verified' => false,
+        'verified_email' => false,
+    ]));
+
+    $this->get(Web::googleCallback->value)
+        ->assertRedirect(Web::login->value)
+        ->assertSessionHasErrors(LoginForm::email);
+
+    $this->assertGuest();
+    expect(User::query()->where(Users::email->value, 'google@example.com')->doesntExist())->toBeTrue();
 });
 
 test('login with valid credentials', function (): void {
