@@ -37,7 +37,24 @@
             @forelse($UsersTable->rows() as $UserRow)
                 <tr>
                     @foreach($UserRow->cells() as $cell)
-                        <td class="whitespace-nowrap">{{ $cell }}</td>
+                        <td class="whitespace-nowrap">
+                            @if($loop->first)
+                                <div class="flex items-center gap-3">
+                                    <div @class(['avatar', 'avatar-placeholder' => $UserRow->picture() === null])>
+                                        <div class="w-8 rounded-full bg-neutral text-neutral-content">
+                                            @if($UserRow->picture() !== null)
+                                                <img src="{{ $UserRow->picture() }}" alt="{{ $UserRow->name }}" referrerpolicy="no-referrer">
+                                            @else
+                                                <span class="text-xs">{{ $UserRow->initials() }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <span>{{ $cell }}</span>
+                                </div>
+                            @else
+                                {{ $cell }}
+                            @endif
+                        </td>
                     @endforeach
                     <td class="whitespace-nowrap">
                         <a href="{{ $UserRow->editUrl() }}" class="btn btn-ghost btn-xs">Edit</a>

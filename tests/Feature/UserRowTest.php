@@ -33,3 +33,9 @@ test('the cells line up with the headings, in order', function (): void {
         ->and($cells[0])->toBe($User->name)
         ->and($cells[1])->toBe($User->email);
 });
+
+test('initials are taken from the first and last word of the name', function (): void {
+    $UserRow = UserRow::from(User::factory()->createOne([Users::name->value => 'Ada Byron Lovelace'])->toArray());
+
+    expect($UserRow->initials())->toBe('AL');
+});

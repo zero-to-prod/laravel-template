@@ -6,6 +6,7 @@ use App\Helpers\DataModel;
 use App\Routes\Admin;
 use App\Sources\Db\App\Users;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Zerotoprod\DataModel\Describe;
 use ZeroToProd\DbModel\ColumnType;
 
@@ -22,6 +23,11 @@ readonly class UserRow
 
     #[Describe([Describe::required => true])]
     public string $name;
+
+    public const string picture = 'picture';
+
+    #[Describe([Describe::default => null])]
+    public ?string $picture;
 
     public const string email = 'email';
 
@@ -41,6 +47,24 @@ readonly class UserRow
     public function editUrl(): string
     {
         return Admin::user->url([Admin::userParameter => $this->id]);
+    }
+
+    public function initials(): string
+    {
+        $words = array_values(array_filter(explode(' ', Str::squish($this->name))));
+
+        if ($words === []) {
+            return '?';
+        }
+
+        $last = count($words) > 1 ? Str::substr(end($words), 0, 1) : '';
+
+        return Str::upper(Str::substr($words[0], 0, 1).$last);
+    }
+
+    public function picture(): ?string
+    {
+        return $this->picture ?? null;
     }
 
     /** @return list<string> */

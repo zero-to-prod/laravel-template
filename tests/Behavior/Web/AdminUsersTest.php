@@ -1,11 +1,13 @@
 <?php
 
+use App\Helpers\OauthProviderId;
 use App\Helpers\SortDirection;
 use App\Models\User;
 use App\Modules\Admin\Users\UsersQuery;
 use App\Modules\Admin\Users\UsersRequest;
 use App\Routes\Admin;
 use App\Routes\Web;
+use App\Sources\Db\App\OauthProviders;
 use App\Sources\Db\App\Users;
 use App\View\DataModels\UsersTable;
 use Illuminate\Http\Request;
@@ -37,6 +39,29 @@ test('the page lists a user', function (): void {
         ->assertSee('Users')
         ->assertSee($User->name)
         ->assertSee($User->email);
+});
+
+test('the page displays the users oauth avatar', function (): void {
+    $User = adminUser();
+    $User->oauthProviders()->create([
+        OauthProviders::provider_id->value => OauthProviderId::google->value,
+        OauthProviders::sub->value => '123456789',
+        OauthProviders::name->value => $User->name,
+        OauthProviders::given_name->value => 'Admin',
+        OauthProviders::family_name->value => 'User',
+        OauthProviders::picture->value => 'https://example.com/avatar.jpg',
+        OauthProviders::email->value => $User->email,
+        OauthProviders::email_verified->value => true,
+        OauthProviders::hd->value => null,
+        OauthProviders::id->value => '123456789',
+        OauthProviders::verified_email->value => true,
+    ]);
+
+    $this->actingAs($User)
+        ->get(Admin::users->value)
+        ->assertOk()
+        ->assertSee('https://example.com/avatar.jpg')
+        ->assertSee('alt="'.$User->name.'"', false);
 });
 
 test('every column the table lists gets a heading linking to its own ordering', function (): void {

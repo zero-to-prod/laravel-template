@@ -14,10 +14,5 @@ Head::title('Credentials')
 @endphp
 <x-settings-card :settingsCard="[SettingsCard::title => 'Credentials']">
     <x-status-toast/>
-    <p class="text-sm text-base-content/70">
-        The personal access tokens that reach this account through the API. A token is shown once, when it is
-        created, and reaches every endpoint until you narrow it under Manage.
-    </p>
-
     <x-credentials-table :credentialsTable="[CredentialsTable::tokens => $tokens]"/>
 </x-settings-card>

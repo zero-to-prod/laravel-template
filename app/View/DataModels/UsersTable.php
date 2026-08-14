@@ -70,7 +70,10 @@ readonly class UsersTable
     public function rows(): array
     {
         return array_values($this->paginator->getCollection()
-            ->map(static fn (User $User): UserRow => UserRow::from($User->toArray()))
+            ->map(static fn (User $User): UserRow => UserRow::from([
+                ...$User->toArray(),
+                UserRow::picture => $User->oauthProviders->first()?->picture,
+            ]))
             ->all());
     }
 

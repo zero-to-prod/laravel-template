@@ -14,7 +14,7 @@ class UsersQuery
     /** @return LengthAwarePaginator<int, User> */
     public static function get(UsersRequest $UsersRequest): LengthAwarePaginator
     {
-        $Builder = User::query();
+        $Builder = User::query()->with('oauthProviders');
 
         if ($UsersRequest->searching()) {
             $term = '%'.addcslashes($UsersRequest->search, '%_\\').'%';
