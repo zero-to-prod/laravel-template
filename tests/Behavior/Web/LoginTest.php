@@ -8,8 +8,10 @@ use App\Modules\Login\LoginFormFactory;
 use App\Routes\Web;
 use App\Sources\Db\App\OauthProviders;
 use App\Sources\Db\App\Users;
+use Laravel\Socialite\Contracts\User as SocialiteUser;
 use Laravel\Socialite\Socialite;
 use Laravel\Socialite\Two\User as GoogleUser;
+use Mockery\MockInterface;
 
 test('route is accessible', function (): void {
     $this->get(Web::login->value)
@@ -122,6 +124,18 @@ test('google login rejects an unverified email', function (): void {
 
     $this->assertGuest();
     expect(User::query()->where(Users::email->value, 'google@example.com')->doesntExist())->toBeTrue();
+});
+
+test('google login rejects an unexpected socialite user', function (): void {
+    /** @var SocialiteUser&MockInterface $SocialiteUser */
+    $SocialiteUser = mock(SocialiteUser::class);
+    Socialite::fake(SocialiteDriver::google->value, $SocialiteUser);
+
+    $this->get(Web::googleCallback->value)
+        ->assertRedirect(Web::login->value)
+        ->assertSessionHasErrors(LoginForm::email);
+
+    $this->assertGuest();
 });
 
 test('login with valid credentials', function (): void {
