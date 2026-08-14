@@ -25,6 +25,8 @@ return new class extends Migration
             $Blueprint->string('email')->primary()->comment('The email the reset token was issued to');
             $Blueprint->string('token')->comment('The hashed password reset token');
             $Blueprint->timestamp('created_at')->nullable()->comment('When the reset token was issued');
+
+            $Blueprint->foreign('email')->references('email')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
         });
 
         Schema::create('sessions', static function (Blueprint $Blueprint) {
@@ -34,13 +36,15 @@ return new class extends Migration
             $Blueprint->text('user_agent')->nullable()->comment('The user agent the session was last seen from');
             $Blueprint->longText('payload')->comment('The serialized session data');
             $Blueprint->integer('last_activity')->index()->comment('The unix timestamp of the last request on the session');
+
+            $Blueprint->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

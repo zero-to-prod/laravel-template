@@ -22,9 +22,11 @@ enum Admin: string
 
     public const string prefix = '/admin';
     public const string userParameter = 'user';
+    public const string providerParameter = 'provider';
 
     case index = self::prefix;
     case links = self::prefix.'/links';
     case users = self::prefix.'/users';
     case user = self::prefix.'/users/{'.self::userParameter.'}';
+    case userProvider = self::prefix.'/users/{'.self::userParameter.'}/providers/{'.self::providerParameter.'}';
 }

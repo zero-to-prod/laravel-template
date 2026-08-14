@@ -1,11 +1,13 @@
 <?php
 
 use App\Helpers\Role;
+use App\Helpers\Theme;
 use App\Models\User;
 use App\Modules\Admin\Users\Update\UsersUpdateRequest;
 use App\Routes\Admin;
 use App\Routes\Web;
 use App\Sources\Db\App\Users;
+use Illuminate\Support\Facades\Hash;
 
 function editUrl(User $User): string
 {
@@ -23,6 +25,7 @@ function payload(User $User, array $overrides = []): array
         UsersUpdateRequest::email => $User->email,
         UsersUpdateRequest::verified => $User->email_verified_at !== null,
         UsersUpdateRequest::admin => $User->hasRole(Role::admin->value),
+        UsersUpdateRequest::theme => $User->theme->value,
         ...$overrides,
     ];
 }
@@ -49,7 +52,11 @@ test('the page renders the account it edits', function (): void {
         ->assertOk()
         ->assertSee($User->name)
         ->assertSee('value="'.$User->email.'"', false)
-        ->assertSee('Administrator');
+        ->assertSee('Administrator')
+        ->assertSee($User->id)
+        ->assertSee('Record details')
+        ->assertSee('Authentication providers')
+        ->assertSee('Delete user');
 });
 
 test('the index links to the page for a listed user', function (): void {
@@ -91,6 +98,33 @@ test('the name and email are saved', function (): void {
         Users::name->value => 'Ada Lovelace',
         Users::email->value => 'ada@example.com',
     ]);
+});
+
+test('the theme and an optional new password are saved', function (): void {
+    $User = User::factory()->createOne();
+
+    $this->actingAs(adminUser())
+        ->post(editUrl($User), payload($User, [
+            UsersUpdateRequest::theme => Theme::dark->value,
+            UsersUpdateRequest::password => 'new-password-1234',
+            UsersUpdateRequest::password_confirmation => 'new-password-1234',
+        ]))
+        ->assertSessionHasNoErrors();
+
+    expect($User->refresh()->theme)->toBe(Theme::dark)
+        ->and(Hash::check('new-password-1234', $User->password))->toBeTrue();
+});
+
+test('an invalid theme and mismatched password are refused', function (): void {
+    $User = User::factory()->createOne();
+
+    $this->actingAs(adminUser())
+        ->post(editUrl($User), payload($User, [
+            UsersUpdateRequest::theme => 'sepia',
+            UsersUpdateRequest::password => 'new-password-1234',
+            UsersUpdateRequest::password_confirmation => 'mismatch',
+        ]))
+        ->assertSessionHasErrors([UsersUpdateRequest::theme, UsersUpdateRequest::password]);
 });
 
 test('an email another account holds is refused', function (): void {

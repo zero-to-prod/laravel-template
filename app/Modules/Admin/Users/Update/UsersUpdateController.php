@@ -3,6 +3,7 @@
 namespace App\Modules\Admin\Users\Update;
 
 use App\Helpers\Role;
+use App\Helpers\Theme;
 use App\Models\User;
 use App\Sources\Db\App\Users;
 use Illuminate\Http\RedirectResponse;
@@ -35,6 +36,12 @@ readonly class UsersUpdateController
         $User->email_verified_at = $UsersUpdateRequest->verified
             ? $User->email_verified_at ?? Carbon::now()
             : null;
+        $User->theme = Theme::from($UsersUpdateRequest->theme);
+
+        if ($UsersUpdateRequest->password !== '') {
+            $User->password = $UsersUpdateRequest->password;
+        }
+
         $User->save();
 
         $UsersUpdateRequest->admin

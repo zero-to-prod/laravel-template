@@ -44,6 +44,7 @@ return new class extends Migration
 
             $Blueprint->index(['model_id', 'model_type'], 'model_has_permissions_model_id_model_type_index');
             $Blueprint->foreign('permission_id')->references('id')->on('permissions')->cascadeOnDelete();
+            $Blueprint->foreign('model_id')->references('id')->on('users')->cascadeOnDelete();
             $Blueprint->primary(
                 ['permission_id', 'model_id', 'model_type'],
                 'model_has_permissions_permission_model_type_primary',
@@ -57,6 +58,7 @@ return new class extends Migration
 
             $Blueprint->index(['model_id', 'model_type'], 'model_has_roles_model_id_model_type_index');
             $Blueprint->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete();
+            $Blueprint->foreign('model_id')->references('id')->on('users')->cascadeOnDelete();
             $Blueprint->primary(
                 ['role_id', 'model_id', 'model_type'],
                 'model_has_roles_role_model_type_primary',

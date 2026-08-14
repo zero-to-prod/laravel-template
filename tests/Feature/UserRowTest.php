@@ -39,3 +39,11 @@ test('initials are taken from the first and last word of the name', function ():
 
     expect($UserRow->initials())->toBe('AL');
 });
+
+test('an empty name uses a question mark for initials', function (): void {
+    $User = User::factory()->createOne();
+    $attributes = $User->toArray();
+    $attributes[Users::name->value] = '';
+
+    expect(UserRow::from($attributes)->initials())->toBe('?');
+});

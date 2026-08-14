@@ -36,4 +36,28 @@ readonly class UsersUpdateForm
         TextInput::required => true,
     ])]
     public string $email;
+
+    public const string password = 'password';
+
+    #[TextInput([
+        TextInput::legend => 'New Password',
+        TextInput::type => 'password',
+        TextInput::icon => SvgName::key,
+        TextInput::placeholder => 'Leave blank to keep the current password',
+        TextInput::autocomplete => 'new-password',
+        TextInput::title => 'Replace the user password',
+    ])]
+    public string $password;
+
+    public const string password_confirmation = 'password_confirmation';
+
+    #[TextInput([
+        TextInput::legend => 'Confirm New Password',
+        TextInput::type => 'password',
+        TextInput::icon => SvgName::key,
+        TextInput::placeholder => 'Confirm the new password',
+        TextInput::autocomplete => 'new-password',
+        TextInput::title => 'New password confirmation',
+    ])]
+    public string $password_confirmation;
 }
