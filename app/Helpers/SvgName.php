@@ -2,9 +2,7 @@
 
 namespace App\Helpers;
 
-/**
- * All of the SVG names that match to the SVG files in the resources/svg directory.
- */
+/** All of the SVG names that match to the SVG files in the resources/svg directory. */
 enum SvgName: string
 {
     case chevron_down = 'chevron-down';

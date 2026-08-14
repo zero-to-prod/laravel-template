@@ -15,13 +15,13 @@ enum ViewDirectory: string
 {
     case svg = 'svg';
 
-    public function qualify(SvgName $name): string
+    public function qualify(SvgName $SvgName): string
     {
-        return $this->value.'.'.$name->value;
+        return $this->value.'.'.$SvgName->value;
     }
 
-    public function has(SvgName $name): bool
+    public function has(SvgName $SvgName): bool
     {
-        return Views::exists($this->qualify($name));
+        return Views::exists($this->qualify($SvgName));
     }
 }
