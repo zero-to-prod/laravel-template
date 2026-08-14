@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\SessionKey;
 use App\Helpers\SocialiteDriver;
 use App\Models\OauthProvider;
 use App\Models\User;
@@ -46,7 +47,8 @@ test('google login creates a verified user', function (): void {
     $this->assertAuthenticatedAs($User);
     expect($User->name)->toBe('Google User')
         ->and($User->hasVerifiedEmail())->toBeTrue()
-        ->and($User->oauthProviders()->sole()->sub)->toBe('123456789');
+        ->and($User->oauthProviders()->sole()->sub)->toBe('123456789')
+        ->and(session(SessionKey::user_picture->value))->toBe('https://example.com/avatar.jpg');
 });
 
 test('google login updates the oauth provider', function (): void {

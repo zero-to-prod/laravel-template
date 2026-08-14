@@ -1,12 +1,12 @@
 @props(['topnav'])
 @php
-    use App\Models\User;
+    use App\Helpers\SessionKey;
     use App\Routes\Web;
     use App\View\DataModels\Svg;
     use App\View\DataModels\Topnav;
     use App\View\DataModels\UserMenu;
     $Topnav = Topnav::from($topnav);
-    $User = auth()->user();
+    $picture = session(SessionKey::user_picture->value);
 @endphp
 <div class="fixed top-0 z-20 shadow-md navbar bg-base-100">
     <div class="navbar-start">
@@ -48,7 +48,7 @@
             <x-user-menu :userMenu="[
                 UserMenu::name => auth()->user()?->name ?? '',
                 UserMenu::email => auth()->user()?->email ?? '',
-                UserMenu::picture => $User instanceof User ? $User->avatar() : null,
+                UserMenu::picture => is_string($picture) && $picture !== '' ? $picture : null,
             ]"/>
         @else
             <a href="{{Web::login->value}}" class="text-lg btn btn-ghost no-animation">

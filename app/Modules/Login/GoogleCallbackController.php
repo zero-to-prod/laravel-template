@@ -2,6 +2,7 @@
 
 namespace App\Modules\Login;
 
+use App\Helpers\SessionKey;
 use App\Helpers\SocialiteDriver;
 use App\Models\OauthProvider;
 use App\Models\User;
@@ -61,6 +62,7 @@ readonly class GoogleCallbackController
 
         Auth::login($User);
         request()->session()->regenerate();
+        request()->session()->put(SessionKey::user_picture->value, $GoogleUser->picture);
 
         return redirect()->intended(Web::home->value);
     }

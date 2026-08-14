@@ -4,14 +4,17 @@
     $UserMenu = UserMenu::from($userMenu);
 @endphp
 <div class="dropdown dropdown-end">
-    <div tabindex="0" role="button" @class(['btn btn-ghost btn-circle avatar', 'avatar-placeholder' => $UserMenu->picture === null]) title="{{$UserMenu->name}}">
-        <div class="w-9 rounded-full bg-neutral text-neutral-content">
-            @if($UserMenu->picture !== null)
+    <div tabindex="0" role="button"
+         @class(['btn btn-ghost btn-circle avatar', 'avatar-placeholder' => $UserMenu->picture === null]) title="{{$UserMenu->name}}">
+        @if($UserMenu->picture !== null)
+            <div class="w-9 rounded-full text-neutral-content">
                 <img src="{{$UserMenu->picture}}" alt="{{$UserMenu->name}}" referrerpolicy="no-referrer">
-            @else
+            </div>
+        @else
+            <div class="w-9 rounded-full bg-neutral text-neutral-content">
                 <span class="text-sm">{{$UserMenu->initials()}}</span>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
     <ul tabindex="0" class="mt-3 w-64 p-2 shadow menu menu-sm dropdown-content bg-base-300 rounded-box z-1">
         <li class="menu-title">
