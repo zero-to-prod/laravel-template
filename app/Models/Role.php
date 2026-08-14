@@ -18,6 +18,8 @@ use Spatie\Permission\Models\Role as SpatieRole;
  * @property string $guard_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @mixin IdeHelperRole
  */
 class Role extends SpatieRole
 {

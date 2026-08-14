@@ -20,12 +20,12 @@ Head::title('Admin')
             <dl class="mt-4 stats stats-vertical sm:stats-horizontal shadow">
                 <div class="stat">
                     <dt class="stat-title">Registered users</dt>
-                    <dd class="stat-value text-2xl">{{User::query()->count()}}</dd>
+                    <dd class="stat-value text-2xl">{{User::count()}}</dd>
                 </div>
                 <div class="stat">
                     <dt class="stat-title">Verified users</dt>
                     <dd class="stat-value text-2xl">
-                        {{User::query()->whereNotNull(Users::email_verified_at->value)->count()}}
+                        {{User::whereNotNull(Users::email_verified_at->value)->count()}}
                     </dd>
                 </div>
             </dl>

@@ -17,6 +17,8 @@ use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
  * @property Carbon|null $expires_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @mixin IdeHelperPersonalAccessToken
  */
 class PersonalAccessToken extends SanctumPersonalAccessToken
 {

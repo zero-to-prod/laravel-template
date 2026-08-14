@@ -18,6 +18,8 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
  * @property string $guard_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @mixin IdeHelperPermission
  */
 class Permission extends SpatiePermission
 {

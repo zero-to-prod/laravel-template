@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\OauthProviderId;
 use App\Helpers\SessionKey;
 use App\Helpers\SocialiteDriver;
 use App\Models\OauthProvider;
@@ -56,6 +57,7 @@ test('google login updates the oauth provider', function (): void {
         Users::email->value => 'google@example.com',
     ]);
     $User->oauthProviders()->create([
+        OauthProviders::provider_id->value => OauthProviderId::google->value,
         OauthProviders::sub->value => '123456789',
         OauthProviders::name->value => 'Old Name',
         OauthProviders::given_name->value => 'Old',
@@ -83,6 +85,7 @@ test('google login updates the oauth provider', function (): void {
 
     $this->assertAuthenticatedAs($User);
     expect($OauthProvider->name)->toBe('New Name')
+        ->and($OauthProvider->provider_id)->toBe(OauthProviderId::google)
         ->and($OauthProvider->email)->toBe('new@example.com')
         ->and($OauthProvider->picture)->toBe('https://example.com/new.jpg')
         ->and(OauthProvider::query()->where(OauthProviders::sub->value, '123456789')->count())->toBe(1);

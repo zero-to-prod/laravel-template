@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\OauthProviderId;
 use App\Models\OauthProvider;
 use App\Models\User;
 use App\Sources\Db\App\OauthProviders;
@@ -7,6 +8,7 @@ use App\Sources\Db\App\OauthProviders;
 test('oauth provider belongs to a user', function (): void {
     $User = User::factory()->createOne();
     $OauthProvider = $User->oauthProviders()->create([
+        OauthProviders::provider_id->value => OauthProviderId::google->value,
         OauthProviders::sub->value => '115454882825190401401',
         OauthProviders::name->value => 'Digital Forte',
         OauthProviders::given_name->value => 'Digital',
@@ -24,6 +26,7 @@ test('oauth provider belongs to a user', function (): void {
         ->and($OauthProvider->getKey())->toBe('115454882825190401401')
         ->and($OauthProvider->incrementing)->toBeFalse()
         ->and($OauthProvider->timestamps)->toBeFalse()
+        ->and($OauthProvider->provider_id)->toBe(OauthProviderId::google)
         ->and($OauthProvider->email_verified)->toBeTrue()
         ->and($OauthProvider->verified_email)->toBeTrue()
         ->and($OauthProvider->user->is($User))->toBeTrue()

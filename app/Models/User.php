@@ -29,6 +29,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, OauthProvider> $oauthProviders
+ *
+ * @mixin IdeHelperUser
  */
 class User extends Authenticatable implements MustVerifyEmail
 {

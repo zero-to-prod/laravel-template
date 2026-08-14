@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Helpers\OauthProviderId;
 use App\Sources\Db\App\OauthProviders;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property string $user_id
+ * @property OauthProviderId $provider_id
  * @property string $sub
  * @property string $name
  * @property string $given_name
@@ -20,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $verified_email
  * @property string|null $link
  * @property-read User $user
+ *
+ * @mixin IdeHelperOauthProvider
  */
 class OauthProvider extends Model
 {
@@ -38,6 +42,7 @@ class OauthProvider extends Model
     /** @var list<string> */
     protected $fillable = [
         OauthProviders::user_id->value,
+        OauthProviders::provider_id->value,
         OauthProviders::sub->value,
         OauthProviders::name->value,
         OauthProviders::given_name->value,
@@ -55,6 +60,7 @@ class OauthProvider extends Model
     protected function casts(): array
     {
         return [
+            OauthProviders::provider_id->value => OauthProviderId::class,
             OauthProviders::email_verified->value => 'boolean',
             OauthProviders::verified_email->value => 'boolean',
         ];

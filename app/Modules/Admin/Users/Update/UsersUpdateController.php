@@ -49,8 +49,7 @@ readonly class UsersUpdateController
     {
         $violations = [];
 
-        $taken = User::query()
-            ->where(Users::email->value, $UsersUpdateRequest->email)
+        $taken = User::query()->where(Users::email->value, $UsersUpdateRequest->email)
             ->whereKeyNot($User->getKey())
             ->exists();
 

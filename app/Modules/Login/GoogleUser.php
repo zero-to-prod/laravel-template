@@ -72,4 +72,11 @@ class GoogleUser
 
     #[Describe([Describe::default => null])]
     public ?string $link = null;
+
+    public function hasVerifiedEmail(): bool
+    {
+        return filter_var($this->email, FILTER_VALIDATE_EMAIL) !== false
+            && $this->email_verified
+            && $this->verified_email;
+    }
 }

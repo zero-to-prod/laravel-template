@@ -11,6 +11,7 @@ return new class extends Migration
     {
         Schema::create('oauth_providers', static function (Blueprint $Blueprint) {
             $Blueprint->foreignUlid('user_id')->comment('The user the OAuth identity belongs to');
+            $Blueprint->string('provider_id')->comment('The OAuth provider identifier');
             $Blueprint->string(GoogleUser::sub)->unique()->comment('The provider subject identifier');
             $Blueprint->string(GoogleUser::name)->comment('The name supplied by the provider');
             $Blueprint->string(GoogleUser::given_name)->comment('The given name supplied by the provider');

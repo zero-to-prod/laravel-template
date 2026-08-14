@@ -2,6 +2,7 @@
 
 namespace App\Modules\Login;
 
+use App\Helpers\OauthProviderId;
 use App\Helpers\SessionKey;
 use App\Helpers\SocialiteDriver;
 use App\Models\OauthProvider;
@@ -29,7 +30,7 @@ readonly class GoogleCallbackController
 
         $GoogleUser = GoogleUser::from($google_user->getRaw());
 
-        if (! $this->hasVerifiedEmail($GoogleUser)) {
+        if (! $GoogleUser->hasVerifiedEmail()) {
             return redirect(Web::login->value)->withErrors([
                 LoginForm::email => 'Google did not provide a verified email address.',
             ]);
@@ -37,6 +38,7 @@ readonly class GoogleCallbackController
 
         $User = User::query()->getConnection()->transaction(function () use ($GoogleUser): User {
             $OauthProvider = OauthProvider::query()->firstOrNew([
+                OauthProviders::provider_id->value => OauthProviderId::google->value,
                 OauthProviders::sub->value => $GoogleUser->sub,
             ]);
 
@@ -53,7 +55,10 @@ readonly class GoogleCallbackController
             }
 
             $User->oauthProviders()->updateOrCreate(
-                [OauthProviders::sub->value => $GoogleUser->sub],
+                [
+                    OauthProviders::provider_id->value => OauthProviderId::google->value,
+                    OauthProviders::sub->value => $GoogleUser->sub,
+                ],
                 $GoogleUser->toArray(),
             );
 
@@ -65,12 +70,5 @@ readonly class GoogleCallbackController
         request()->session()->put(SessionKey::user_picture->value, $GoogleUser->picture);
 
         return redirect()->intended(Web::home->value);
-    }
-
-    private function hasVerifiedEmail(GoogleUser $GoogleUser): bool
-    {
-        return filter_var($GoogleUser->email, FILTER_VALIDATE_EMAIL) !== false
-            && $GoogleUser->email_verified
-            && $GoogleUser->verified_email;
     }
 }

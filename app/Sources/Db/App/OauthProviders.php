@@ -43,6 +43,15 @@ enum OauthProviders: string
     case user_id = 'user_id';
 
     #[Column([
+        Column::name => self::provider_id,
+        Column::comment => 'The OAuth provider identifier',
+        Column::type => ColumnType::varchar->value,
+        Column::length => 255,
+        Column::nullable => false,
+    ])]
+    case provider_id = 'provider_id';
+
+    #[Column([
         Column::name => self::sub,
         Column::comment => 'The provider subject identifier',
         Column::type => ColumnType::varchar->value,
