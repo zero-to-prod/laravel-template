@@ -5,6 +5,8 @@ use App\Modules\Api\Support\AbilityQuery;
 use App\Routes\Admin;
 use App\Routes\ApiRoute;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
+use Tests\Fixtures\NumericApiRoute;
 
 test('a method this api does not answer is held to the ability that reads', function (): void {
     expect(HttpVerb::of(Request::create(ApiRoute::user->value, 'HEAD')))->toBe(HttpVerb::get)
@@ -55,4 +57,15 @@ test('admin api abilities are available only to an administrator', function (): 
         ->and(AbilityQuery::groups()['public'])->toHaveKey(ApiRoute::user->value)
         ->and(AbilityQuery::groups()['admin'])->toHaveKey(Admin::api_users->value)
         ->and(AbilityQuery::abilities())->toContain(HttpVerb::get->ability(Admin::api_users->value));
+});
+
+test('invalid and non string route indexes publish no credential groups', function (): void {
+    Config::set('openapi.schemas', [
+        'invalid' => ['route_index' => 'NotAnEnum'],
+        'numeric' => ['route_index' => NumericApiRoute::class],
+    ]);
+
+    expect(AbilityQuery::groups())->toBe([
+        'numeric' => [],
+    ]);
 });

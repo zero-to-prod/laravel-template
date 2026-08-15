@@ -40,11 +40,7 @@ return [
             'route' => [
                 'uri' => ltrim(Admin::openapi->value, '/'),
                 'name' => 'openapi.admin',
-                'middleware' => [
-                    MiddlewareTag::web->value,
-                    MiddlewareTag::auth->value,
-                    Role::admin->middleware(),
-                ],
+                'middleware' => [MiddlewareTag::api->value],
             ],
             'openapi' => [
                 'openapi' => '3.0.4',
