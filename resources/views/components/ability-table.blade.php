@@ -14,7 +14,14 @@
             <tr>
                 <th>Endpoint</th>
                 @foreach($AbilityTable->verbs() as $HttpVerb)
-                    <th class="text-center text-primary">{{ $HttpVerb->value }}</th>
+                    <th class="text-center">
+                        <button type="button"
+                                class="btn btn-ghost btn-xs text-primary"
+                                data-ability-column="{{ $HttpVerb->value }}"
+                                aria-label="Toggle all {{ $HttpVerb->value }} abilities"
+                                aria-pressed="false"
+                        >{{ $HttpVerb->value }}</button>
+                    </th>
                 @endforeach
             </tr>
             </thead>
@@ -29,6 +36,7 @@
                                        class="toggle toggle-sm toggle-primary"
                                        name="{{ AbilityTable::field }}"
                                        value="{{ $AbilityRow->ability($HttpVerb) }}"
+                                       data-ability-verb="{{ $HttpVerb->value }}"
                                        aria-label="{{ $AbilityRow->ability($HttpVerb) }}"
                                         @checked($AbilityRow->checked($HttpVerb))
                                 />

@@ -39,6 +39,17 @@ test('the page lists every endpoint a token can be granted, and every verb', fun
     }
 });
 
+test('each verb heading toggles its whole ability column', function (): void {
+    $User = User::factory()->createOne();
+    $response = $this->actingAs($User)->get(credentialUrl($User))->assertOk();
+
+    foreach (HttpVerb::cases() as $HttpVerb) {
+        $response
+            ->assertSee('data-ability-column="'.$HttpVerb->value.'"', false)
+            ->assertSee('aria-label="Toggle all '.$HttpVerb->value.' abilities"', false);
+    }
+});
+
 test('the page offers admin api abilities to an administrator', function (): void {
     $User = adminUser();
 

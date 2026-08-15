@@ -24,6 +24,20 @@ enum Admin: string
     public const string userParameter = 'user';
     public const string providerParameter = 'provider';
 
+    case api_logs = self::prefix.'/api/logs';
+    case api_logs_clear_cache_all = self::prefix.'/api/logs/clear-cache-all';
+    case api_logs_delete_multiple_files = self::prefix.'/api/logs/delete-multiple-files';
+    case api_logs_file = self::prefix.'/api/logs/files/{file_identifier}';
+    case api_logs_file_clear_cache = self::prefix.'/api/logs/files/{file_identifier}/clear-cache';
+    case api_logs_file_download = self::prefix.'/api/logs/files/{file_identifier}/download';
+    case api_logs_file_download_request = self::prefix.'/api/logs/files/{file_identifier}/download/request';
+    case api_logs_files = self::prefix.'/api/logs/files';
+    case api_logs_folder = self::prefix.'/api/logs/folders/{folder_identifier}';
+    case api_logs_folder_clear_cache = self::prefix.'/api/logs/folders/{folder_identifier}/clear-cache';
+    case api_logs_folder_download = self::prefix.'/api/logs/folders/{folder_identifier}/download';
+    case api_logs_folder_download_request = self::prefix.'/api/logs/folders/{folder_identifier}/download/request';
+    case api_logs_folders = self::prefix.'/api/logs/folders';
+    case api_logs_hosts = self::prefix.'/api/logs/hosts';
     case api_user = self::prefix.'/api/users/{user}';
     case api_users = self::prefix.'/api/users';
     case content = self::prefix.'/content';
