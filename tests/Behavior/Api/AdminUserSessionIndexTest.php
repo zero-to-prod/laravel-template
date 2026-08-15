@@ -32,6 +32,6 @@ test('list a user sessions', function (): void {
 test('session list rejects guests and missing users', function (): void {
     $url = Admin::api_user_sessions->url([Admin::userParameter => 'missing']);
 
-    $this->getJson($url)->assertUnauthorized();
+    $this->assertMatchesSchema($this->getJson($url))->assertUnauthorized();
     $this->actingAs(adminUser())->getJson($url)->assertNotFound();
 });

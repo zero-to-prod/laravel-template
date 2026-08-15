@@ -21,6 +21,14 @@ test('every case describes one navigation item', function (): void {
     }
 });
 
+test('a settings navigation case must describe an item with named attributes', function (mixed $item, string $message): void {
+    expect(static fn (): mixed => new ReflectionMethod(SettingsNav::class, 'attributes')->invoke(null, $item))
+        ->toThrow(LogicException::class, $message);
+})->with([
+    'missing item' => [null, 'Settings navigation cases must describe a navigation item.'],
+    'positional attribute' => [[Auth::settingsProfile], 'Settings navigation attributes must be named.'],
+]);
+
 test('every settings section is listed', function (): void {
     expect(collect(SettingsNav::items())->pluck('route')->all())
         ->toBe([

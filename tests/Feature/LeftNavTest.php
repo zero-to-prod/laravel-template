@@ -17,6 +17,14 @@ test('every case describes one navigation item', function (): void {
     }
 });
 
+test('a left navigation case must describe an item with named attributes', function (mixed $item, string $message): void {
+    expect(static fn (): mixed => new ReflectionMethod(LeftNav::class, 'attributes')->invoke(null, $item))
+        ->toThrow(LogicException::class, $message);
+})->with([
+    'missing item' => [null, 'Left navigation cases must describe a navigation item.'],
+    'positional attribute' => [[Web::home], 'Left navigation attributes must be named.'],
+]);
+
 test('the rail is shown to an authenticated user', function (): void {
     $this->actingAs(User::factory()->createOne())
         ->get(Web::home->value)

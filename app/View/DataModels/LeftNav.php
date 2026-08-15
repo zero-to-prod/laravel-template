@@ -25,8 +25,13 @@ enum LeftNav
     {
         $attributes = new ReflectionEnumUnitCase(self::class, $this->name)->getAttributes(NavItem::class);
         $arguments = $attributes[0]->getArguments();
-        $item = $arguments[0] ?? null;
 
+        return new NavItem(self::attributes($arguments[0] ?? null));
+    }
+
+    /** @return array<string, mixed> */
+    private static function attributes(mixed $item): array
+    {
         if (! is_array($item)) {
             throw new LogicException('Left navigation cases must describe a navigation item.');
         }
@@ -41,7 +46,7 @@ enum LeftNav
             $attributes[$key] = $value;
         }
 
-        return new NavItem($attributes);
+        return $attributes;
     }
 
     public static function visible(): bool
