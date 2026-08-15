@@ -6,7 +6,6 @@ use App\Modules\Api\Admin\LogInvestigation\LogInvestigator;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\Admin;
 use Illuminate\Http\Request;
-use Mockery\ExpectationInterface;
 use Mockery\MockInterface;
 use Opcodes\LogViewer\Facades\LogViewer;
 use Opcodes\LogViewer\Http\Controllers\LogsController;
