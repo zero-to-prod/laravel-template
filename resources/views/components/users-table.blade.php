@@ -40,9 +40,12 @@
                         <td class="whitespace-nowrap">
                             @if($loop->first)
                                 <div class="flex items-center gap-3">
-                                    <div class="avatar">
-                                        <div class="w-8 rounded-full text-neutral-content">
-                                            <img src="{{ $UserRow->picture() }}" alt="{{ $UserRow->name }}" referrerpolicy="no-referrer">
+                                    <div class="avatar avatar-placeholder">
+                                        <div class="relative w-8 rounded-full text-neutral-content">
+                                            <span class="hidden text-xs">{{ $UserRow->initials() }}</span>
+                                            <img class="absolute inset-0" src="{{ $UserRow->picture() }}" alt="{{ $UserRow->name }}"
+                                                 referrerpolicy="no-referrer"
+                                                 onerror="this.previousElementSibling.classList.remove('hidden'); this.parentElement.classList.add('bg-neutral'); this.remove()">
                                         </div>
                                     </div>
                                     <span>{{ $cell }}</span>

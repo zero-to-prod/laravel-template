@@ -61,7 +61,20 @@ test('the page displays the users oauth avatar', function (): void {
         ->get(Admin::users->value)
         ->assertOk()
         ->assertSee('https://example.com/avatar.jpg')
-        ->assertSee('alt="'.$User->name.'"', false);
+        ->assertSee('alt="'.e($User->name).'"', false);
+});
+
+test('the page falls back to initials when the user picture cannot load', function (): void {
+    $User = adminUser();
+    $User->update([Users::name->value => 'Ada Lovelace']);
+
+    $this->actingAs($User)
+        ->get(Admin::users->value)
+        ->assertOk()
+        ->assertSee('avatar-placeholder', false)
+        ->assertSee("classList.add('bg-neutral')", false)
+        ->assertSee('<span class="hidden text-xs">AL</span>', false)
+        ->assertSee('AL');
 });
 
 test('every column the table lists gets a heading linking to its own ordering', function (): void {
