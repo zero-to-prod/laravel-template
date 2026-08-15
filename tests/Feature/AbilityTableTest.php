@@ -74,3 +74,12 @@ test('the form posts back to the token it manages', function (): void {
 test('the checkbox name is the key the request reads', function (): void {
     expect(AbilityTable::field)->toBe(TokenUpdateRequest::abilities.'[]');
 });
+
+test('admin rows are grouped separately for an administrator', function (): void {
+    $this->actingAs(adminUser());
+    $groups = abilityTable()->groups();
+
+    expect(array_keys($groups))->toBe(['public', 'admin'])
+        ->and($groups['public'])->not->toBeEmpty()
+        ->and($groups['admin'])->not->toBeEmpty();
+});

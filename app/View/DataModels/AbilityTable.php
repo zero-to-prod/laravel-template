@@ -53,6 +53,27 @@ readonly class AbilityTable
         return $rows;
     }
 
+    /** @return array<string, list<AbilityRow>> */
+    public function groups(): array
+    {
+        $groups = [];
+
+        foreach (AbilityQuery::groups() as $name => $endpoints) {
+            $groups[$name] = [];
+
+            foreach ($endpoints as $path => $verbs) {
+                $groups[$name][] = AbilityRow::from([
+                    AbilityRow::path => $path,
+                    AbilityRow::verbs => $verbs,
+                    AbilityRow::granted => $this->granted,
+                    AbilityRow::every => $this->every(),
+                ]);
+            }
+        }
+
+        return $groups;
+    }
+
     public function every(): bool
     {
         return in_array(HttpVerb::every, $this->granted, true);

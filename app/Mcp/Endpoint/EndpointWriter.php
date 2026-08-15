@@ -2,7 +2,6 @@
 
 namespace App\Mcp\Endpoint;
 
-use App\Routes\ApiRoute;
 use Illuminate\Support\Facades\File;
 
 readonly class EndpointWriter
@@ -33,7 +32,7 @@ readonly class EndpointWriter
         $route = $this->apiRoute();
 
         if ($route !== null) {
-            $edits['app/Routes/ApiRoute.php'] = $route;
+            $edits[$this->routeFile()] = $route;
         }
 
         $edits[$this->Blueprint->routesFile()] = $this->registration();
@@ -67,8 +66,11 @@ readonly class EndpointWriter
 
     private function apiRoute(): ?string
     {
-        $contents = File::get(base_path('app/Routes/ApiRoute.php'));
-        $suffix = substr($this->Blueprint->path, strlen(ApiRoute::prefix));
+        $contents = File::get(base_path($this->routeFile()));
+
+        $suffix = $this->Blueprint->api->routePrefix()
+                |> strlen(...)
+                |> (fn ($x) => substr($this->Blueprint->path, $x));
 
         if (str_contains($contents, sprintf("= self::prefix.'%s';", $suffix))) {
             return null;
@@ -82,16 +84,23 @@ readonly class EndpointWriter
         $contents = $this->Blueprint->routesFile()
                 |> base_path(...)
                 |> File::get(...);
+
         $controller = $this->Blueprint->namespace().'\\'.$this->Blueprint->controllerClass();
 
         $contents = $this->insert($contents, 'use '.$controller.';', 'use ');
 
         return rtrim($contents, "\n")."\n".sprintf(
-            "Route::%s(ApiRoute::%s->value, %s::class);\n",
+            "Route::%s(%s::%s->value, %s::class);\n",
             $this->Blueprint->method,
+            class_basename($this->Blueprint->api->route()),
             $this->Blueprint->routeCase,
             $this->Blueprint->controllerClass(),
         );
+    }
+
+    private function routeFile(): string
+    {
+        return str_replace('\\', '/', lcfirst($this->Blueprint->api->route())).'.php';
     }
 
     private function insert(string $contents, string $line, string $prefix): string

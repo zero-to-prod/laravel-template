@@ -83,3 +83,27 @@ test('it rejects a non-openapi 3 schema', function (): void {
         'dry_run' => true,
     ])->assertHasErrors()->assertSee('Only OpenAPI 3.x schemas are supported.');
 });
+
+test('it targets every operation at the selected admin api', function (): void {
+    $schema = <<<'YAML'
+        openapi: 3.0.4
+        info: {title: Admin users, version: 1.0.0}
+        paths:
+          /gadgets:
+            get:
+              operationId: listUsers
+              tags: [Users]
+              responses:
+                '200': {description: The users.}
+        YAML;
+
+    TemplateServer::tool(ScaffoldOpenApi::class, [
+        'api' => 'admin',
+        'openapi' => $schema,
+        'dry_run' => true,
+    ])->assertOk()
+        ->assertSee("case api_gadgets = self::prefix.'/api/gadgets';")
+        ->assertSee('Admin::api_gadgets->value')
+        ->assertSee('#[AdminApiSchema(')
+        ->assertSee('routes/api_admin.php');
+});

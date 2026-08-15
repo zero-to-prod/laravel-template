@@ -2,11 +2,11 @@
 
 namespace App\Mcp\Tools;
 
+use App\Mcp\Endpoint\EndpointApi;
 use App\Mcp\Endpoint\EndpointBlueprint;
 use App\Mcp\Endpoint\EndpointParameter;
 use App\Mcp\Endpoint\EndpointRenderer;
 use App\Mcp\Endpoint\EndpointWriter;
-use App\Routes\ApiRoute;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -39,6 +39,9 @@ class ScaffoldEndpoint extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
+            'api' => $schema->string()
+                ->enum(array_column(EndpointApi::cases(), 'value'))
+                ->description('The API to extend. Defaults to public.'),
             'module' => $schema->string()
                 ->description('Directory under app/Modules/Api, such as Widget/Part/Store.')
                 ->required(),
@@ -49,7 +52,7 @@ class ScaffoldEndpoint extends Tool
                 ->description('The HTTP method this operation serves.')
                 ->required(),
             'path' => $schema->string()
-                ->description('The full path, such as /api/user/tokens or /api/user/tokens/{token}.')
+                ->description('The full path under the selected API prefix (/api for public or /admin/api for admin).')
                 ->required(),
             'path_parameters' => $schema->array()
                 ->items($schema->object([
@@ -121,6 +124,14 @@ class ScaffoldEndpoint extends Tool
     {
 
         $Blueprint = EndpointBlueprint::from($input);
+
+        if (! str_starts_with($Blueprint->path, $Blueprint->api->prefix().'/')) {
+            return Response::error(sprintf(
+                'The %s API path must start with %s/.',
+                $Blueprint->api->value,
+                $Blueprint->api->prefix(),
+            ));
+        }
         $mismatch = $this->mismatchedParameters($Blueprint);
 
         if ($mismatch !== null) {
@@ -184,7 +195,8 @@ class ScaffoldEndpoint extends Tool
             'module' => ['required', 'string', 'regex:/^[A-Za-z][A-Za-z0-9]*(\/[A-Za-z][A-Za-z0-9]*)*$/'],
             'class_prefix' => ['nullable', 'string', 'regex:/^[A-Z][A-Za-z0-9]*$/'],
             'method' => ['required', 'string', 'in:get,post,put,patch,delete'],
-            'path' => ['required', 'string', 'starts_with:'.ApiRoute::prefix.'/'],
+            'api' => ['nullable', 'string', 'in:public,admin'],
+            'path' => ['required', 'string'],
             'path_parameters' => ['array'],
             'path_parameters.*.name' => ['required', 'string', 'regex:/^[a-z][a-z0-9_]*$/'],
             'path_parameters.*.description' => ['required', 'string'],

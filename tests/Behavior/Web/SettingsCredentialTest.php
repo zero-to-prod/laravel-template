@@ -3,6 +3,7 @@
 use App\Helpers\HttpVerb;
 use App\Models\User;
 use App\Modules\Settings\Credentials\TokenUpdateRequest;
+use App\Routes\Admin;
 use App\Routes\ApiRoute;
 use App\Routes\Auth;
 use App\Routes\Web;
@@ -28,12 +29,25 @@ test('the page lists every endpoint a token can be granted, and every verb', fun
 
     $response = $this->actingAs($User)->get(credentialUrl($User))->assertOk();
 
-    $response->assertSee('Endpoint')
+    $response->assertSee('Public API')
+        ->assertDontSee('Admin API')
+        ->assertSee('Endpoint')
         ->assertSee(ApiRoute::user->value);
 
     foreach (HttpVerb::cases() as $HttpVerb) {
         $response->assertSee($HttpVerb->value);
     }
+});
+
+test('the page offers admin api abilities to an administrator', function (): void {
+    $User = adminUser();
+
+    $this->actingAs($User)
+        ->get(credentialUrl($User))
+        ->assertOk()
+        ->assertSee('Admin API')
+        ->assertSee(Admin::api_users->value)
+        ->assertSee(HttpVerb::get->ability(Admin::api_users->value));
 });
 
 test('a toggle is offered only where a verb is bound to the path', function (): void {
@@ -106,6 +120,17 @@ test('an ability the grid never offered is not stored', function (): void {
 
     $this->actingAs($User)->post($url, [
         TokenUpdateRequest::abilities => [HttpVerb::every, 'DELETE'.HttpVerb::separator.'/api/nowhere'],
+    ]);
+
+    expect($User->tokens()->sole()->abilities)->toBe([]);
+});
+
+test('a non administrator cannot store an admin api ability', function (): void {
+    $User = User::factory()->createOne();
+    $url = credentialUrl($User);
+
+    $this->actingAs($User)->post($url, [
+        TokenUpdateRequest::abilities => [HttpVerb::get->ability(Admin::api_users->value)],
     ]);
 
     expect($User->tokens()->sole()->abilities)->toBe([]);

@@ -2,6 +2,7 @@
 
 use App\Helpers\HttpVerb;
 use App\Modules\Api\Support\AbilityQuery;
+use App\Routes\Admin;
 use App\Routes\ApiRoute;
 use Illuminate\Http\Request;
 
@@ -43,4 +44,15 @@ test('the grantable abilities are every verb of every path it offers', function 
 
     expect($abilities)->toBe($expected)
         ->and($abilities)->toContain(HttpVerb::get->ability(ApiRoute::user->value));
+});
+
+test('admin api abilities are available only to an administrator', function (): void {
+    expect(array_keys(AbilityQuery::groups()))->toBe(['public']);
+
+    $this->actingAs(adminUser());
+
+    expect(array_keys(AbilityQuery::groups()))->toBe(['public', 'admin'])
+        ->and(AbilityQuery::groups()['public'])->toHaveKey(ApiRoute::user->value)
+        ->and(AbilityQuery::groups()['admin'])->toHaveKey(Admin::api_users->value)
+        ->and(AbilityQuery::abilities())->toContain(HttpVerb::get->ability(Admin::api_users->value));
 });

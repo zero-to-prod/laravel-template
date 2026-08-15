@@ -7,10 +7,8 @@ use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\DescribesOperation;
 use App\Modules\Api\Support\PaginationParameters;
 use App\Modules\Api\Support\PaginationResponse;
-use App\Modules\Api\Support\PublicApiSchema;
 use App\Modules\Api\Support\Response;
 use App\Modules\Api\Support\SharedSchema;
-use App\Routes\ApiRoute;
 use Illuminate\Http\JsonResponse;
 use Zerotoprod\DataModel\Describe;
 use ZeroToProd\LaravelOpenapi\ApiSchema;
@@ -186,7 +184,7 @@ readonly class EndpointRenderer
         $imports = [
             DescribesOperation::class,
             SharedSchema::class,
-            ApiRoute::class,
+            $this->Blueprint->api->route(),
             'ReflectionException',
             ApiSchema::class,
         ];
@@ -273,7 +271,7 @@ readonly class EndpointRenderer
                         return [
                             'components' => SharedSchema::components,
                             'paths' => [
-                                ApiRoute::%s->value => [
+                                %s::%s->value => [
                                     '%s' => [
                 %s                        'responses' => [
                 %s                        ],
@@ -286,6 +284,7 @@ readonly class EndpointRenderer
 
                 PHP,
             $this->Blueprint->schemaClass(),
+            class_basename($this->Blueprint->api->route()),
             $this->Blueprint->routeCase,
             $this->Blueprint->method,
             $operation,
@@ -295,7 +294,7 @@ readonly class EndpointRenderer
 
     public function controller(): string
     {
-        $imports = [JsonResponse::class, 'ReflectionException', PublicApiSchema::class];
+        $imports = [JsonResponse::class, 'ReflectionException', $this->Blueprint->api->schemaAttribute()];
         $takesRequest = $this->Blueprint->hasBody() || $this->Blueprint->declaresUnauthorized() || $this->Blueprint->paginated;
 
         if ($takesRequest) {
@@ -329,7 +328,7 @@ readonly class EndpointRenderer
             <<<'PHP'
                 readonly class %s
                 {
-                    #[PublicApiSchema(static function (): array {
+                    #[%s(static function (): array {
                         return %s::schema();
                     })]
                     public function __invoke(%s): JsonResponse
@@ -339,6 +338,7 @@ readonly class EndpointRenderer
 
                 PHP,
             $this->Blueprint->controllerClass(),
+            class_basename($this->Blueprint->api->schemaAttribute()),
             $this->Blueprint->schemaClass(),
             implode(', ', $arguments),
             $body,
@@ -348,7 +348,7 @@ readonly class EndpointRenderer
     public function test(): string
     {
         $namespace = $this->Blueprint->namespace();
-        $imports = [ApiResponse::class, $namespace.'\\'.$this->Blueprint->responseClass(), ApiRoute::class];
+        $imports = [ApiResponse::class, $namespace.'\\'.$this->Blueprint->responseClass(), $this->Blueprint->api->route()];
 
         if ($this->Blueprint->hasBody()) {
             $imports[] = $namespace.'\\'.$this->Blueprint->requestClass();
@@ -439,13 +439,21 @@ readonly class EndpointRenderer
             return '';
         }
 
+        if ($this->Blueprint->api === EndpointApi::admin) {
+            return "    \$User = adminUser();\n\n";
+        }
+
         return "    \$User = User::factory()->createOne();\n    \$token = \$User->createToken('test-device')->plainTextToken;\n\n";
     }
 
     /** @param  array<string, string>  $overrides  field name => literal */
     private function call(?string $token, array $overrides = []): string
     {
-        $caller = $token === null ? '$this' : sprintf('$this->withToken(%s)', $token);
+        if ($this->Blueprint->api === EndpointApi::admin) {
+            $caller = $token === "'invalid-token'" ? '$this' : '$this->actingAs($User)';
+        } else {
+            $caller = $token === null ? '$this' : sprintf('$this->withToken(%s)', $token);
+        }
         $route = $this->route();
 
         if (! $this->Blueprint->hasBody()) {
@@ -471,7 +479,7 @@ readonly class EndpointRenderer
     private function route(): string
     {
         if ($this->Blueprint->pathParameters === []) {
-            return sprintf('ApiRoute::%s->value', $this->Blueprint->routeCase);
+            return sprintf('%s::%s->value', class_basename($this->Blueprint->api->route()), $this->Blueprint->routeCase);
         }
 
         return array_map(
@@ -479,7 +487,7 @@ readonly class EndpointRenderer
             $this->Blueprint->pathParameters,
         )
                 |> (static fn ($x) => implode(', ', $x))
-                |> (fn ($x) => sprintf('ApiRoute::%s->url([%s])', $this->Blueprint->routeCase, $x));
+                |> (fn ($x) => sprintf('%s::%s->url([%s])', class_basename($this->Blueprint->api->route()), $this->Blueprint->routeCase, $x));
     }
 
     private function testName(): string

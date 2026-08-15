@@ -12,7 +12,7 @@ class OpenApiEndpointMapper
     private array $document;
 
     /** @return list<array<string, mixed>> */
-    public function map(string $schema): array
+    public function map(string $schema, string $prefix = '/api', string $routePrefix = '/api'): array
     {
         $decoded = json_validate($schema) ? json_decode($schema, true) : Yaml::parse($schema);
 
@@ -47,7 +47,7 @@ class OpenApiEndpointMapper
                 if (is_array($operation)) {
                     /** @var array<string, mixed> $pathItem */
                     /** @var array<string, mixed> $operation */
-                    $endpoint = $this->operation($method, $path, $pathItem, $operation);
+                    $endpoint = $this->operation($method, $path, $pathItem, $operation, $prefix, $routePrefix);
                     $module = $endpoint['module'];
 
                     if (is_string($module) && in_array($module, $modules, true)) {
@@ -73,7 +73,7 @@ class OpenApiEndpointMapper
      * @param  array<string, mixed>  $operation
      * @return array<string, mixed>
      */
-    private function operation(string $method, string $path, array $pathItem, array $operation): array
+    private function operation(string $method, string $path, array $pathItem, array $operation, string $prefix, string $routePrefix): array
     {
         $operationTags = $operation['tags'] ?? [];
         $tags = is_array($operationTags) ? array_values(array_filter($operationTags, 'is_string')) : [];
@@ -85,11 +85,13 @@ class OpenApiEndpointMapper
             ? $operation['security'] !== []
             : ($this->document['security'] ?? []) !== [];
 
+        $targetPath = str_starts_with($path, $prefix.'/') ? $path : $prefix.'/'.ltrim($path, '/');
+
         return [
             'module' => $resource.'/'.$action,
             'method' => $method,
-            'path' => '/api/'.ltrim($path, '/'),
-            'route_case' => $this->routeCase($path),
+            'path' => $targetPath,
+            'route_case' => $this->routeCase(substr($targetPath, strlen($routePrefix))),
             'authenticated' => $security,
             'security' => $security,
             'success_status' => $successStatus,

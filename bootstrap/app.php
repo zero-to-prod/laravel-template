@@ -31,6 +31,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             Route::middleware([MiddlewareTag::sanctum->value, EnsureTokenAbilityMiddleware::class])
                 ->group(base_path('routes/api_auth.php'));
+
+            Route::middleware([MiddlewareTag::sanctum->value, EnsureTokenAbilityMiddleware::class, Role::admin->middleware()])
+                ->group(base_path('routes/api_admin.php'));
         },
         commands: __DIR__.'/../routes/console.php',
         health: '/up',

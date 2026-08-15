@@ -24,6 +24,8 @@ enum Admin: string
     public const string userParameter = 'user';
     public const string providerParameter = 'provider';
 
+    case api_user = self::prefix.'/api/users/{user}';
+    case api_users = self::prefix.'/api/users';
     case index = self::prefix;
     case links = self::prefix.'/links';
     case logs = self::prefix.'/logs';

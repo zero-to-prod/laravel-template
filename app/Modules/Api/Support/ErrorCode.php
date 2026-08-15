@@ -15,4 +15,5 @@ enum ErrorCode: string
     case unauthorized = 'unauthorized';
     case missing_ability = 'missing_ability';
     case unsupported_media_type = 'unsupported_media_type';
+    case user_not_found = 'user_not_found';
 }

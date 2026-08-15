@@ -140,3 +140,29 @@ test('a module that is already there is not overwritten', function (): void {
     ])->assertHasErrors()
         ->assertSee('app/Modules/Api/Public/User/Show/UserShowResponse.php');
 });
+
+test('an admin endpoint uses the admin route index schema and session authentication', function (): void {
+    TemplateServer::tool(ScaffoldEndpoint::class, [
+        ...scaffoldArguments(),
+        'api' => 'admin',
+        'module' => 'Admin/User/Index',
+        'path' => '/admin/api/widgets',
+        'security' => false,
+    ])->assertOk()
+        ->assertSee('app/Modules/Api/Admin/User/Index/AdminUserIndexController.php')
+        ->assertSee('app/Routes/Admin.php')
+        ->assertSee('routes/api_admin.php')
+        ->assertSee('use App\\Modules\\Api\\Support\\AdminApiSchema;')
+        ->assertSee('#[AdminApiSchema(')
+        ->assertSee('Admin::api_widgets->value')
+        ->assertSee('$this->actingAs($User)')
+        ->assertSee('$User = adminUser();')
+        ->assertDontSee('withToken(');
+});
+
+test('an endpoint path must belong to the selected api', function (): void {
+    TemplateServer::tool(ScaffoldEndpoint::class, [
+        ...scaffoldArguments(),
+        'api' => 'admin',
+    ])->assertHasErrors()->assertSee('The admin API path must start with /admin/api/.');
+});

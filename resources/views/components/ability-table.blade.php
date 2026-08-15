@@ -5,8 +5,11 @@
 @endphp
 <form method="POST" action="{{ $AbilityTable->action() }}" class="mt-6 flex flex-col gap-4">
     @csrf
-    <div class="overflow-x-auto rounded-box border border-base-300">
-        <table class="table">
+    @foreach($AbilityTable->groups() as $api => $rows)
+        <section class="flex flex-col gap-2">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-base-content/70">{{ ucfirst($api) }} API</h2>
+            <div class="overflow-x-auto rounded-box border border-base-300">
+                <table class="table">
             <thead>
             <tr>
                 <th>Endpoint</th>
@@ -16,7 +19,7 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($AbilityTable->rows() as $AbilityRow)
+            @forelse($rows as $AbilityRow)
                 <tr class="hover:bg-base-200">
                     <td class="whitespace-nowrap font-mono text-sm">{{ $AbilityRow->path }}</td>
                     @foreach($AbilityTable->verbs() as $HttpVerb)
@@ -33,10 +36,18 @@
                         </td>
                     @endforeach
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="{{ count($AbilityTable->verbs()) + 1 }}" class="text-center text-base-content/70">
+                        This API has no token-authenticated endpoints.
+                    </td>
+                </tr>
+            @endforelse
             </tbody>
-        </table>
-    </div>
+                </table>
+            </div>
+        </section>
+    @endforeach
 
     <div class="flex items-center gap-3">
         <button type="submit" class="btn btn-primary">Save Abilities</button>

@@ -6,6 +6,7 @@ use App\Helpers\Role;
 use App\Modules\Api\Support\AdminApiSchema;
 use App\Modules\Api\Support\PublicApiSchema;
 use App\Routes\Admin;
+use App\Routes\ApiRoute;
 use App\Routes\MiddlewareTag;
 
 return [
@@ -17,6 +18,7 @@ return [
     'schemas' => [
         'public' => [
             'attribute' => PublicApiSchema::class,
+            'route_index' => ApiRoute::class,
             'route' => [
                 'uri' => 'openapi.json',
                 'name' => 'openapi.public',
@@ -33,6 +35,8 @@ return [
         ],
         'admin' => [
             'attribute' => AdminApiSchema::class,
+            'route_index' => Admin::class,
+            'credential_role' => Role::admin->value,
             'route' => [
                 'uri' => ltrim(Admin::openapi->value, '/'),
                 'name' => 'openapi.admin',

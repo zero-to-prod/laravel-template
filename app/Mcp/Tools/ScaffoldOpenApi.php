@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Mcp\Endpoint\EndpointApi;
 use App\Mcp\OpenApi\OpenApiEndpointMapper;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use InvalidArgumentException;
@@ -22,6 +23,7 @@ class ScaffoldOpenApi extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
+            'api' => $schema->string()->enum(array_column(EndpointApi::cases(), 'value'))->description('The API to extend. Defaults to public.'),
             'openapi' => $schema->string()->description('The complete OpenAPI 3.x document, as JSON or YAML.')->required(),
             'dry_run' => $schema->boolean()->description('Return what would be written without writing it.'),
             'force' => $schema->boolean()->description('Overwrite endpoint files that are already there.'),
@@ -32,6 +34,7 @@ class ScaffoldOpenApi extends Tool
     {
         $input = $Request->validate([
             'openapi' => ['required', 'string'],
+            'api' => ['nullable', 'string', 'in:public,admin'],
             'dry_run' => ['boolean'],
             'force' => ['boolean'],
         ]);
@@ -43,7 +46,8 @@ class ScaffoldOpenApi extends Tool
         }
 
         try {
-            $endpoints = $OpenApiEndpointMapper->map($openapi);
+            $api = EndpointApi::tryFrom(is_string($input['api'] ?? null) ? $input['api'] : '') ?? EndpointApi::public;
+            $endpoints = $OpenApiEndpointMapper->map($openapi, $api->prefix(), $api->routePrefix());
         } catch (InvalidArgumentException $Exception) {
             return Response::error($Exception->getMessage());
         }
@@ -53,6 +57,7 @@ class ScaffoldOpenApi extends Tool
         foreach ($endpoints as $endpoint) {
             $Response = $ScaffoldEndpoint->scaffold([
                 ...$endpoint,
+                'api' => $api->value,
                 'dry_run' => ($input['dry_run'] ?? false) === true,
                 'force' => ($input['force'] ?? false) === true,
             ]);

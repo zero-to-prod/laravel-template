@@ -2,8 +2,6 @@
 
 namespace App\Mcp\Endpoint;
 
-use App\Routes\ApiRoute;
-
 /** @phpstan-type ErrorStatus array{status: int, description: string} */
 readonly class EndpointBlueprint
 {
@@ -16,6 +14,7 @@ readonly class EndpointBlueprint
      */
     private function __construct(
         public string $module,
+        public EndpointApi $api,
         public string $prefix,
         public string $method,
         public string $path,
@@ -41,9 +40,11 @@ readonly class EndpointBlueprint
         $path = self::text($input, 'path') ?? '';
         $authenticated = ($input['authenticated'] ?? true) === true;
         $successStatus = $input['success_status'] ?? null;
+        $api = EndpointApi::tryFrom(self::text($input, 'api') ?? '') ?? EndpointApi::public;
 
         return new self(
             module: $module,
+            api: $api,
             prefix: self::text($input, 'class_prefix') ?? str_replace('/', '', $module),
             method: strtolower(self::text($input, 'method') ?? 'get'),
             path: $path,
@@ -123,7 +124,7 @@ readonly class EndpointBlueprint
 
     public function routesFile(): string
     {
-        return $this->authenticated ? 'routes/api_auth.php' : 'routes/api.php';
+        return $this->api->routesFile($this->authenticated);
     }
 
     public function hasBody(): bool
@@ -143,7 +144,7 @@ readonly class EndpointBlueprint
 
     public function routeCaseLine(): string
     {
-        return ApiRoute::prefix
+        return $this->api->routePrefix()
                 |> strlen(...)
                 |> (fn ($x) => substr($this->path, $x))
                 |> (fn ($x) => sprintf("    case %s = self::prefix.'%s';", $this->routeCase, $x));
@@ -177,7 +178,11 @@ readonly class EndpointBlueprint
 
     private static function caseFor(string $path): string
     {
-        $segments = ApiRoute::prefix
+        $prefix = str_starts_with($path, EndpointApi::admin->prefix())
+            ? EndpointApi::admin->routePrefix()
+            : EndpointApi::public->routePrefix();
+
+        $segments = $prefix
                 |> strlen(...)
                 |> (static fn ($x) => substr($path, $x))
                 |> (static fn ($x) => trim($x, '/'));
