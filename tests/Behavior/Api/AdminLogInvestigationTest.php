@@ -59,11 +59,6 @@ test('investigate logs through the admin api', function (): void {
 test('malformed upstream log entries are ignored', function (): void {
     $this->mock(LogsController::class, function (MockInterface $Mock): void {
         $Expectation = $Mock->expects('index');
-
-        if (! $Expectation instanceof ExpectationInterface) {
-            throw new RuntimeException('Expected a Mockery expectation.');
-        }
-
         $Expectation->andReturn(response()->json([
             'logs' => [null, ['level' => 'ERROR']],
             'pagination' => null,
