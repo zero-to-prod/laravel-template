@@ -79,7 +79,7 @@ readonly class UsersTable
 
     public function span(): int
     {
-        return count(self::columns()) + 1;
+        return count(self::columns()) + 2;
     }
 
     public function searching(): bool

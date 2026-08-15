@@ -45,6 +45,19 @@ test('the page lists the tokens of the authenticated user only', function (): vo
         ->assertDontSee('Theirs');
 });
 
+test('the page shows when a token was last used', function (): void {
+    $User = User::factory()->createOne();
+    $lastUsedAt = now()->subDay();
+    $Token = issuedToken($User, $User->createToken('Laptop CLI'));
+    $Token->forceFill([PersonalAccessTokens::last_used_at->value => $lastUsedAt])->save();
+
+    $this->actingAs($User)
+        ->get(Auth::settingsCredentials->value)
+        ->assertOk()
+        ->assertSee('Last Used')
+        ->assertSee($lastUsedAt->toFormattedDateString());
+});
+
 test('a token is created with only public GET abilities and no expiry', function (): void {
     $User = User::factory()->createOne();
 

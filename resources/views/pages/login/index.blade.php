@@ -27,7 +27,16 @@ render(function (View $view) {
         @csrf
         <x-text-input :textInput="LoginForm::textInput(LoginForm::email)"/>
         <x-text-input :textInput="LoginForm::textInput(LoginForm::password)"/>
-        <div class="text-right">
+        <div class="flex items-center justify-between gap-4">
+            <label class="flex cursor-pointer items-center gap-2 text-sm">
+                <input type="checkbox"
+                       name="{{LoginForm::remember_token}}"
+                       value="1"
+                       class="checkbox checkbox-primary checkbox-sm"
+                       @checked(old(LoginForm::remember_token))
+                />
+                <span>Remember me</span>
+            </label>
             <a href="{{Web::forgotPassword->value}}" class="link link-primary text-sm">Forgot password?</a>
         </div>
         <button class="btn btn-primary mt-4 w-full">Login</button>

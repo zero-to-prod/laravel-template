@@ -15,6 +15,10 @@ test('the users page is listed', function (): void {
     expect(collect(AdminNav::items())->pluck('route')->all())->toContain(Admin::users);
 });
 
+test('the sessions page is listed', function (): void {
+    expect(collect(AdminNav::items())->pluck('route')->all())->toContain(Admin::sessions);
+});
+
 test('the log viewer is listed', function (): void {
     expect(collect(AdminNav::items())->pluck('route')->all())->toContain(Admin::logs);
 });

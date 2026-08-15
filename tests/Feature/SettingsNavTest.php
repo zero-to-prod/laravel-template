@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Routes\Auth;
 use App\Routes\Web;
+use App\View\DataModels\NavItem;
 use App\View\DataModels\SettingsNav;
 use App\View\ViewDirectory;
 use Illuminate\Http\Request;
@@ -14,13 +15,20 @@ test('the first entry is the profile page', function (): void {
         ->and($items[0]->route)->toBe(Auth::settingsProfile);
 });
 
+test('every case describes one navigation item', function (): void {
+    foreach (SettingsNav::cases() as $SettingsNav) {
+        expect($SettingsNav->item())->toBeInstanceOf(NavItem::class);
+    }
+});
+
 test('every settings section is listed', function (): void {
     expect(collect(SettingsNav::items())->pluck('route')->all())
         ->toBe([
             Auth::settingsProfile,
+            Auth::settingsAppearance,
             Auth::settingsSecurity,
             Auth::settingsCredentials,
-            Auth::settingsAppearance,
+            Auth::settingsSessions,
         ]);
 });
 
@@ -55,6 +63,19 @@ test('the credentials section stays active below its own path', function (): voi
     }
 
     expect($active['Credentials'])->toBeTrue()
+        ->and($active['Profile'])->toBeFalse();
+});
+
+test('the sessions section stays active below its own path', function (): void {
+    app()->instance('request', Request::create(Auth::settingsSession->url([Auth::sessionParameter => 'abc'])));
+
+    $active = [];
+
+    foreach (SettingsNav::items() as $NavItem) {
+        $active[$NavItem->label] = $NavItem->active();
+    }
+
+    expect($active['Sessions'])->toBeTrue()
         ->and($active['Profile'])->toBeFalse();
 });
 

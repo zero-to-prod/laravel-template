@@ -3,6 +3,8 @@
 use App\Helpers\Role;
 use App\Helpers\SvgName;
 use App\Helpers\Theme;
+use App\Models\User;
+use App\Modules\Admin\Sessions\SessionsQuery;
 use App\Modules\Admin\Users\Delete\UserDeleteController;
 use App\Modules\Admin\Users\Update\UsersUpdateForm;
 use App\Modules\Admin\Users\Update\UsersUpdateRequest;
@@ -17,11 +19,16 @@ Head::title('User')
     ->hiddenFromRobots();
 ?>
 @php
+    $Authenticated = request()->user();
+    $user = $Authenticated instanceof User && $Authenticated->id === $userId
+        ? $Authenticated
+        : User::query()->findOrFail($userId);
     $user->load('oauthProviders');
     $action = Admin::user->url([Admin::userParameter => $user->id]);
     $verified = (bool) old(UsersUpdateRequest::verified, $user->email_verified_at !== null);
     $administrator = (bool) old(UsersUpdateRequest::admin, $user->hasRole(Role::admin->value));
     $theme = old(UsersUpdateRequest::theme, $user->theme->value);
+    $lastSessionAt = SessionsQuery::lastActivity($user->id);
 @endphp
 <x-main>
     <div class="mx-auto max-w-5xl p-4 sm:p-6">
@@ -37,6 +44,7 @@ Head::title('User')
                 <p class="mt-1 font-mono text-xs text-base-content/55">{{$user->id}}</p>
             </div>
             <div class="flex gap-2">
+                <a href="{{Admin::sessions->value.'?'.http_build_query([Admin::userParameter => $user->id])}}" class="btn btn-ghost btn-sm">Sessions</a>
                 @if($user->email_verified_at !== null)
                     <span class="badge badge-success">Email verified</span>
                 @else
@@ -115,6 +123,7 @@ Head::title('User')
                         <div class="py-3"><dt class="text-base-content/55">Email verified at</dt><dd class="mt-1">{{$user->email_verified_at?->toDayDateTimeString() ?? 'Not verified'}}</dd></div>
                         <div class="py-3"><dt class="text-base-content/55">Theme</dt><dd class="mt-1">{{$user->theme->label()}}</dd></div>
                         <div class="py-3"><dt class="text-base-content/55">Created</dt><dd class="mt-1">{{$user->created_at?->toDayDateTimeString() ?? '—'}}</dd></div>
+                        <div class="py-3"><dt class="text-base-content/55">Last session</dt><dd class="mt-1">{{$lastSessionAt?->toDayDateTimeString() ?? '—'}}</dd></div>
                         <div class="py-3"><dt class="text-base-content/55">Last updated</dt><dd class="mt-1">{{$user->updated_at?->toDayDateTimeString() ?? '—'}}</dd></div>
                         <div class="py-3"><dt class="text-base-content/55">Remembered login</dt><dd class="mt-1">{{$user->remember_token === null ? 'No' : 'Yes'}}</dd></div>
                     </dl>

@@ -46,7 +46,7 @@ return RectorConfig::configure()
     ])
     ->withConfiguredRule(ForbidCommentPhraseRector::class, [
         ForbidCommentPhraseRector::PHRASES => [
-            '/@todo/i',
+            '/@?todo\b/i',
         ],
     ])
     ->withSets([

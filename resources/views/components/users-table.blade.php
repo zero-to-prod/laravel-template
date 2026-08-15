@@ -30,6 +30,7 @@
                         </a>
                     </th>
                 @endforeach
+                <th>Last session</th>
                 <th class="w-0"><span class="sr-only">Edit</span></th>
             </tr>
             </thead>

@@ -23,6 +23,7 @@ enum Admin: string
     public const string prefix = '/admin';
     public const string userParameter = 'user';
     public const string providerParameter = 'provider';
+    public const string sessionParameter = 'session';
 
     case api_logs = self::prefix.'/api/logs';
     case api_logs_investigate = self::prefix.'/api/logs/investigate';
@@ -40,6 +41,7 @@ enum Admin: string
     case api_logs_folders = self::prefix.'/api/logs/folders';
     case api_logs_hosts = self::prefix.'/api/logs/hosts';
     case api_user = self::prefix.'/api/users/{user}';
+    case api_user_sessions = self::prefix.'/api/users/{user}/sessions';
     case api_users = self::prefix.'/api/users';
     case content = self::prefix.'/content';
     case index = self::prefix;
@@ -47,7 +49,10 @@ enum Admin: string
     case logs = self::prefix.'/logs';
     #[AdminLink]
     case openapi = self::prefix.'/openapi.json';
+    case sessions = self::prefix.'/sessions';
+    case session = self::prefix.'/sessions/{'.self::sessionParameter.'}';
     case users = self::prefix.'/users';
     case user = self::prefix.'/users/{'.self::userParameter.'}';
+    case userSessions = self::prefix.'/users/{'.self::userParameter.'}/sessions';
     case userProvider = self::prefix.'/users/{'.self::userParameter.'}/providers/{'.self::providerParameter.'}';
 }

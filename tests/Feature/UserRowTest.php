@@ -29,9 +29,19 @@ test('the cells line up with the headings, in order', function (): void {
     $User = User::factory()->createOne();
     $cells = UserRow::from($User->toArray())->cells();
 
-    expect($cells)->toHaveSameSize(UsersTable::columns())
+    expect($cells)->toHaveCount(count(UsersTable::columns()) + 1)
         ->and($cells[0])->toBe($User->name)
         ->and($cells[1])->toBe($User->email);
+});
+
+test('the last session renders as a time and an absent one as a dash', function (): void {
+    $User = User::factory()->createOne();
+
+    expect(UserRow::from($User->toArray())->lastSession())->toBe('—')
+        ->and(UserRow::from([
+            ...$User->toArray(),
+            UserRow::last_session_at => now()->timestamp,
+        ])->lastSession())->toBe(now()->toDayDateTimeString());
 });
 
 test('initials are taken from the first and last word of the name', function (): void {

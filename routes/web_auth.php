@@ -7,6 +7,8 @@ use App\Modules\Settings\Credentials\TokenController;
 use App\Modules\Settings\Credentials\TokenDestroyController;
 use App\Modules\Settings\Credentials\TokenUpdateController;
 use App\Modules\Settings\Profile\ProfileController;
+use App\Modules\Settings\Sessions\SessionDestroyController;
+use App\Modules\Settings\Sessions\SessionsDestroyController;
 use App\Modules\Verification\VerificationNotificationController;
 use App\Modules\Verification\VerifyEmailController;
 use App\Routes\Auth;
@@ -24,6 +26,8 @@ Route::middleware(MiddlewareTag::verified->value)->group(function () {
     Route::post(Auth::confirmPassword->value, PasswordConfirmationController::class)
         ->middleware('throttle:6,1');
     Route::post(Auth::settingsProfile->value, ProfileController::class);
+    Route::delete(Auth::settingsSessions->value, SessionsDestroyController::class);
+    Route::delete(Auth::settingsSession->value, SessionDestroyController::class);
     Route::post(Auth::settingsSecurity->value, PasswordController::class);
     Route::post(Auth::settingsCredentials->value, TokenController::class);
     Route::post(Auth::settingsCredential->value, TokenUpdateController::class);

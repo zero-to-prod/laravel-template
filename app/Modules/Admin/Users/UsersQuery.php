@@ -2,7 +2,9 @@
 
 namespace App\Modules\Admin\Users;
 
+use App\Models\Session;
 use App\Models\User;
+use App\Sources\Db\App\Sessions;
 use App\Sources\Db\App\Users;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -14,7 +16,13 @@ class UsersQuery
     /** @return LengthAwarePaginator<int, User> */
     public static function get(UsersRequest $UsersRequest): LengthAwarePaginator
     {
-        $Builder = User::query()->with('oauthProviders');
+        $Builder = User::query()
+            ->with('oauthProviders')
+            ->addSelect([
+                'last_session_at' => Session::query()
+                    ->selectRaw('MAX('.Sessions::last_activity->value.')')
+                    ->whereColumn(Sessions::user_id->value, Users::table().'.'.Users::id->value),
+            ]);
 
         if ($UsersRequest->searching()) {
             $term = '%'.addcslashes($UsersRequest->search, '%_\\').'%';

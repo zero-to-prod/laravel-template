@@ -21,7 +21,21 @@ test('route is accessible', function (): void {
     $this->get(Web::login->value)
         ->assertOk()
         ->assertSee(Web::googleRedirect->value)
-        ->assertSee('Google');
+        ->assertSee('Google')
+        ->assertSee('Remember me')
+        ->assertSeeHtml('name="'.LoginForm::remember_token.'"');
+});
+
+test('remember me selection is preserved after validation fails', function (): void {
+    $Response = $this->from(Web::login->value)
+        ->followingRedirects()
+        ->post(Web::login->value, [
+            ...LoginFormFactory::factory()->set([LoginForm::email => ''])->context(),
+            LoginForm::remember_token => true,
+        ]);
+
+    $Response->assertOk();
+    expect($Response->getContent())->toMatch('/<input(?=[^>]*name="remember_token")(?=[^>]*checked)[^>]*>/');
 });
 
 test('google login redirects to google', function (): void {

@@ -107,7 +107,7 @@ test('the form carries the ordering forward so a search does not reset it', func
 });
 
 test('the span covers every column and the actions beside them', function (): void {
-    expect(usersTable()->span())->toBe(count(UsersTable::columns()) + 1);
+    expect(usersTable()->span())->toBe(count(UsersTable::columns()) + 2);
 });
 
 test('an empty page summarises as nothing at all', function (): void {

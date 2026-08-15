@@ -24,7 +24,7 @@ class ScaffoldEndpoint extends Tool
 
         What the convention derives is written finished. What needs a decision — the behaviour of the
         action, the values a test asserts, the state an error status is reached from — is written as a
-        `@todo`, which `composer check` reports until it is resolved.
+        a pending-work marker, which `composer check` reports until it is resolved.
 
         Declare only the statuses you will also write a test for: a declared response no test reaches
         fails `openapi:coverage`, while one that is never reached and never declared is silent.

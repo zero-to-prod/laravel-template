@@ -18,11 +18,14 @@ enum Auth: string
     use RendersRoute;
 
     public const string credentialParameter = 'credential';
+    public const string sessionParameter = 'session';
 
     case dashboard = '/dashboard';
     case confirmPassword = '/confirm-password';
     case settings = '/settings';
     case settingsProfile = '/settings/profile';
+    case settingsSessions = '/settings/sessions';
+    case settingsSession = '/settings/sessions/{'.self::sessionParameter.'}';
     case settingsSecurity = '/settings/security';
     case settingsCredentials = '/settings/credentials';
     case settingsCredential = '/settings/credentials/{'.self::credentialParameter.'}';

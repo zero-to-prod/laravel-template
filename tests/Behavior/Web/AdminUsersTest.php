@@ -2,18 +2,18 @@
 
 use App\Helpers\OauthProviderId;
 use App\Helpers\SortDirection;
+use App\Models\Session;
 use App\Models\User;
 use App\Modules\Admin\Users\UsersQuery;
 use App\Modules\Admin\Users\UsersRequest;
 use App\Routes\Admin;
 use App\Routes\Web;
 use App\Sources\Db\App\OauthProviders;
+use App\Sources\Db\App\Sessions;
 use App\Sources\Db\App\Users;
 use App\View\DataModels\UsersTable;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Request;
-// TODO: do not use Illuminate\Support\Facades\DB
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /** @param  array<string, string|int>  $query */
@@ -44,10 +44,26 @@ test('the page lists a user', function (): void {
         ->assertSee($User->email);
 });
 
+test('the page lists each users last session time', function (): void {
+    $User = User::factory()->createOne();
+    $lastSessionAt = now()->subHour()->startOfSecond();
+    Session::query()->create([
+        Sessions::id->value => 'listed-user-session',
+        Sessions::user_id->value => $User->id,
+        Sessions::payload->value => 'payload',
+        Sessions::last_activity->value => $lastSessionAt->timestamp,
+    ]);
+
+    $this->actingAs(adminUser())
+        ->get(Admin::users->value)
+        ->assertOk()
+        ->assertSee('Last session')
+        ->assertSee($lastSessionAt->toDayDateTimeString());
+});
+
 test('the page queries its user table once', function (): void {
     $queries = [];
-    // TODO: do not use Illuminate\Support\Facades\DB
-    DB::listen(static function (QueryExecuted $QueryExecuted) use (&$queries): void {
+    User::resolveConnection()->listen(static function (QueryExecuted $QueryExecuted) use (&$queries): void {
         $queries[] = $QueryExecuted->sql;
     });
 

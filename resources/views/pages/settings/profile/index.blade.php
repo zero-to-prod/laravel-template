@@ -38,4 +38,5 @@ Head::title('Profile')
         </x-text-input>
         <button class="btn btn-primary">Save</button>
     </form>
+
 </x-settings-card>

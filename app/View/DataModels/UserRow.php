@@ -45,6 +45,11 @@ readonly class UserRow
     #[Describe([Describe::default => null])]
     public ?string $created_at;
 
+    public const string last_session_at = 'last_session_at';
+
+    #[Describe([Describe::default => null])]
+    public ?int $last_session_at;
+
     public function editUrl(): string
     {
         return Admin::user->url([Admin::userParameter => $this->id]);
@@ -63,7 +68,19 @@ readonly class UserRow
     /** @return list<string> */
     public function cells(): array
     {
-        return array_map(fn (Users $Column): string => $this->cell($Column), UsersTable::columns());
+        return [
+            ...array_map(fn (Users $Column): string => $this->cell($Column), UsersTable::columns()),
+            $this->lastSession(),
+        ];
+    }
+
+    public function lastSession(): string
+    {
+        $timestamp = $this->collect()->get(self::last_session_at);
+
+        return is_numeric($timestamp)
+            ? Carbon::createFromTimestamp((int) $timestamp)->toDayDateTimeString()
+            : '—';
     }
 
     public function cell(Users $Users): string

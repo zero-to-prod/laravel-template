@@ -11,6 +11,9 @@ enum AdminNav
     #[NavItem([NavItem::label => 'Users', NavItem::icon => SvgName::user, NavItem::route => Admin::users])]
     case users;
 
+    #[NavItem([NavItem::label => 'Sessions', NavItem::icon => SvgName::desktop, NavItem::route => Admin::sessions])]
+    case sessions;
+
     #[NavItem([NavItem::label => 'Content', NavItem::icon => SvgName::document, NavItem::route => Admin::content])]
     case content;
 

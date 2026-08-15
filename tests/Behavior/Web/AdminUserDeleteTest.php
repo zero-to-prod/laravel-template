@@ -3,14 +3,13 @@
 use App\Helpers\OauthProviderId;
 use App\Helpers\Role;
 use App\Models\OauthProvider;
+use App\Models\Session;
 use App\Models\User;
 use App\Modules\Admin\Users\Delete\UserDeleteController;
 use App\Routes\Admin;
 use App\Routes\Web;
 use App\Sources\Db\App\OauthProviders;
 use App\Sources\Db\App\Users;
-// TODO: do not use Illuminate\Support\Facades\DB
-use Illuminate\Support\Facades\DB;
 
 function userDeleteUrl(string $userId): string
 {
@@ -138,13 +137,11 @@ test('deleting a user cascades every related record', function (): void {
     $User->assignRole(Role::admin->value);
     $Token = $User->createToken('Delete me');
 
-    // TODO: do not use Illuminate\Support\Facades\DB
-    DB::table('password_reset_tokens')->insert([
+    User::query()->getConnection()->table('password_reset_tokens')->insert([
         Users::email->value => $User->email,
         'token' => 'hashed-token',
     ]);
-    // TODO: do not use Illuminate\Support\Facades\DB
-    DB::table('sessions')->insert([
+    Session::query()->create([
         'id' => 'user-session',
         'user_id' => $User->id,
         'payload' => 'payload',

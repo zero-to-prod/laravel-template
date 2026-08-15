@@ -4,10 +4,17 @@ use App\Models\User;
 use App\Routes\Auth;
 use App\Routes\Web;
 use App\View\DataModels\LeftNav;
+use App\View\DataModels\NavItem;
 
 test('the rail links to home', function (): void {
     expect(LeftNav::items())->toHaveCount(1)
         ->and(LeftNav::items()[0]->route)->toBe(Web::home);
+});
+
+test('every case describes one navigation item', function (): void {
+    foreach (LeftNav::cases() as $LeftNav) {
+        expect($LeftNav->item())->toBeInstanceOf(NavItem::class);
+    }
 });
 
 test('the rail is shown to an authenticated user', function (): void {
