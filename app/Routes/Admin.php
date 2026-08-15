@@ -27,6 +27,8 @@ enum Admin: string
     case index = self::prefix;
     case links = self::prefix.'/links';
     case logs = self::prefix.'/logs';
+    #[AdminLink]
+    case openapi = self::prefix.'/openapi.json';
     case users = self::prefix.'/users';
     case user = self::prefix.'/users/{'.self::userParameter.'}';
     case userProvider = self::prefix.'/users/{'.self::userParameter.'}/providers/{'.self::providerParameter.'}';

@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use App\Modules\Api\Authenticated\AuthenticatedResponse;
+use App\Modules\Api\Public\Authenticated\AuthenticatedResponse;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\ApiRoute;
 use Laravel\Sanctum\Sanctum;

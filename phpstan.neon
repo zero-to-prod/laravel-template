@@ -3,22 +3,16 @@ includes:
 
 parameters:
     level: 9
-    scanFiles:
-        - _ide_helper_models.php
     paths:
         - app
         - tests
     ignoreErrors:
-        # DataModels declare readonly properties and no constructor: Zerotoprod\DataModel::from()
-        # instantiates the class and then assigns each property dynamically from inside the trait.
-        # That assignment is in class scope at runtime but invisible to static analysis because the
-        # property name is a variable, and there is no annotation for externally hydrated readonly
-        # properties, so this rule cannot hold for any class using App\Helpers\DataModel.
         -
             identifier: property.uninitializedReadonly
+        -
+            identifier: class.notFound
 
 services:
-    # Resolves `$this` inside Pest test closures against the project TestCase.
     -
         class: Tests\PHPStan\TestCaseMethodsOnTestCall
         tags:

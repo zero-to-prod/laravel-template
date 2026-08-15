@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Api\Readme;
+namespace App\Modules\Api\Public\Readme;
 
 use App\Modules\Api\Support\DescribesOperation;
 use App\Modules\Api\Support\SharedSchema;

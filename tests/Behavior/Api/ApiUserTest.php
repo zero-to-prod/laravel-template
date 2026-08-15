@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Api\Public\User\Show\UserShowResponse;
 use App\Modules\Api\Support\ApiResponse;
-use App\Modules\Api\User\Show\UserShowResponse;
 use App\Routes\ApiRoute;
 
 test('authenticated user can retrieve their details', function (): void {

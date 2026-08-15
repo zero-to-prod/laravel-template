@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Api\User\Show;
+namespace App\Modules\Api\Public\User\Show;
 
 use App\Helpers\DataModel;
 use App\Modules\Api\Support\HasResponseSchema;

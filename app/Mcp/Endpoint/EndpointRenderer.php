@@ -7,6 +7,7 @@ use App\Modules\Api\Support\ApiResponse;
 use App\Modules\Api\Support\DescribesOperation;
 use App\Modules\Api\Support\PaginationParameters;
 use App\Modules\Api\Support\PaginationResponse;
+use App\Modules\Api\Support\PublicApiSchema;
 use App\Modules\Api\Support\Response;
 use App\Modules\Api\Support\SharedSchema;
 use App\Routes\ApiRoute;
@@ -294,7 +295,7 @@ readonly class EndpointRenderer
 
     public function controller(): string
     {
-        $imports = [JsonResponse::class, 'ReflectionException', ApiSchema::class];
+        $imports = [JsonResponse::class, 'ReflectionException', PublicApiSchema::class];
         $takesRequest = $this->Blueprint->hasBody() || $this->Blueprint->declaresUnauthorized() || $this->Blueprint->paginated;
 
         if ($takesRequest) {
@@ -328,7 +329,7 @@ readonly class EndpointRenderer
             <<<'PHP'
                 readonly class %s
                 {
-                    #[ApiSchema(static function (): array {
+                    #[PublicApiSchema(static function (): array {
                         return %s::schema();
                     })]
                     public function __invoke(%s): JsonResponse

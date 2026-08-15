@@ -1,6 +1,6 @@
 <?php
 
-use App\Modules\Api\User\Show\UserShowController;
+use App\Modules\Api\Public\User\Show\UserShowController;
 use App\Routes\ApiRoute;
 use Illuminate\Support\Facades\Route;
 

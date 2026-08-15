@@ -6,9 +6,11 @@ use App\Helpers\Role;
 use App\Helpers\Theme;
 use App\Models\PersonalAccessToken;
 use App\Models\User;
+use App\Modules\Api\Support\SchemaController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Head\Enums\Media;
@@ -31,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerOpenApiSchemas();
+
         LogViewer::auth(static function (Request $request): bool {
             $User = $request->user();
 
@@ -52,5 +56,20 @@ class AppServiceProvider extends ServiceProvider
             ->og(type: OgType::Website, siteName: $name)
             ->twitter(card: TwitterCard::Summary)
             ->searchableByRobots());
+    }
+
+    private function registerOpenApiSchemas(): void
+    {
+        /** @var array<string, array{route?: array{uri?: string, name?: string, middleware?: list<string>}}> $schemas */
+        $schemas = Config::array('openapi.schemas', []);
+
+        foreach ($schemas as $schema => $configuration) {
+            $route = $configuration['route'] ?? [];
+
+            Route::middleware($route['middleware'] ?? [])
+                ->get($route['uri'] ?? "$schema/openapi.json", SchemaController::class)
+                ->defaults('schema', $schema)
+                ->name($route['name'] ?? "openapi.$schema");
+        }
     }
 }

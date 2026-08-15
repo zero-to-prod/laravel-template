@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Modules\Api\Readme;
+namespace App\Modules\Api\Public\Readme;
 
+use App\Modules\Api\Support\PublicApiSchema;
 use Illuminate\Http\JsonResponse;
-use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class ReadmeController
 {
-    #[ApiSchema(static function (): array {
+    #[PublicApiSchema(static function (): array {
         return ReadmeSchema::schema();
     })]
     public function __invoke(): JsonResponse

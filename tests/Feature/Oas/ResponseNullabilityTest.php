@@ -1,9 +1,9 @@
 <?php
 
-use App\Modules\Api\Authenticated\AuthenticatedResponse;
+use App\Modules\Api\Public\Authenticated\AuthenticatedResponse;
+use App\Modules\Api\Public\User\Show\UserShowResponse;
 use App\Modules\Api\Support\HasResponseSchema;
 use App\Modules\Api\Support\PaginationResponse;
-use App\Modules\Api\User\Show\UserShowResponse;
 
 // `HasResponseSchema` publishes every declared field as required, so a nullable
 // one is `required` plus `nullable: true`: always present, sometimes null.

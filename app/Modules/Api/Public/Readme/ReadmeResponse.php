@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Api\Readme;
+namespace App\Modules\Api\Public\Readme;
 
 use App\Helpers\DataModel;
 use App\Modules\Api\Support\HasResponseSchema;

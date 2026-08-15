@@ -113,7 +113,7 @@ test('a paginated index declares the query parameters and a pagination object', 
         ...scaffoldArguments(),
         'paginated' => true,
         'response_fields' => [
-            ['name' => 'widgets', 'type' => 'array', 'items_of' => 'App\Modules\Api\User\Show\UserShowResponse'],
+            ['name' => 'widgets', 'type' => 'array', 'items_of' => 'App\Modules\Api\Public\User\Show\UserShowResponse'],
         ],
     ])->assertOk()
         ->assertSee("'parameters' => [...PaginationParameters::schema()],")
@@ -134,9 +134,9 @@ test('a templated segment with no parameter is refused', function (): void {
 test('a module that is already there is not overwritten', function (): void {
     TemplateServer::tool(ScaffoldEndpoint::class, [
         ...scaffoldArguments(),
-        'module' => 'User/Show',
+        'module' => 'Public/User/Show',
         'class_prefix' => 'UserShow',
         'dry_run' => false,
     ])->assertHasErrors()
-        ->assertSee('app/Modules/Api/User/Show/UserShowResponse.php');
+        ->assertSee('app/Modules/Api/Public/User/Show/UserShowResponse.php');
 });

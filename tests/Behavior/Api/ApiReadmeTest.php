@@ -1,6 +1,6 @@
 <?php
 
-use App\Modules\Api\Readme\ReadmeResponse;
+use App\Modules\Api\Public\Readme\ReadmeResponse;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\ApiRoute;
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Modules\Api\User\Show;
+namespace App\Modules\Api\Public\User\Show;
 
 use App\Models\User;
+use App\Modules\Api\Support\PublicApiSchema;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class UserShowController
 {
-    #[ApiSchema(static function (): array {
+    #[PublicApiSchema(static function (): array {
         return UserShowSchema::schema();
     })]
     public function __invoke(Request $Request): JsonResponse

@@ -1,6 +1,7 @@
 <?php
 
 use App\AppConfig;
+use App\Routes\Admin;
 use App\Routes\AdminLink;
 use App\Routes\ApiRoute;
 use App\Routes\Auth;
@@ -39,6 +40,7 @@ test('the documents an admin reads are listed', function (): void {
         Web::sitemap->value,
         Web::openapi->value,
         ApiRoute::readme->value,
+        Admin::openapi->value,
     );
 });
 

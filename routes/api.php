@@ -1,7 +1,7 @@
 <?php
 
-use App\Modules\Api\Authenticated\AuthenticatedController;
-use App\Modules\Api\Readme\ReadmeController;
+use App\Modules\Api\Public\Authenticated\AuthenticatedController;
+use App\Modules\Api\Public\Readme\ReadmeController;
 use App\Routes\ApiRoute;
 use Illuminate\Support\Facades\Route;
 

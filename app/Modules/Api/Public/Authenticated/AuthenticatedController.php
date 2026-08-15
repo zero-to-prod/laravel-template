@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Modules\Api\Authenticated;
+namespace App\Modules\Api\Public\Authenticated;
 
+use App\Modules\Api\Support\PublicApiSchema;
 use Illuminate\Http\JsonResponse;
-use ZeroToProd\LaravelOpenapi\ApiSchema;
 
 readonly class AuthenticatedController
 {
-    #[ApiSchema(static function (): array {
+    #[PublicApiSchema(static function (): array {
         return AuthenticatedSchema::schema();
     })]
     public function __invoke(): JsonResponse
