@@ -90,6 +90,15 @@ class AbilityQuery
     }
 
     /** @return list<string> */
+    public static function getAbilities(): array
+    {
+        return array_values(array_filter(
+            self::abilities(),
+            static fn (string $ability): bool => str_starts_with($ability, HttpVerb::get->value.HttpVerb::separator),
+        ));
+    }
+
+    /** @return list<string> */
     private static function bound(): array
     {
         $bound = [];

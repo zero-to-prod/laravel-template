@@ -3,6 +3,7 @@
 namespace App\Modules\Settings\Credentials;
 
 use App\Models\User;
+use App\Modules\Api\Support\AbilityQuery;
 use App\View\DataModels\CredentialsTable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,7 +23,11 @@ readonly class TokenController
         }
 
         $NewAccessToken = User::authenticated($Request)
-            ->createToken($TokenRequest->name, expiresAt: $TokenRequest->expiresAt());
+            ->createToken(
+                $TokenRequest->name,
+                AbilityQuery::getAbilities(),
+                $TokenRequest->expiresAt(),
+            );
 
         return back()
             ->with(CredentialsTable::sessionKey, $NewAccessToken->plainTextToken)

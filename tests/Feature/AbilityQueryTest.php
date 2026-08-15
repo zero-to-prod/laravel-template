@@ -48,6 +48,13 @@ test('the grantable abilities are every verb of every path it offers', function 
         ->and($abilities)->toContain(HttpVerb::get->ability(ApiRoute::user->value));
 });
 
+test('the default abilities contain only GET requests', function (): void {
+    $abilities = AbilityQuery::getAbilities();
+
+    expect($abilities)->not->toBeEmpty()
+        ->and(array_filter($abilities, static fn (string $ability): bool => str_starts_with($ability, HttpVerb::get->value.HttpVerb::separator)))->toBe($abilities);
+});
+
 test('admin api abilities are available only to an administrator', function (): void {
     expect(array_keys(AbilityQuery::groups()))->toBe(['public']);
 

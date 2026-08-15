@@ -1,7 +1,10 @@
 <?php
 
+use App\Helpers\HttpVerb;
 use App\Models\User;
 use App\Modules\Settings\Credentials\TokenForm;
+use App\Routes\Admin;
+use App\Routes\ApiRoute;
 use App\Routes\Auth;
 use App\Routes\Web;
 use App\Sources\Db\App\PersonalAccessTokens;
@@ -42,7 +45,7 @@ test('the page lists the tokens of the authenticated user only', function (): vo
         ->assertDontSee('Theirs');
 });
 
-test('a token is created with every ability and no expiry', function (): void {
+test('a token is created with only public GET abilities and no expiry', function (): void {
     $User = User::factory()->createOne();
 
     $this->actingAs($User)
@@ -55,8 +58,23 @@ test('a token is created with every ability and no expiry', function (): void {
     $Token = $User->tokens()->sole();
 
     expect($Token->name)->toBe('Laptop CLI')
-        ->and($Token->abilities)->toBe(['*'])
+        ->and($Token->abilities)->toBe([HttpVerb::get->ability(ApiRoute::user->value)])
         ->and($Token->expires_at)->toBeNull();
+});
+
+test('an administrator token is created with only GET abilities across every api', function (): void {
+    $User = adminUser();
+
+    $this->actingAs($User)
+        ->post(Auth::settingsCredentials->value, [TokenForm::name => 'Admin CLI'])
+        ->assertSessionHasNoErrors();
+
+    $abilities = $User->tokens()->sole()->abilities ?? [];
+
+    expect($abilities)
+        ->toContain(HttpVerb::get->ability(ApiRoute::user->value))
+        ->toContain(HttpVerb::get->ability(Admin::api_users->value))
+        ->and(array_filter($abilities, static fn (string $ability): bool => str_starts_with($ability, HttpVerb::get->value.HttpVerb::separator)))->toBe($abilities);
 });
 
 test('the secret is rendered on the redirect it was flashed to, and never again', function (): void {
