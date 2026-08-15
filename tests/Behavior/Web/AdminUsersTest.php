@@ -10,7 +10,9 @@ use App\Routes\Web;
 use App\Sources\Db\App\OauthProviders;
 use App\Sources\Db\App\Users;
 use App\View\DataModels\UsersTable;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /** @param  array<string, string|int>  $query */
@@ -39,6 +41,27 @@ test('the page lists a user', function (): void {
         ->assertSee('Users')
         ->assertSee($User->name)
         ->assertSee($User->email);
+});
+
+test('the page queries its user table once', function (): void {
+    $queries = [];
+    DB::listen(static function (QueryExecuted $QueryExecuted) use (&$queries): void {
+        $queries[] = $QueryExecuted->sql;
+    });
+
+    $this->actingAs(adminUser())
+        ->get(Admin::users->value)
+        ->assertOk();
+
+    expect(collect($queries)->filter(
+        static fn (string $query): bool => str_contains($query, 'count(*) as `aggregate` from `users`'),
+    ))->toHaveCount(1)
+        ->and(collect($queries)->filter(
+            static fn (string $query): bool => str_contains($query, 'from `users` order by'),
+        ))->toHaveCount(1)
+        ->and(collect($queries)->filter(
+            static fn (string $query): bool => str_contains($query, 'from `oauth_providers`'),
+        ))->toHaveCount(1);
 });
 
 test('the page displays the users oauth avatar', function (): void {
