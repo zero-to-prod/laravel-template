@@ -28,7 +28,10 @@ test('an unauthenticated request is rejected', function (): void {
 test('large duplicated context is excluded unless it is requested', function (): void {
     $User = adminUser();
     $path = storage_path('logs/admin-api-index.log');
-    file_put_contents($path, "[2026-08-15 00:00:00] local.ERROR: compact response {\"exception\":\"stack trace\",\"request_id\":\"123\"}\n");
+    file_put_contents($path, implode('', [
+        "[2026-08-15 00:00:00] local.ERROR: compact response {\"exception\":\"stack trace\",\"request_id\":\"123\"}\n",
+        "[2026-08-15 00:01:00] local.ERROR: empty context {\"exception\":\"second stack trace\"}\n",
+    ]));
     LogViewer::clearFileCache();
     $File = LogViewer::getFiles()->firstWhere('path', $path);
     expect($File)->toBeInstanceOf(LogFile::class);
@@ -37,11 +40,11 @@ test('large duplicated context is excluded unless it is requested', function ():
     try {
         $CompactResponse = $this->actingAs($User)->getJson(Admin::api_logs->value.'?'.http_build_query([
             'file' => $identifier,
-            'per_page' => 1,
+            'per_page' => 2,
         ]));
         $FullResponse = $this->actingAs($User)->getJson(Admin::api_logs->value.'?'.http_build_query([
             'file' => $identifier,
-            'per_page' => 1,
+            'per_page' => 2,
             'include_context' => true,
         ]));
     } finally {
@@ -50,9 +53,12 @@ test('large duplicated context is excluded unless it is requested', function ():
 
     $CompactResponse->assertOk()
         ->assertJsonMissingPath('data.logs.0.full_text')
-        ->assertJsonMissingPath('data.logs.0.context.exception')
-        ->assertJsonPath('data.logs.0.context.request_id', '123');
+        ->assertJsonMissingPath('data.logs.0.context')
+        ->assertJsonMissingPath('data.logs.1.context.exception')
+        ->assertJsonPath('data.logs.1.context.request_id', '123');
     $FullResponse->assertOk()
-        ->assertJsonPath('data.logs.0.full_text', 'compact response')
-        ->assertJsonPath('data.logs.0.context.exception', 'stack trace');
+        ->assertJsonPath('data.logs.0.full_text', 'empty context')
+        ->assertJsonPath('data.logs.0.context.exception', 'second stack trace')
+        ->assertJsonPath('data.logs.1.full_text', 'compact response')
+        ->assertJsonPath('data.logs.1.context.exception', 'stack trace');
 });

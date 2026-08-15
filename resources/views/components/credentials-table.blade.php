@@ -5,13 +5,18 @@
 @endphp
 <div class="mt-6 flex flex-col gap-4">
     @if($CredentialsTable->issued)
-        <div role="alert" class="alert alert-success alert-vertical items-start">
-            <div>
-                <p class="font-medium">Copy your new token now.</p>
-                <p class="text-sm opacity-80">It is shown once and cannot be recovered.</p>
+        <dialog class="modal" data-token-dialog>
+            <div class="modal-box">
+                <h2 class="text-lg font-semibold">Copy your new token now.</h2>
+                <p class="mt-2 text-sm text-base-content/70">It is shown once and cannot be recovered.</p>
+                <code class="mt-5 block w-full break-all rounded-box bg-base-200 p-4 font-mono text-sm text-base-content" data-token-value>{{ $CredentialsTable->issued }}</code>
+                <div class="modal-action">
+                    <button type="button" class="btn btn-ghost" data-token-dialog-close>Close</button>
+                    <button type="button" class="btn btn-primary" data-copy-token>Copy token</button>
+                </div>
             </div>
-            <code class="w-full break-all rounded-box bg-base-100 p-3 font-mono text-sm text-base-content">{{ $CredentialsTable->issued }}</code>
-        </div>
+            <form method="dialog" class="modal-backdrop"><button>Close</button></form>
+        </dialog>
     @endif
 
     <form method="POST" action="{{ $CredentialsTable->action() }}" class="flex flex-wrap items-end gap-2">

@@ -93,6 +93,8 @@ test('the secret is rendered on the redirect it was flashed to, and never again'
     $this->get(Auth::settingsCredentials->value)
         ->assertOk()
         ->assertSee('Copy your new token now.')
+        ->assertSee('data-token-dialog', false)
+        ->assertSee('data-copy-token', false)
         ->assertSee($secret);
 
     $this->get(Auth::settingsCredentials->value)

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Api\Admin\LogInvestigation\AdminLogInvestigationController;
 use App\Modules\Api\Admin\User\Delete\AdminUserDeleteController;
 use App\Modules\Api\Admin\User\Index\AdminUserIndexController;
 use App\Modules\Api\Admin\User\Show\AdminUserShowController;
@@ -33,6 +34,7 @@ Route::get(Admin::api_logs_files->value, AdminLogFileIndexController::class);
 Route::post(Admin::api_logs_clear_cache_all->value, AdminLogClearCacheAllController::class);
 Route::post(Admin::api_logs_delete_multiple_files->value, AdminLogDeleteMultipleFilesController::class);
 Route::get(Admin::api_logs->value, AdminLogIndexController::class);
+Route::get(Admin::api_logs_investigate->value, AdminLogInvestigationController::class);
 Route::delete(Admin::api_logs_folder->value, AdminLogFolderDeleteController::class);
 Route::get(Admin::api_logs_folder_download_request->value, AdminLogFolderDownloadRequestController::class);
 Route::get(Admin::api_logs_folder_download->value, AdminLogFolderDownloadController::class);

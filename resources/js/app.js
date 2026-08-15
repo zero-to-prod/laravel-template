@@ -28,6 +28,8 @@ document.querySelectorAll('[data-toast][data-autodismiss]').forEach((toast) => {
     setTimeout(() => dismissToast(toast), Number(toast.dataset.autodismiss));
 });
 
+document.querySelector('[data-token-dialog]')?.showModal();
+
 document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-dismiss-toast]');
 
@@ -43,6 +45,23 @@ document.addEventListener('click', (event) => {
 
     if (event.target.closest('[data-delete-dialog-close]')) {
         event.target.closest('[data-delete-dialog]')?.close();
+    }
+
+    if (event.target.closest('[data-token-dialog-close]')) {
+        event.target.closest('[data-token-dialog]')?.close();
+    }
+
+    const copyToken = event.target.closest('[data-copy-token]');
+
+    if (copyToken) {
+        const token = copyToken.closest('[data-token-dialog]')?.querySelector('[data-token-value]')?.textContent.trim();
+
+        if (token) {
+            navigator.clipboard.writeText(token).then(() => {
+                copyToken.textContent = 'Copied';
+                copyToken.disabled = true;
+            });
+        }
     }
 
     const abilityColumn = event.target.closest('[data-ability-column]');

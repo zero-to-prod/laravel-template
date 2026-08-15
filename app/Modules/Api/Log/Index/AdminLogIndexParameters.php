@@ -7,7 +7,10 @@ use ZeroToProd\LaravelOpenapi\ApiSchema;
 use ZeroToProd\SchemaValidator\Property;
 use ZeroToProd\SchemaValidator\Schema;
 
-/** @phpstan-import-type Parameter from ApiSchema */
+/**
+ * @phpstan-import-type OpenApiSchema from ApiSchema
+ * @phpstan-import-type Parameter from ApiSchema
+ */
 readonly class AdminLogIndexParameters
 {
     public const string include_context = 'include_context';
@@ -54,7 +57,7 @@ readonly class AdminLogIndexParameters
     }
 
     /**
-     * @param  array<string, mixed>  $schema
+     * @param  OpenApiSchema  $schema
      * @return Parameter
      */
     private static function parameter(string $name, string $description, array $schema): array

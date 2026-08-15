@@ -25,6 +25,7 @@ enum Admin: string
     public const string providerParameter = 'provider';
 
     case api_logs = self::prefix.'/api/logs';
+    case api_logs_investigate = self::prefix.'/api/logs/investigate';
     case api_logs_clear_cache_all = self::prefix.'/api/logs/clear-cache-all';
     case api_logs_delete_multiple_files = self::prefix.'/api/logs/delete-multiple-files';
     case api_logs_file = self::prefix.'/api/logs/files/{file_identifier}';
