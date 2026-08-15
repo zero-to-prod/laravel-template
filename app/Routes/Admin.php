@@ -26,6 +26,7 @@ enum Admin: string
 
     case api_user = self::prefix.'/api/users/{user}';
     case api_users = self::prefix.'/api/users';
+    case content = self::prefix.'/content';
     case index = self::prefix;
     case links = self::prefix.'/links';
     case logs = self::prefix.'/logs';

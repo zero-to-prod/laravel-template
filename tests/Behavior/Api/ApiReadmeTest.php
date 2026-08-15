@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\CacheKey;
 use App\Modules\Api\Public\Readme\ReadmeResponse;
 use App\Modules\Api\Support\ApiResponse;
 use App\Routes\ApiRoute;
@@ -14,19 +15,12 @@ test('readme is served without a token', function (): void {
         ])
         ->assertJsonPath(
             ApiResponse::data.'.'.ReadmeResponse::content,
-            (string) file_get_contents(resource_path('api-readme.md'))
+            (string) file_get_contents(resource_path(CacheKey::api_readme->value))
         );
 });
 
-// The readme tours the endpoints by path, so a new route silently makes it wrong. The
-// enum is the only place a path is spelled, which makes it the thing to check against.
-test('the readme mentions every api path', function (): void {
-    $readme = (string) file_get_contents(resource_path('api-readme.md'));
+test('the readme points to the current API contract', function (): void {
+    $readme = (string) file_get_contents(resource_path(CacheKey::api_readme->value));
 
-    $missing = array_values(array_filter(
-        ApiRoute::cases(),
-        static fn (ApiRoute $Route): bool => ! str_contains($readme, $Route->value),
-    ));
-
-    expect(array_map(static fn (ApiRoute $Route): string => $Route->value, $missing))->toBeArray();
+    expect($readme)->toContain('/openapi.json');
 });

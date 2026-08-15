@@ -7,11 +7,21 @@ use App\Helpers\SvgName;
 use App\Routes\Admin;
 use App\Routes\Auth;
 use App\Routes\Web;
+use Attribute;
 use Zerotoprod\DataModel\Describe;
 
+#[Attribute(Attribute::TARGET_CLASS_CONSTANT)]
 readonly class NavItem
 {
     use DataModel;
+
+    /** @param  array<string, mixed>  $attributes */
+    public function __construct(array $attributes = [])
+    {
+        if ($attributes !== []) {
+            self::from($attributes, $this);
+        }
+    }
 
     public const string label = 'label';
 

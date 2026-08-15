@@ -1,7 +1,7 @@
 # API
 
-A JSON API authenticated with bearer tokens. Every path below is relative to `/api`,
-every request and response body is `application/json`, and
+A JSON API authenticated with bearer tokens. API paths are relative to `/api`,
+request and response bodies are `application/json`, and
 [/openapi.json](/openapi.json) is the generated contract.
 
 ## The envelope
@@ -11,9 +11,9 @@ Every response the API produces is the same object:
 ```json
 {
   "success": true,
-  "message": "UserShowResponse",
+  "message": "ResourceResponse",
   "data": {},
-  "type": "UserShowResponse"
+  "type": "ResourceResponse"
 }
 ```
 
@@ -48,8 +48,8 @@ issues or revokes one. Tokens default to all abilities and no expiry.
 
 ## Abilities
 
-An ability is one method reaching one path, written `GET:/api/user` — the path exactly as
-the document keys it, so a templated segment stays templated: `DELETE:/api/widgets/{widget}`.
+An ability is one method reaching one path, written `GET:/api/resource` — the path exactly as
+the document keys it, so a templated segment stays templated: `DELETE:/api/resources/{resource}`.
 A token granted `*` reaches everything, which is what a token is issued with unless you
 say otherwise.
 
@@ -59,5 +59,4 @@ or validated. Abilities are set on a token when it is issued, and changed afterw
 the web UI under Settings → Credentials, where each token has a grid of every endpoint
 against every method it answers.
 
-`GET /api/authenticated` reports whether the token you sent is currently accepted.
-
+Consult the OpenAPI document for the current endpoints and the abilities they require.

@@ -58,6 +58,7 @@ test('the status toast carries a dismiss control', function (): void {
         ->getContent();
 
     expect($content)->toContain('data-toast')
+        ->and($content)->toContain('data-autodismiss="5000"')
         ->and($content)->toContain('data-dismiss-toast')
         ->and($content)->toContain('aria-label="Dismiss"');
 });

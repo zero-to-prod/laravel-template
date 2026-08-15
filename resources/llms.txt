@@ -1,21 +1,17 @@
-# Laravel Template
+# Application
 
-> An opinionated Laravel template for JSON APIs. Its OpenAPI document is generated from the code and enforced by the test suite, so the document is the contract rather than a description of one.
+> The public website and API for this application.
 
 Read [/openapi.json](/openapi.json) first: it is machine-readable, always current, and
-covers every path, request body, response and error shape. The notes below are the
-conventions that document does not state.
+covers every available path, request body, response, and error shape.
 
 - Every response is an envelope — `{"type": ..., "message": ..., "data": {...}}` — where
   `type` names the response object. Errors use the same envelope, except a 401 raised by
   the authentication middleware, which is a bare `{"message": ...}`.
-- Authentication is a Sanctum bearer token, sent as `Authorization: Bearer <token>`. There
-  is no login endpoint: the first token is issued from the web UI under Settings →
-  Credentials, and further tokens from `POST /api/user/tokens` once you hold one. A token
-  is shown once and stored hashed. Revoking is `DELETE /api/user/tokens/{token}`.
-- A token carries abilities, each one method reaching one path as the document keys it —
-  `GET:/api/user`, `DELETE:/api/cache/{key}` — or `*` for all of them, which is the
-  default. A method the token was not granted is refused with a 403 and
+- Authentication uses a bearer token, sent as `Authorization: Bearer <token>`. Tokens
+  are created and managed from the web UI under Settings → Credentials.
+- A token carries abilities, each one pairing an HTTP method with a documented path, or
+  `*` for all of them. A method the token was not granted is refused with a 403 and
   `missing_ability` before the endpoint runs.
 - A field documented as nullable may be null, never absent: every documented key is
   present in the body.
@@ -26,11 +22,3 @@ conventions that document does not state.
 
 - [OpenAPI document](/openapi.json): Every endpoint in full — paths, methods, request bodies, response schemas, and the statuses each operation can return.
 - [API readme](/api/readme): The prose tour — envelope, error shapes, token flow, and what each endpoint is for. Returns the standard envelope; the markdown is the `data.content` string.
-
-## Docs
-
-- [README](https://github.com/zero-to-prod/laravel-template/blob/main/README.md): What the template is and how to run it.
-
-## Optional
-
-- [Source repository](https://github.com/zero-to-prod/laravel-template): The template itself.

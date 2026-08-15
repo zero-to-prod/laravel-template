@@ -1,10 +1,25 @@
 import './bootstrap';
 
+const dismissToast = (toast) => {
+    if (! toast || toast.dataset.dismissing !== undefined) {
+        return;
+    }
+
+    toast.dataset.dismissing = '';
+    toast.classList.add('translate-y-2', 'opacity-0');
+    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+    setTimeout(() => toast.remove(), 300);
+};
+
+document.querySelectorAll('[data-toast][data-autodismiss]').forEach((toast) => {
+    setTimeout(() => dismissToast(toast), Number(toast.dataset.autodismiss));
+});
+
 document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-dismiss-toast]');
 
     if (button) {
-        button.closest('[data-toast]')?.remove();
+        dismissToast(button.closest('[data-toast]'));
     }
 
     const openDialog = event.target.closest('[data-delete-dialog-open]');
