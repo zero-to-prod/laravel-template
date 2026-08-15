@@ -45,7 +45,7 @@ Ranked; higher entries constrain lower.
 `app/Modules/Api/<Concept>[/<Sub>]/<Verb>/` holds four files:
 `<Concept><Verb>{Controller,Request,Response,Schema}`. Verbs: `Index`, `Show`,
 `Store`, `Update`, `Destroy`; `Request` omitted when there is no body. Canonical:
-[User/Show](app/Modules/Api/User/Show). Path parameters sit one level up,
+[Public/User/Show](app/Modules/Api/Public/User/Show). Path parameters sit one level up,
 beside the verbs, as a shared parameter class the scaffolder writes.
 Non-API modules are `app/Modules/<Concept>/` with `Controller` + `Request` +
 `Form` (+ `FormFactory`).
