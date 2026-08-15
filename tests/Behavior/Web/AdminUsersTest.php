@@ -12,6 +12,7 @@ use App\Sources\Db\App\Users;
 use App\View\DataModels\UsersTable;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Request;
+// TODO: do not use Illuminate\Support\Facades\DB
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -45,6 +46,7 @@ test('the page lists a user', function (): void {
 
 test('the page queries its user table once', function (): void {
     $queries = [];
+    // TODO: do not use Illuminate\Support\Facades\DB
     DB::listen(static function (QueryExecuted $QueryExecuted) use (&$queries): void {
         $queries[] = $QueryExecuted->sql;
     });
