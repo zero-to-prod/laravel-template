@@ -1,0 +1,317 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/*
+|------------------------------------------------------------------------------
+| Template initialisation
+|------------------------------------------------------------------------------
+|
+| Configure a new application created from this template. Run this once from
+| the repository root:
+|
+|     php init
+|
+| Edit TEMPLATE when the template's defaults change. Nothing is written until
+| the proposed values have been displayed and confirmed.
+|
+*/
+
+const TEMPLATE = [
+    'slug' => 'project',
+    'title' => 'Laravel Template',
+    'fallback_title' => 'Project',
+    'description' => 'An opinionated Laravel application.',
+    'url' => 'http://project.test',
+    'database' => 'app',
+    'admin_email' => 'admin@example.com',
+    'support_email' => 'hello@example.com',
+    'mcp_server' => 'TemplateServer',
+];
+
+const SKIP_DIRECTORIES = ['.git', '.idea', 'vendor', 'build', 'node_modules', 'storage'];
+const SKIP_FILES = ['init', 'composer.lock', 'package-lock.json', '.env', '.DS_Store'];
+
+$root = __DIR__;
+
+if (getcwd() !== $root || ! is_file($root.'/artisan') || ! is_file($root.'/composer.json')) {
+    fwrite(STDERR, "init: run this from the repository root.\n");
+
+    exit(1);
+}
+
+writeln('');
+writeln('  Laravel application template');
+writeln('  Press enter to accept the value in brackets.');
+
+$answers = [];
+
+do {
+    $answers = ask_all($root, $answers);
+    summarise($answers);
+} while (! confirm('Write these values', true));
+
+$changed = rewrite($root, replacements($answers), $answers);
+$renamed = rename_files($root, $answers);
+
+writeln('');
+writeln(sprintf('  Rewrote %d file%s, renamed %d.', $changed, $changed === 1 ? '' : 's', $renamed));
+
+if (confirm('Delete init', true)) {
+    remove_self($root);
+}
+
+writeln('');
+writeln('  Next:');
+writeln('');
+writeln('    composer update');
+writeln('    npm install');
+writeln('    php artisan key:generate');
+writeln('    composer check');
+writeln('');
+
+exit(0);
+
+/**
+ * @param  array<string, string>  $previous
+ * @return array<string, string>
+ */
+function ask_all(string $root, array $previous = []): array
+{
+    writeln('');
+
+    $was = static fn (string $key, string $fallback): string => $previous[$key] ?? $fallback;
+    $slug = slugify(ask('Project slug', $was('slug', slugify(basename($root)) ?: TEMPLATE['slug'])));
+    $title = ask('Application name', $was('title', titleise($slug)));
+    $organisation = slugify(ask('GitHub organisation', $was('organisation', slugify(git('config user.name')))));
+
+    return [
+        'slug' => $slug,
+        'title' => $title,
+        'description' => ask('Description', $was('description', TEMPLATE['description'])),
+        'url' => ask('Application URL', $was('url', 'http://'.$slug.'.test')),
+        'database' => database_name(ask('Database name', $was('database', str_replace('-', '_', $slug)))) ?: TEMPLATE['database'],
+        'admin_email' => ask('Admin email', $was('admin_email', TEMPLATE['admin_email'])),
+        'support_email' => ask('Support email', $was('support_email', git('config user.email') ?: TEMPLATE['support_email'])),
+        'organisation' => $organisation,
+        'author' => ask('Author name', $was('author', git('config user.name'))),
+        'author_email' => ask('Author email', $was('author_email', git('config user.email'))),
+        'mcp_server' => studly($title).'Server',
+    ];
+}
+
+/** @param array<string, string> $answers */
+function summarise(array $answers): void
+{
+    writeln('');
+    writeln('  This is what will be written:');
+    writeln('');
+
+    $rows = [
+        'Application' => $answers['title'],
+        'Slug' => $answers['slug'],
+        'Description' => $answers['description'],
+        'URL' => $answers['url'],
+        'Database' => $answers['database'],
+        'Admin email' => $answers['admin_email'],
+        'Support email' => $answers['support_email'],
+        'MCP server' => $answers['mcp_server'].' ('.$answers['slug'].')',
+        'Repository' => repository($answers),
+        'Author' => author($answers),
+    ];
+
+    foreach ($rows as $label => $value) {
+        writeln(sprintf('    %-15s %s', $label, $value ?: '(not set)'));
+    }
+
+    writeln('');
+}
+
+/**
+ * @param  array<string, string>  $answers
+ * @return array<string, string>
+ */
+function replacements(array $answers): array
+{
+    return [
+        '"name": "project"' => '"name": "'.$answers['slug'].'"',
+        '"'.TEMPLATE['slug'].'": {' => '"'.$answers['slug'].'": {',
+        'APP_NAME='.TEMPLATE['slug'] => 'APP_NAME="'.$answers['title'].'"',
+        'APP_URL='.TEMPLATE['url'] => 'APP_URL='.$answers['url'],
+        'DB_DATABASE='.TEMPLATE['database'] => 'DB_DATABASE='.$answers['database'],
+        'ADMIN_EMAIL='.TEMPLATE['admin_email'] => 'ADMIN_EMAIL='.$answers['admin_email'],
+        'MAIL_FROM_ADDRESS="'.TEMPLATE['support_email'].'"' => 'MAIL_FROM_ADDRESS="'.$answers['support_email'].'"',
+        "'".TEMPLATE['support_email']."'" => "'".$answers['support_email']."'",
+        "'".TEMPLATE['admin_email']."'" => "'".$answers['admin_email']."'",
+        "'".TEMPLATE['title']."'" => "'".$answers['title']."'",
+        "'".TEMPLATE['fallback_title']."'" => "'".$answers['title']."'",
+        '# '.TEMPLATE['title'] => '# '.$answers['title'],
+        TEMPLATE['description'] => $answers['description'],
+        TEMPLATE['mcp_server'] => $answers['mcp_server'],
+        "Mcp::local('".TEMPLATE['slug']."'" => "Mcp::local('".$answers['slug']."'",
+    ];
+}
+
+/**
+ * @param  array<string, string>  $replacements
+ * @param  array<string, string>  $answers
+ */
+function rewrite(string $root, array $replacements, array $answers): int
+{
+    $changed = 0;
+
+    foreach (files($root) as $file) {
+        $contents = (string) file_get_contents($file);
+        $rewritten = strtr($contents, $replacements);
+
+        if ($rewritten === $contents) {
+            continue;
+        }
+
+        file_put_contents($file, $rewritten);
+        $changed++;
+    }
+
+    $composer = $root.'/composer.json';
+    $json = json_decode((string) file_get_contents($composer), true, flags: JSON_THROW_ON_ERROR);
+    $json = ['name' => composer_name($answers)] + $json;
+    $json['description'] = $answers['description'];
+    $json['authors'] = array_values(array_filter([author_record($answers)]));
+    $json['homepage'] = repository($answers) ?: null;
+    $json['support'] = repository($answers) ? ['issues' => repository($answers).'/issues'] : null;
+    $json = array_filter($json, static fn (mixed $value): bool => $value !== null && $value !== []);
+    file_put_contents($composer, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL);
+
+    return $changed + 1;
+}
+
+/** @param array<string, string> $answers */
+function rename_files(string $root, array $answers): int
+{
+    $from = $root.'/app/Mcp/Servers/'.TEMPLATE['mcp_server'].'.php';
+    $to = $root.'/app/Mcp/Servers/'.$answers['mcp_server'].'.php';
+
+    if ($from === $to || ! is_file($from)) {
+        return 0;
+    }
+
+    rename($from, $to);
+
+    return 1;
+}
+
+function remove_self(string $root): void
+{
+    unlink(__FILE__);
+
+    $attributes = $root.'/.gitattributes';
+
+    if (is_file($attributes)) {
+        $contents = preg_replace('#^/init\s.*\R#m', '', (string) file_get_contents($attributes));
+        file_put_contents($attributes, (string) $contents);
+    }
+}
+
+/** @return list<string> */
+function files(string $root): array
+{
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveCallbackFilterIterator(
+            new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS),
+            static fn (SplFileInfo $file): bool => $file->isDir()
+                ? ! in_array($file->getFilename(), SKIP_DIRECTORIES, true)
+                : ! in_array($file->getFilename(), SKIP_FILES, true),
+        ),
+    );
+
+    $files = [];
+
+    /** @var SplFileInfo $file */
+    foreach ($iterator as $file) {
+        if ($file->isFile()) {
+            $files[] = $file->getPathname();
+        }
+    }
+
+    sort($files);
+
+    return $files;
+}
+
+function ask(string $question, string $default): string
+{
+    echo sprintf('  %s [%s]: ', $question, $default);
+    $answer = trim((string) fgets(STDIN));
+
+    return $answer === '' ? $default : $answer;
+}
+
+function confirm(string $question, bool $default = false): bool
+{
+    echo sprintf('  %s? [%s] ', $question, $default ? 'Y/n' : 'y/N');
+    $answer = strtolower(trim((string) fgets(STDIN)));
+
+    return $answer === '' ? $default : in_array($answer, ['y', 'yes'], true);
+}
+
+function writeln(string $line): void
+{
+    echo $line, PHP_EOL;
+}
+
+function git(string $arguments): string
+{
+    return trim((string) shell_exec('git '.$arguments.' 2>/dev/null'));
+}
+
+function slugify(string $value): string
+{
+    return trim((string) preg_replace('/-+/', '-', (string) preg_replace('/[^a-z0-9]+/', '-', strtolower($value))), '-');
+}
+
+function database_name(string $value): string
+{
+    return trim((string) preg_replace('/_+/', '_', (string) preg_replace('/[^a-z0-9]+/', '_', strtolower($value))), '_');
+}
+
+function studly(string $value): string
+{
+    return str_replace(' ', '', titleise($value));
+}
+
+function titleise(string $value): string
+{
+    return ucwords((string) preg_replace('/[^a-zA-Z0-9]+/', ' ', $value));
+}
+
+/** @param array<string, string> $answers */
+function repository(array $answers): string
+{
+    return $answers['organisation'] === '' ? '' : 'https://github.com/'.$answers['organisation'].'/'.$answers['slug'];
+}
+
+/** @param array<string, string> $answers */
+function composer_name(array $answers): string
+{
+    return ($answers['organisation'] ?: 'app').'/'.$answers['slug'];
+}
+
+/** @param array<string, string> $answers */
+function author(array $answers): string
+{
+    return trim($answers['author'].($answers['author_email'] === '' ? '' : ' <'.$answers['author_email'].'>'));
+}
+
+/**
+ * @param  array<string, string>  $answers
+ * @return array{name: string, email?: string}|null
+ */
+function author_record(array $answers): ?array
+{
+    if ($answers['author'] === '') {
+        return null;
+    }
+
+    return array_filter(['name' => $answers['author'], 'email' => $answers['author_email']]);
+}

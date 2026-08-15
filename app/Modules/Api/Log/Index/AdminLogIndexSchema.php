@@ -24,6 +24,7 @@ readonly class AdminLogIndexSchema implements DescribesOperation
                         'operationId' => 'listLogs',
                         'summary' => 'Search and paginate log entries.',
                         'tags' => ['Logs'],
+                        'parameters' => AdminLogIndexParameters::schema(),
                         'responses' => [
                             '200' => [
                                 'description' => 'The successful response.',
