@@ -6,8 +6,38 @@
 <form method="POST" action="{{ $AbilityTable->action() }}" class="mt-6 flex flex-col gap-4">
     @csrf
     @foreach($AbilityTable->groups() as $api => $rows)
+        @php($connection = $AbilityTable->mcpConnection($api))
         <section class="flex flex-col gap-2">
             <h2 class="text-sm font-semibold uppercase tracking-wide text-base-content/70">{{ ucfirst($api) }} API</h2>
+            <details class="group rounded-box border border-base-300 bg-base-200/50">
+                <summary class="cursor-pointer list-none p-4 font-semibold marker:content-none">
+                    <span class="flex items-center justify-between gap-3">
+                        MCP connection
+                        <span class="text-base-content/60 transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
+                    </span>
+                </summary>
+                <div class="border-t border-base-300 p-4">
+                    <p class="text-sm text-base-content/70">Use this API's OpenAPI document with your personal access token.</p>
+                <dl class="mt-4 grid gap-3 text-sm md:grid-cols-2">
+                    <div>
+                        <dt class="font-medium text-base-content/70">API base URL</dt>
+                        <dd><code class="break-all font-mono">{{ $connection['base_url'] }}</code></dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium text-base-content/70">OpenAPI document</dt>
+                        <dd><code class="break-all font-mono">{{ $connection['openapi_url'] }}</code></dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium text-base-content/70">Request headers</dt>
+                        <dd><code class="break-all font-mono">{{ $connection['headers'] }}</code></dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium text-base-content/70">Agent documentation</dt>
+                        <dd><a href="{{ $connection['llms_url'] }}" class="link link-primary break-all font-mono">{{ $connection['llms_url'] }}</a></dd>
+                    </div>
+                </dl>
+                </div>
+            </details>
             <div class="overflow-x-auto rounded-box border border-base-300">
                 <table class="table">
             <thead>

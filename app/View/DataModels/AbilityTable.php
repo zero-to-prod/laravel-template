@@ -7,6 +7,8 @@ use App\Helpers\HttpVerb;
 use App\Modules\Api\Support\AbilityQuery;
 use App\Modules\Settings\Credentials\TokenUpdateRequest;
 use App\Routes\Auth;
+use App\Routes\Web;
+use Illuminate\Support\Facades\Config;
 use Zerotoprod\DataModel\Describe;
 
 readonly class AbilityTable
@@ -77,6 +79,17 @@ readonly class AbilityTable
     public function every(): bool
     {
         return in_array(HttpVerb::every, $this->granted, true);
+    }
+
+    /** @return array{base_url: string, openapi_url: string, headers: string, llms_url: string} */
+    public function mcpConnection(string $api): array
+    {
+        return [
+            'base_url' => url('/'),
+            'openapi_url' => url(Config::string("openapi.schemas.$api.route.uri")),
+            'headers' => 'Authorization:Bearer <token>',
+            'llms_url' => url(Web::llms->value),
+        ];
     }
 
     public function action(): string

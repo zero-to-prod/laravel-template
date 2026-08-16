@@ -8,6 +8,7 @@ use App\Routes\ApiRoute;
 use App\Routes\Auth;
 use App\Routes\Web;
 use App\View\DataModels\AbilityTable;
+use Illuminate\Support\Facades\Config;
 
 /** The management page of a token the given account owns. */
 function credentialUrl(User $User, string $name = 'Ability Grid'): string
@@ -31,6 +32,12 @@ test('the page lists every endpoint a token can be granted, and every verb', fun
 
     $response->assertSee('Public API')
         ->assertDontSee('Admin API')
+        ->assertSee('MCP connection')
+        ->assertSee(url(Config::string('openapi.schemas.public.route.uri')))
+        ->assertSee('Authorization:Bearer &lt;token&gt;', false)
+        ->assertSee('<details', false)
+        ->assertSee('href="'.url(Web::llms->value).'"', false)
+        ->assertDontSee('npx -y @ivotoby/openapi-mcp-server')
         ->assertSee('Endpoint')
         ->assertSee(ApiRoute::user->value);
 

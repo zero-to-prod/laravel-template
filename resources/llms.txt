@@ -22,3 +22,65 @@ covers every available path, request body, response, and error shape.
 
 - [OpenAPI document](/openapi.json): Every endpoint in full — paths, methods, request bodies, response schemas, and the statuses each operation can return.
 - [API readme](/api/readme): The prose tour — envelope, error shapes, token flow, and what each endpoint is for. Returns the standard envelope; the markdown is the `data.content` string.
+
+## MCP
+
+Use [@ivotoby/openapi-mcp-server](https://github.com/ivo-toby/mcp-openapi-server)
+to expose this API's OpenAPI operations as MCP tools. In Settings → Credentials, open
+the **MCP connection** panel beside the API you want and copy its base URL, OpenAPI URL,
+and bearer-header format. Replace the example values below with those details and replace
+`replace-with-token` with the plain-text token shown when the credential was created.
+
+Keep the token in a local or user-scoped configuration. Never commit it to source control.
+The token's abilities and expiry limit what the MCP tools can do.
+
+### Generic stdio connection
+
+MCP clients that accept an `mcpServers` JSON object, including Claude Desktop and many
+editor clients, can start the package with this configuration:
+
+```json
+{
+  "mcpServers": {
+    "application-api": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@ivotoby/openapi-mcp-server"],
+      "env": {
+        "API_BASE_URL": "https://example.com",
+        "OPENAPI_SPEC_PATH": "https://example.com/openapi.json",
+        "API_HEADERS": "Authorization:Bearer replace-with-token"
+      }
+    }
+  }
+}
+```
+
+If a client does not accept the `type` field, omit it; stdio is the package default.
+To launch the same local stdio server directly:
+
+```sh
+API_BASE_URL='https://example.com' \
+OPENAPI_SPEC_PATH='https://example.com/openapi.json' \
+API_HEADERS='Authorization:Bearer replace-with-token' \
+npx -y @ivotoby/openapi-mcp-server
+```
+
+The process communicates over standard input and output, so an MCP client normally starts
+and manages it rather than connecting to a network URL.
+
+### Claude Code
+
+Add a private, project-local stdio server from the project directory:
+
+```sh
+claude mcp add --transport stdio --scope local \
+  --env API_BASE_URL=https://example.com \
+  --env OPENAPI_SPEC_PATH=https://example.com/openapi.json \
+  --env 'API_HEADERS=Authorization:Bearer replace-with-token' \
+  application-api -- npx -y @ivotoby/openapi-mcp-server
+```
+
+Verify it with `claude mcp get application-api` or run `/mcp` inside Claude Code.
+Use `--scope user` instead of `--scope local` only when the same credential should be
+available from every project on the machine.

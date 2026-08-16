@@ -5,6 +5,7 @@ use App\Modules\Api\Support\AbilityQuery;
 use App\Modules\Settings\Credentials\TokenUpdateRequest;
 use App\Routes\ApiRoute;
 use App\Routes\Auth;
+use App\Routes\Web;
 use App\View\DataModels\AbilityRow;
 use App\View\DataModels\AbilityTable;
 use Zerotoprod\DataModel\PropertyRequiredException;
@@ -69,6 +70,15 @@ test('a wildcard token ticks every row', function (): void {
 test('the form posts back to the token it manages', function (): void {
     expect(abilityTable()->action())
         ->toBe(Auth::settingsCredential->url([Auth::credentialParameter => abilityTable()->id]));
+});
+
+test('mcp connection details target the selected api document', function (): void {
+    expect(abilityTable()->mcpConnection('public'))->toBe([
+        'base_url' => url('/'),
+        'openapi_url' => url('openapi.json'),
+        'headers' => 'Authorization:Bearer <token>',
+        'llms_url' => url(Web::llms->value),
+    ]);
 });
 
 test('the checkbox name is the key the request reads', function (): void {
